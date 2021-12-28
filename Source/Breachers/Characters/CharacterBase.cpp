@@ -1,5 +1,6 @@
 #include "CharacterBase.h"
 #include "Breachers/Components/MovementSystem.h"
+#include "Breachers/Components/WeaponSystem.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -14,6 +15,7 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed;
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
+	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));

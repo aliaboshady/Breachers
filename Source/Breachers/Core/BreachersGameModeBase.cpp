@@ -23,7 +23,6 @@ void ABreachersGameModeBase::RequestAttackerSpawn(AController* Controller)
 {
 	if(AttackerSpawns.Num() > 0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("NUM>0"));
 		const int32 RandInd = FMath::RandRange(0, AttackerSpawns.Num() - 1);
 		const FTransform SpawnTransform = AttackerSpawns[RandInd]->GetActorTransform();
 		if(AttackerClass) SpawnCharacter(AttackerClass, SpawnTransform, Controller);

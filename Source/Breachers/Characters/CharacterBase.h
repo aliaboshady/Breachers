@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+class UWeaponSystem;
 class UMovementSystem;
 class UCameraComponent;
 
@@ -15,11 +16,11 @@ public:
 	ACharacterBase();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(VisibleAnywhere)
+	UWeaponSystem* WeaponSystem;
+
 protected:
 	virtual void BeginPlay() override;
-
-	UPROPERTY()
-	UMovementSystem* MovementSystem;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -37,6 +38,9 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void Server_StopWalk();
 	void StopWalk();
+
+	UPROPERTY(VisibleAnywhere)
+	UMovementSystem* MovementSystem;
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
