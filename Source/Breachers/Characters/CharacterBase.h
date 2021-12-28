@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+class AWeaponBase;
 class UWeaponSystem;
 class UMovementSystem;
 class UCameraComponent;
@@ -14,13 +15,16 @@ class BREACHERS_API ACharacterBase : public ACharacter
 
 public:
 	ACharacterBase();
+	USkeletalMeshComponent* GetArmsMeshFP();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void EquipWeapon(AWeaponBase* Weapon);
 
 	UPROPERTY(VisibleAnywhere)
 	UWeaponSystem* WeaponSystem;
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);

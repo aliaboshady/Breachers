@@ -2,12 +2,12 @@
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Components/SphereComponent.h"
+#include "Net/UnrealNetwork.h"
 
 AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
-	bIsRifle = false;
 
 	Mesh_TP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh_TP"));
 	RootComponent = Mesh_TP;
@@ -27,6 +27,12 @@ AWeaponBase::AWeaponBase()
 	SphereComponent->SetRelativeLocation(FVector(0, 20, 5));
 }
 
+void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWeaponBase, WeaponInfo);
+}
+
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -35,7 +41,7 @@ void AWeaponBase::BeginPlay()
 }
 
 void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(!HasAuthority()) return;
 	
@@ -43,17 +49,10 @@ void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		if(ACharacterBase* Player = Cast<ACharacterBase>(OtherActor))
 		{
-			if(bIsRifle && !Player->WeaponSystem->HasPrimaryWeapon())
+			if(!Player->WeaponSystem->HasPrimaryWeapon() || !Player->WeaponSystem->HasSecondaryWeapon())
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Take primary"));
-				// Player->EquipRifle(this);
-				// GetEquiped(Player);
-			}
-			else if(!bIsRifle && !Player->WeaponSystem->HasSecondaryWeapon())
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Take secondary"));
-				// Player->EquipPistol(this);
-				// GetEquiped(Player);
+				Player->EquipWeapon(this);
+				GetEquiped(Player);
 			}
 		}
 	}

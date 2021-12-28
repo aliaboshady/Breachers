@@ -4,6 +4,7 @@
 #include "WeaponSystem.generated.h"
 
 class AWeaponBase;
+class ACharacterBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BREACHERS_API UWeaponSystem : public UActorComponent
@@ -14,16 +15,31 @@ public:
 	UWeaponSystem();
 	bool HasPrimaryWeapon() const;
 	bool HasSecondaryWeapon() const;
+	void EquipWeapon(AWeaponBase* Weapon);
 
 protected:
 	virtual void BeginPlay() override;
+	FAttachmentTransformRules CreateAttachRules();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY()
+	UFUNCTION(Server, Reliable)
+	void Server_EquipWeapon(AWeaponBase* Weapon);
+
+	UFUNCTION(Client, Reliable)
+	void Client_EquipWeaponVisualsFP(AWeaponBase* Weapon);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_EquipWeaponVisualsTP(AWeaponBase* Weapon);
+
+	UPROPERTY(Replicated)
 	AWeaponBase* CurrentWeapon;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	AWeaponBase* PrimaryWeapon;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	AWeaponBase* SecondaryWeapon;
+
+	UPROPERTY(Replicated)
+	ACharacterBase* CharacterPlayer;
 };

@@ -1,5 +1,5 @@
 #include "MovementSystem.h"
-
+#include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 UMovementSystem::UMovementSystem()
@@ -7,10 +7,10 @@ UMovementSystem::UMovementSystem()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-
 void UMovementSystem::BeginPlay()
 {
 	Super::BeginPlay();
+	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
 }
 
 void UMovementSystem::MoveForward(float Value, APawn* Pawn)

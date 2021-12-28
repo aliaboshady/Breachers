@@ -3,6 +3,7 @@
 #include "Breachers/Components/WeaponSystem.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
 
 ACharacterBase::ACharacterBase()
 {
@@ -33,6 +34,12 @@ ACharacterBase::ACharacterBase()
 	Arms_FP->SetRelativeLocation(FVector(-20, 0, -170));
 	Arms_FP->SetRelativeRotation(FRotator(0, -90, 0));
 	Arms_FP->CastShadow = false;
+}
+
+void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	//DOREPLIFETIME(ACharacterBase, WeaponSystem);
 }
 
 void ACharacterBase::BeginPlay()
@@ -109,4 +116,14 @@ void ACharacterBase::Server_StopWalk_Implementation()
 void ACharacterBase::StopWalk()
 {
 	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+}
+
+USkeletalMeshComponent* ACharacterBase::GetArmsMeshFP()
+{
+	return Arms_FP;
+}
+
+void ACharacterBase::EquipWeapon(AWeaponBase* Weapon)
+{
+	WeaponSystem->EquipWeapon(Weapon);
 }

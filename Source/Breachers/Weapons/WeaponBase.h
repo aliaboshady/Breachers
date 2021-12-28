@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "WeaponInfo.h"
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
@@ -21,14 +22,12 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh_TP;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+	FWeaponInfo WeaponInfo;
+
 protected:
 	virtual void BeginPlay() override;
-
-	// UPROPERTY(EditAnywhere)
-	// FWeaponInfo WeaponInfo;
-
-	UPROPERTY(EditAnywhere)
-	bool bIsRifle;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComponent;
