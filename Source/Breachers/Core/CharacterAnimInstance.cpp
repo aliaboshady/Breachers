@@ -1,5 +1,4 @@
 #include "CharacterAnimInstance.h"
-
 #include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/PawnMovementComponent.h"
 
