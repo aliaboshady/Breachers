@@ -14,7 +14,7 @@ class BREACHERS_API AWeaponBase : public AActor
 	
 public:	
 	AWeaponBase();
-	void GetEquiped(ACharacterBase* Player);
+	void OnTaken();
 
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh_FP;

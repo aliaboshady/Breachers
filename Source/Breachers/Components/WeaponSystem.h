@@ -13,9 +13,9 @@ class BREACHERS_API UWeaponSystem : public UActorComponent
 
 public:	
 	UWeaponSystem();
-	bool HasPrimaryWeapon() const;
-	bool HasSecondaryWeapon() const;
 	void EquipWeapon(AWeaponBase* Weapon);
+	bool CanTakeWeapon(AWeaponBase* Weapon);
+	void TakeWeapon(AWeaponBase* Weapon);
 
 protected:
 	virtual void BeginPlay() override;
@@ -24,12 +24,21 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void Server_EquipWeapon(AWeaponBase* Weapon);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
+
+	UFUNCTION(Server, Reliable)
+	void Server_TakeWeapon(AWeaponBase* Weapon);
 
 	UFUNCTION(Client, Reliable)
 	void Client_EquipWeaponVisualsFP(AWeaponBase* Weapon);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EquipWeaponVisualsTP(AWeaponBase* Weapon);
+
+	UPROPERTY(Replicated)
+	ACharacterBase* CharacterPlayer;
 
 	UPROPERTY(Replicated)
 	AWeaponBase* CurrentWeapon;
@@ -41,5 +50,8 @@ protected:
 	AWeaponBase* SecondaryWeapon;
 
 	UPROPERTY(Replicated)
-	ACharacterBase* CharacterPlayer;
+	AWeaponBase* MeleeWeapon;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AWeaponBase> MeleeWeaponClass;
 };

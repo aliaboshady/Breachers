@@ -127,3 +127,19 @@ void ACharacterBase::EquipWeapon(AWeaponBase* Weapon)
 {
 	WeaponSystem->EquipWeapon(Weapon);
 }
+
+
+bool ACharacterBase::CanTakeWeapon(AWeaponBase* Weapon)
+{
+	return WeaponSystem->CanTakeWeapon(Weapon);
+}
+
+void ACharacterBase::TakeWeapon(AWeaponBase* Weapon)
+{
+	Server_TakeWeapon(Weapon);
+}
+
+void ACharacterBase::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
+{
+	WeaponSystem->TakeWeapon(Weapon);
+}

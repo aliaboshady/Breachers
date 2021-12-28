@@ -1,6 +1,5 @@
 #include "WeaponBase.h"
 #include "Breachers/Characters/CharacterBase.h"
-#include "Breachers/Components/WeaponSystem.h"
 #include "Components/SphereComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -49,20 +48,17 @@ void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		if(ACharacterBase* Player = Cast<ACharacterBase>(OtherActor))
 		{
-			if(!Player->WeaponSystem->HasPrimaryWeapon() || !Player->WeaponSystem->HasSecondaryWeapon())
+			if(Player->CanTakeWeapon(this))
 			{
-				Player->EquipWeapon(this);
-				GetEquiped(Player);
+				Player->TakeWeapon(this);
+				OnTaken();
 			}
 		}
 	}
 }
 
-void AWeaponBase::GetEquiped(ACharacterBase* Player)
+void AWeaponBase::OnTaken()
 {
-	SetOwner(Player);
-	SetInstigator(Player);
-	
 	if(Mesh_TP)
 	{
 		Mesh_TP->SetEnableGravity(false);

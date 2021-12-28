@@ -22,6 +22,12 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	UWeaponSystem* WeaponSystem;
 
+	bool CanTakeWeapon(AWeaponBase* Weapon);
+	void TakeWeapon(AWeaponBase* Weapon);
+
+	UFUNCTION(Server, Reliable)
+	void Server_TakeWeapon(AWeaponBase* Weapon);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

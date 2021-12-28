@@ -6,7 +6,8 @@ UENUM(BlueprintType)
 enum EWeaponType
 {
 	Primary,
-	Secondary
+	Secondary,
+	Melee
 };
 
 UENUM(BlueprintType)
@@ -15,7 +16,7 @@ enum EFireMode
 	Single,
 	Auto,
 	Spread,
-	Burst
+	Burst,
 };
 
 USTRUCT(BlueprintType)
