@@ -7,8 +7,13 @@ ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	Tags.Add("Player");
-	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
+	CrouchSpeed = 200;
+	WalkSpeed = 300;
+	RunSpeed = 600;
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed;
+	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
@@ -45,6 +50,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacterBase::StopJumping);
 	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacterBase::StartCrouch);
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacterBase::StopCrouch);
+	PlayerInputComponent->BindAction("Walk", IE_Pressed, this, &ACharacterBase::Server_StartWalk);
+	PlayerInputComponent->BindAction("Walk", IE_Released, this, &ACharacterBase::Server_StopWalk);
 }
 
 void ACharacterBase::MoveForward(float Value)
@@ -67,4 +74,37 @@ void ACharacterBase::StartCrouch()
 void ACharacterBase::StopCrouch()
 {
 	UnCrouch();
+}
+
+void ACharacterBase::Client_StartWalk_Implementation()
+{
+	StartWalk();
+}
+
+void ACharacterBase::Server_StartWalk_Implementation()
+{
+	StartWalk();
+	Client_StartWalk();
+}
+
+void ACharacterBase::StartWalk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+}
+
+
+void ACharacterBase::Client_StopWalk_Implementation()
+{
+	StopWalk();
+}
+
+void ACharacterBase::Server_StopWalk_Implementation()
+{
+	StopWalk();
+	Client_StopWalk();
+}
+
+void ACharacterBase::StopWalk()
+{
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 }
