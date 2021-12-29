@@ -43,7 +43,7 @@ protected:
 	UPROPERTY()
 	ACharacterBase* CharacterPlayer;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	AWeaponBase* CurrentWeapon;
 
 	UPROPERTY(Replicated)

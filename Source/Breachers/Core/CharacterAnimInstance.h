@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Breachers/Weapons/WeaponInfo.h"
 #include "CharacterAnimInstance.generated.h"
 
 class ACharacterBase;
@@ -13,6 +14,9 @@ class BREACHERS_API UCharacterAnimInstance : public UAnimInstance
 protected:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ChangePose();
 
 	UPROPERTY()
 	ACharacterBase* OwnerCharacter;
@@ -28,4 +32,7 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsCrouching;
+
+	UPROPERTY(BlueprintReadOnly)
+	TEnumAsByte<EWeaponType> WeaponType;
 };
