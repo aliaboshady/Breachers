@@ -1,6 +1,7 @@
 #include "CharacterBase.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Breachers/Weapons/WeaponBase.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"

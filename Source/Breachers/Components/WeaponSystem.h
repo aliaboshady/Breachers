@@ -19,21 +19,17 @@ public:
 	void EquipPrimary();
 	void EquipSecondary();
 	void EquipMelee();
+	AWeaponBase* GetCurrentWeapon();
 
 protected:
 	virtual void BeginPlay() override;
 	FAttachmentTransformRules CreateAttachRules();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipKnife();
-
-	UFUNCTION(Server, Reliable)
-	void Server_EquipWeapon(AWeaponBase* Weapon);
+	void UnequipWeapon(AWeaponBase* Weapon);
 	
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
-
-	UFUNCTION(Server, Reliable)
-	void Server_TakeWeapon(AWeaponBase* Weapon);
 
 	UFUNCTION(Client, Reliable)
 	void Client_EquipWeaponVisualsFP(AWeaponBase* Weapon);
