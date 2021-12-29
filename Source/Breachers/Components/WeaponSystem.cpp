@@ -50,7 +50,7 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 		PrimaryWeapon = Weapon;
 		PrimaryWeapon->SetOwner(CharacterPlayer);
 		PrimaryWeapon->SetInstigator(CharacterPlayer);
-		Weapon->SetHidden(true);
+		Multicast_HideWeapon(Weapon, true);
 		//EquipWeapon(Weapon);
 	}
 	else if(Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr)
@@ -58,7 +58,7 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 		SecondaryWeapon = Weapon;
 		SecondaryWeapon->SetOwner(CharacterPlayer);
 		SecondaryWeapon->SetInstigator(CharacterPlayer);
-		Weapon->SetHidden(true);
+		Multicast_HideWeapon(Weapon, true);
 	}
 	else if(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr)
 	{
@@ -111,4 +111,10 @@ FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 	AttachRules.RotationRule = EAttachmentRule::SnapToTarget;
 	AttachRules.ScaleRule = EAttachmentRule::SnapToTarget;
 	return AttachRules;
+}
+
+void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, bool bHidden)
+{
+	Weapon->SetHidden(bHidden);
+	Weapon->Mesh_TP->CastShadow = !bHidden;
 }

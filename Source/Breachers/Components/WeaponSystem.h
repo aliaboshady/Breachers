@@ -37,7 +37,10 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EquipWeaponVisualsTP(AWeaponBase* Weapon);
 
-	UPROPERTY(Replicated)
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_HideWeapon(AWeaponBase* Weapon, bool bHidden);
+
+	UPROPERTY()
 	ACharacterBase* CharacterPlayer;
 
 	UPROPERTY(Replicated)
