@@ -21,16 +21,20 @@ void UWeaponSystem::BeginPlay()
 {
 	Super::BeginPlay();
 	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
-	// if(MeleeWeaponClass)
-	// {
-	// 	Server_SpawnWeapon(MeleeWeaponClass);
-	// }
+	if(MeleeWeaponClass)
+	{
+		Server_SpawnWeapon(MeleeWeaponClass);
+	}
 }
 
 void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass)
 {
 	AWeaponBase* SpawnedMeleeWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, FActorSpawnParameters());
-	if(SpawnedMeleeWeapon) EquipWeapon(SpawnedMeleeWeapon);
+	if(SpawnedMeleeWeapon)
+	{
+		TakeWeapon(SpawnedMeleeWeapon);
+		EquipWeapon(SpawnedMeleeWeapon);
+	}
 }
 
 bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
@@ -55,6 +59,12 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 		SecondaryWeapon->SetOwner(CharacterPlayer);
 		SecondaryWeapon->SetInstigator(CharacterPlayer);
 		Weapon->SetHidden(true);
+	}
+	else if(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr)
+	{
+		MeleeWeapon = Weapon;
+		MeleeWeapon->SetOwner(CharacterPlayer);
+		MeleeWeapon->SetInstigator(CharacterPlayer);
 	}
 }
 
