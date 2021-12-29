@@ -61,6 +61,10 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacterBase::StopCrouch);
 	PlayerInputComponent->BindAction("Walk", IE_Pressed, this, &ACharacterBase::Server_StartWalk);
 	PlayerInputComponent->BindAction("Walk", IE_Released, this, &ACharacterBase::Server_StopWalk);
+	
+	PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &ACharacterBase::EquipPrimary);
+	PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &ACharacterBase::EquipSecondary);
+	PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &ACharacterBase::EquipMelee);
 }
 
 void ACharacterBase::MoveForward(float Value)
@@ -142,4 +146,19 @@ void ACharacterBase::TakeWeapon(AWeaponBase* Weapon)
 void ACharacterBase::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 {
 	WeaponSystem->TakeWeapon(Weapon);
+}
+
+void ACharacterBase::EquipPrimary()
+{
+	WeaponSystem->EquipPrimary();
+}
+
+void ACharacterBase::EquipSecondary()
+{
+	WeaponSystem->EquipSecondary();
+}
+
+void ACharacterBase::EquipMelee()
+{
+	WeaponSystem->EquipMelee();
 }

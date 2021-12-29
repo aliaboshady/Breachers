@@ -64,7 +64,7 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 	
 	Weapon->SetOwner(CharacterPlayer);
 	Weapon->SetInstigator(CharacterPlayer);
-	//EquipWeapon(Weapon);
+	EquipWeapon(Weapon);
 }
 
 void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
@@ -99,6 +99,7 @@ void UWeaponSystem::Multicast_EquipWeaponVisualsTP_Implementation(AWeaponBase* W
 	{
 		USkeletalMeshComponent* ArmsTP = CharacterPlayer->GetMesh();
 		Weapon->Mesh_TP->AttachToComponent(ArmsTP, CreateAttachRules(), "WeaponSocket");
+		Weapon->Mesh_TP->CastShadow = true;
 		Weapon->SetHidden(false);
 	}
 }
@@ -116,4 +117,22 @@ void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, boo
 {
 	Weapon->Mesh_TP->CastShadow = !bHidden;
 	Weapon->SetHidden(bHidden);
+}
+
+void UWeaponSystem::EquipPrimary()
+{
+	if(!PrimaryWeapon || CurrentWeapon == PrimaryWeapon) return;
+
+}
+
+void UWeaponSystem::EquipSecondary()
+{
+	if(!SecondaryWeapon || CurrentWeapon == SecondaryWeapon) return;
+
+}
+
+void UWeaponSystem::EquipMelee()
+{
+	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon) return;
+	
 }

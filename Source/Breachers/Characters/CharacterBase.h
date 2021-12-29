@@ -49,6 +49,10 @@ protected:
 	void Server_StopWalk();
 	void StopWalk();
 
+	void EquipPrimary();
+	void EquipSecondary();
+	void EquipMelee();
+
 	UPROPERTY(VisibleAnywhere)
 	UMovementSystem* MovementSystem;
 

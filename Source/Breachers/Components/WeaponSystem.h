@@ -16,6 +16,9 @@ public:
 	void EquipWeapon(AWeaponBase* Weapon);
 	bool CanTakeWeapon(AWeaponBase* Weapon);
 	void TakeWeapon(AWeaponBase* Weapon);
+	void EquipPrimary();
+	void EquipSecondary();
+	void EquipMelee();
 
 protected:
 	virtual void BeginPlay() override;
