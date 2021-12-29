@@ -21,6 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 	FAttachmentTransformRules CreateAttachRules();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	void EquipKnife();
 
 	UFUNCTION(Server, Reliable)
 	void Server_EquipWeapon(AWeaponBase* Weapon);

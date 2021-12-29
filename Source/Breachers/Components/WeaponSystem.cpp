@@ -17,30 +17,32 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, MeleeWeapon);
 }
 
+void UWeaponSystem::EquipKnife()
+{
+	if(MeleeWeapon) EquipWeapon(MeleeWeapon);
+}
+
 void UWeaponSystem::BeginPlay()
 {
 	Super::BeginPlay();
 	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
-	if(MeleeWeaponClass)
-	{
-		Server_SpawnWeapon(MeleeWeaponClass);
-	}
+
+	if(CharacterPlayer->HasAuthority()) Server_SpawnWeapon(MeleeWeaponClass);
+	
+	FTimerHandle EquipKnifeHandle;
+	GetWorld()->GetTimerManager().SetTimer(EquipKnifeHandle, this, &UWeaponSystem::EquipKnife, 1, false, 0.1);
 }
 
 void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass)
 {
-	AWeaponBase* SpawnedMeleeWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, FActorSpawnParameters());
-	if(SpawnedMeleeWeapon)
-	{
-		TakeWeapon(SpawnedMeleeWeapon);
-		EquipWeapon(SpawnedMeleeWeapon);
-	}
+	GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
 }
 
 bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 {
 	return (Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr) ||
-		(Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr);
+		(Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr) ||
+		(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr);
 }
 
 void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
@@ -48,24 +50,21 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 	if(Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr)
 	{
 		PrimaryWeapon = Weapon;
-		PrimaryWeapon->SetOwner(CharacterPlayer);
-		PrimaryWeapon->SetInstigator(CharacterPlayer);
 		Multicast_HideWeapon(Weapon, true);
-		//EquipWeapon(Weapon);
 	}
 	else if(Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr)
 	{
 		SecondaryWeapon = Weapon;
-		SecondaryWeapon->SetOwner(CharacterPlayer);
-		SecondaryWeapon->SetInstigator(CharacterPlayer);
 		Multicast_HideWeapon(Weapon, true);
 	}
 	else if(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr)
 	{
 		MeleeWeapon = Weapon;
-		MeleeWeapon->SetOwner(CharacterPlayer);
-		MeleeWeapon->SetInstigator(CharacterPlayer);
 	}
+	
+	Weapon->SetOwner(CharacterPlayer);
+	Weapon->SetInstigator(CharacterPlayer);
+	//EquipWeapon(Weapon);
 }
 
 void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
@@ -76,8 +75,8 @@ void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 void UWeaponSystem::Server_EquipWeapon_Implementation(AWeaponBase* Weapon)
 {
 	CurrentWeapon = Weapon;
-	Client_EquipWeaponVisualsFP(Weapon);
 	Multicast_EquipWeaponVisualsTP(Weapon);
+	Client_EquipWeaponVisualsFP(Weapon);
 }
 
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
@@ -115,6 +114,6 @@ FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 
 void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, bool bHidden)
 {
-	Weapon->SetHidden(bHidden);
 	Weapon->Mesh_TP->CastShadow = !bHidden;
+	Weapon->SetHidden(bHidden);
 }
