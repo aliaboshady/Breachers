@@ -7,6 +7,7 @@ UWeaponSystem::UWeaponSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
+	bCanFire = true;
 }
 
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -93,6 +94,41 @@ void UWeaponSystem::EquipMelee()
 {
 	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon) return;
 	
+}
+
+void UWeaponSystem::StartFire()
+{
+	if(!CurrentWeapon) return;
+
+	TEnumAsByte<EFireMode> FireMode = CurrentWeapon->WeaponInfo.WeaponFireMode;
+	if(FireMode == Auto)
+	{
+		GetWorld()->GetTimerManager().SetTimer(StartFireTimer, this, &UWeaponSystem::Fire, CurrentWeapon->WeaponInfo.TimeBetweenShots + 0.01, true, 0);
+	}
+	else
+	{
+		Fire();
+	}	
+}
+
+void UWeaponSystem::StopFire()
+{
+	GetWorld()->GetTimerManager().ClearTimer(StartFireTimer);
+}
+
+void UWeaponSystem::Fire()
+{
+	if(!bCanFire) return;
+	UE_LOG(LogTemp, Warning, TEXT("single"));
+	bCanFire = false;
+	FTimerHandle ResetTimer;
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &UWeaponSystem::ResetCanFire, 1, false, CurrentWeapon->WeaponInfo.TimeBetweenShots);
+	
+}
+
+void UWeaponSystem::ResetCanFire()
+{
+	bCanFire = true;
 }
 
 AWeaponBase* UWeaponSystem::GetCurrentWeapon()

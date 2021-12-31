@@ -53,6 +53,14 @@ protected:
 	void EquipSecondary();
 	void EquipMelee();
 
+	UFUNCTION(Server, Reliable)
+	void Server_StartFire();
+	void StartFire();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StopFire();
+	void StopFire();
+
 	UPROPERTY(VisibleAnywhere)
 	UMovementSystem* MovementSystem;
 

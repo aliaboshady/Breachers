@@ -66,6 +66,9 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &ACharacterBase::EquipPrimary);
 	PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &ACharacterBase::EquipSecondary);
 	PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &ACharacterBase::EquipMelee);
+	
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::Server_StartFire);
+	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::Server_StopFire);
 }
 
 void ACharacterBase::MoveForward(float Value)
@@ -162,4 +165,24 @@ void ACharacterBase::EquipSecondary()
 void ACharacterBase::EquipMelee()
 {
 	WeaponSystem->EquipMelee();
+}
+
+void ACharacterBase::Server_StartFire_Implementation()
+{
+	StartFire();
+}
+
+void ACharacterBase::StartFire()
+{
+	WeaponSystem->StartFire();
+}
+
+void ACharacterBase::Server_StopFire_Implementation()
+{
+	StopFire();
+}
+
+void ACharacterBase::StopFire()
+{
+	WeaponSystem->StopFire();
 }

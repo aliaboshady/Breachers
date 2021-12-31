@@ -19,6 +19,8 @@ public:
 	void EquipPrimary();
 	void EquipSecondary();
 	void EquipMelee();
+	void StartFire();
+	void StopFire();
 	AWeaponBase* GetCurrentWeapon();
 
 protected:
@@ -40,6 +42,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_HideWeapon(AWeaponBase* Weapon, bool bHidden);
 
+	void Fire();
+	void ResetCanFire();
+
 	UPROPERTY()
 	ACharacterBase* CharacterPlayer;
 
@@ -57,4 +62,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
+
+	FTimerHandle StartFireTimer;
+	bool bCanFire;
 };

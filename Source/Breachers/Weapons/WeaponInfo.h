@@ -37,6 +37,9 @@ struct FWeaponInfo
 	int32 MaxAmmo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TimeBetweenShots;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* EquipAnim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
