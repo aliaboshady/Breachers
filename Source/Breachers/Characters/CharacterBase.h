@@ -3,6 +3,11 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+#define SURFACE_Head  SurfaceType1
+#define SURFACE_Torso SurfaceType2
+#define SURFACE_Arms  SurfaceType3
+#define SURFACE_Legs  SurfaceType4
+
 class AWeaponBase;
 class UWeaponSystem;
 class UMovementSystem;

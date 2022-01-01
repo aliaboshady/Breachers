@@ -1,8 +1,10 @@
 #include "WeaponBase.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 AWeaponBase::AWeaponBase()
 {
@@ -82,8 +84,8 @@ void AWeaponBase::OnFire()
 void AWeaponBase::Server_OnFire_Implementation()
 {
 	if(!CharacterPlayer) return;
-	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilFactor);
 	
+	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilFactor);
 	const FVector Start = CharacterPlayer->GetCameraLocation();
 	FVector End = CharacterPlayer->GetCameraDirection() * TraceLength + Start;
 	End += RecoilVector;
@@ -93,7 +95,37 @@ void AWeaponBase::Server_OnFire_Implementation()
 	
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::ForDuration, OutHit, true);
-	//Server_ShootInfo(OutHit);
+	ProcessShot(OutHit);
+}
+
+void AWeaponBase::ProcessShot(FHitResult OutHit)
+{
+	if(OutHit.bBlockingHit)
+	{
+		const int32 Damage = GetSurfaceDamage(OutHit);
+		UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), Damage, OutHit.TraceStart, OutHit, CharacterPlayer->GetController(), this, UDamageType::StaticClass());
+	}
+}
+
+int32 AWeaponBase::GetSurfaceDamage(FHitResult OutHit) const
+{
+	const EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(OutHit.PhysMaterial.Get());
+	switch (SurfaceType)
+	{
+	case SURFACE_Head:
+		return WeaponInfo.HeadDamage;
+		
+	case SURFACE_Torso:
+		return WeaponInfo.TorsoDamage;
+		
+	case SURFACE_Arms:
+		return WeaponInfo.ArmsDamage;
+		
+	case SURFACE_Legs:
+		return WeaponInfo.LegsDamage;
+		
+	default: return 0;
+	}
 }
 
 FVector AWeaponBase::RecoilShot(float Spread) const

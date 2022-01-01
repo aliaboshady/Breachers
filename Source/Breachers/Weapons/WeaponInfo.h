@@ -31,7 +31,16 @@ struct FWeaponInfo
 	TEnumAsByte<EFireMode> WeaponFireMode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float Damage;
+	int32 HeadDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 TorsoDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 ArmsDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 LegsDamage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RecoilFactor;
