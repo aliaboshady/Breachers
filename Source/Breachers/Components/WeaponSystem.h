@@ -43,9 +43,10 @@ protected:
 	void Multicast_HideWeapon(AWeaponBase* Weapon, bool bHidden);
 
 	void Fire();
+	void FireSpread();
 	void ResetCanFire();
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
 
 	UPROPERTY(Replicated, BlueprintReadOnly)

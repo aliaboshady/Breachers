@@ -18,6 +18,8 @@ public:
 	USkeletalMeshComponent* GetArmsMeshFP();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void EquipWeapon(AWeaponBase* Weapon);
+	FVector GetCameraLocation();
+	FVector GetCameraDirection();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;

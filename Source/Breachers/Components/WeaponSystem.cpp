@@ -17,6 +17,7 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, PrimaryWeapon);
 	DOREPLIFETIME(UWeaponSystem, SecondaryWeapon);
 	DOREPLIFETIME(UWeaponSystem, MeleeWeapon);
+	DOREPLIFETIME(UWeaponSystem, CharacterPlayer);
 }
 
 void UWeaponSystem::BeginPlay()
@@ -46,7 +47,7 @@ void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 	{
 		MeleeWeapon = Weapon;
 	}
-	
+
 	Weapon->SetOwner(CharacterPlayer);
 	Weapon->SetInstigator(CharacterPlayer);
 	EquipWeapon(Weapon);
@@ -100,10 +101,14 @@ void UWeaponSystem::StartFire()
 {
 	if(!CurrentWeapon) return;
 
-	TEnumAsByte<EFireMode> FireMode = CurrentWeapon->WeaponInfo.WeaponFireMode;
+	const TEnumAsByte<EFireMode> FireMode = CurrentWeapon->WeaponInfo.WeaponFireMode;
 	if(FireMode == Auto)
 	{
 		GetWorld()->GetTimerManager().SetTimer(StartFireTimer, this, &UWeaponSystem::Fire, CurrentWeapon->WeaponInfo.TimeBetweenShots + 0.01, true, 0);
+	}
+	if(FireMode == Spread)
+	{
+		FireSpread();
 	}
 	else
 	{
@@ -118,12 +123,25 @@ void UWeaponSystem::StopFire()
 
 void UWeaponSystem::Fire()
 {
-	if(!bCanFire) return;
-	UE_LOG(LogTemp, Warning, TEXT("single"));
+	if(!bCanFire || !CurrentWeapon) return;
+	CurrentWeapon->OnFire();
 	bCanFire = false;
 	FTimerHandle ResetTimer;
 	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &UWeaponSystem::ResetCanFire, 1, false, CurrentWeapon->WeaponInfo.TimeBetweenShots);
+}
+
+void UWeaponSystem::FireSpread()
+{
+	if(!bCanFire || !CurrentWeapon) return;
 	
+	const int32 ShotsCount = CurrentWeapon->WeaponInfo.BulletsPerSpread;
+	for (int32 i = 0; i < ShotsCount; i++)
+	{
+		CurrentWeapon->OnFire();
+	}
+	bCanFire = false;
+	FTimerHandle ResetTimer;
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &UWeaponSystem::ResetCanFire, 1, false, CurrentWeapon->WeaponInfo.TimeBetweenShots);
 }
 
 void UWeaponSystem::ResetCanFire()

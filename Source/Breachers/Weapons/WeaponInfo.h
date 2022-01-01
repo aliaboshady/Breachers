@@ -32,6 +32,12 @@ struct FWeaponInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float Damage;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RecoilFactor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float BulletsPerSpread;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 MaxAmmo;

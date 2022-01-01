@@ -186,3 +186,13 @@ void ACharacterBase::StopFire()
 {
 	WeaponSystem->StopFire();
 }
+
+FVector ACharacterBase::GetCameraLocation()
+{
+	return CameraComponent->GetComponentLocation();
+}
+
+FVector ACharacterBase::GetCameraDirection()
+{
+	return CameraComponent->GetComponentRotation().Vector();
+}

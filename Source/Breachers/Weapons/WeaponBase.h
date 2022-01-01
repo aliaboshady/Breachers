@@ -15,6 +15,7 @@ class BREACHERS_API AWeaponBase : public AActor
 public:	
 	AWeaponBase();
 	void OnTaken();
+	void OnFire();
 
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh_FP;
@@ -28,9 +29,22 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	FVector RecoilShot(float Spread) const;
+	
+	UFUNCTION(Server, Reliable)
+	void Server_OnFire();
+
+	UPROPERTY(Replicated)
+	ACharacterBase* CharacterPlayer;
 
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* SphereComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TraceLength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float BulletRadius;
 
 	UFUNCTION()
 	void OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
