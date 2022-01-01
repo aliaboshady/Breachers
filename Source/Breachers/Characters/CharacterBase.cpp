@@ -1,4 +1,6 @@
 #include "CharacterBase.h"
+
+#include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/Weapons/WeaponBase.h"
@@ -18,6 +20,7 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed;
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
+	HealthSystem = CreateDefaultSubobject<UHealthSystem>(TEXT("Health System"));
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));

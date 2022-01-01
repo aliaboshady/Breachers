@@ -10,6 +10,7 @@
 
 class AWeaponBase;
 class UWeaponSystem;
+class UHealthSystem;
 class UMovementSystem;
 class UCameraComponent;
 
@@ -76,6 +77,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Arms_FP;
+	
+	UPROPERTY(VisibleAnywhere)
+	UHealthSystem* HealthSystem;
 
 	UPROPERTY(EditAnywhere)
 	float CrouchSpeed;
