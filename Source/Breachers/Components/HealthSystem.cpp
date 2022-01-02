@@ -13,7 +13,12 @@ void UHealthSystem::BeginPlay()
 {
 	Super::BeginPlay();
 	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
-	if(CharacterPlayer) CharacterPlayer->OnTakePointDamage.AddDynamic(this, &UHealthSystem::OnTakePointDamage);
+	if(CharacterPlayer && CharacterPlayer->HasAuthority())
+	{
+		CharacterPlayer->OnTakePointDamage.AddDynamic(this, &UHealthSystem::OnTakePointDamage);
+	}
+
+	CurrentHealth = MaxHealth;
 }
 
 void UHealthSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -27,5 +32,5 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
 	FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
 	const UDamageType* DamageType, AActor* DamageCauser)
 {
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Damage);
+	CurrentHealth = FMath::Clamp(CurrentHealth - static_cast<int32>(Damage), 0, MaxHealth);
 }
