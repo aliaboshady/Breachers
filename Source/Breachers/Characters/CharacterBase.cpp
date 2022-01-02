@@ -70,8 +70,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &ACharacterBase::EquipSecondary);
 	PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &ACharacterBase::EquipMelee);
 	
-	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &ACharacterBase::Server_StartFire);
-	PlayerInputComponent->BindAction("Fire", IE_Released, this, &ACharacterBase::Server_StopFire);
+	PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &ACharacterBase::Server_StartFire);
+	PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &ACharacterBase::Server_StopFire);
 }
 
 void ACharacterBase::MoveForward(float Value)
