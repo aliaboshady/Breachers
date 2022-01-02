@@ -25,8 +25,18 @@ void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Direction = CalculateDirection(PlayerVelocity, PlayerRotation);
 	bIsJumping = OwnerCharacter->GetMovementComponent()->IsFalling();
 	bIsCrouching = OwnerCharacter->GetMovementComponent()->IsCrouching();
+	AimOffsetPitch = GetAimOffsetPitch();
 	
 	Multicast_ChangePose();
+}
+
+float UCharacterAnimInstance::GetAimOffsetPitch() const
+{
+	const FRotator BaseAimRotation = OwnerCharacter->GetBaseAimRotation();
+	const FRotator Rotation = OwnerCharacter->GetActorRotation();
+	FRotator Delta = BaseAimRotation - Rotation;
+	Delta.Normalize();
+	return Delta.Pitch;
 }
 
 void UCharacterAnimInstance::Multicast_ChangePose_Implementation()

@@ -18,6 +18,8 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangePose();
 
+	float GetAimOffsetPitch() const;
+
 	UPROPERTY()
 	ACharacterBase* OwnerCharacter;
 	
@@ -26,6 +28,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	float Direction;
+	
+	UPROPERTY(BlueprintReadOnly)
+	float AimOffsetPitch;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsJumping;
