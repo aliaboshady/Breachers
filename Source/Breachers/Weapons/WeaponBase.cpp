@@ -1,6 +1,7 @@
 #include "WeaponBase.h"
 #include "DrawDebugHelpers.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Components/WeaponSystem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -54,11 +55,11 @@ void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor*
 	
 	if(OtherActor->ActorHasTag(FName("Player")))
 	{
-		if(ACharacterBase* Player = Cast<ACharacterBase>(OtherActor))
+		if(const ACharacterBase* Player = Cast<ACharacterBase>(OtherActor))
 		{
-			if(Player->CanTakeWeapon(this))
+			if(Player->WeaponSystem->CanTakeWeapon(this))
 			{
-				Player->TakeWeapon(this);
+				Player->WeaponSystem->TakeWeapon(this);
 				OnTaken();
 			}
 		}

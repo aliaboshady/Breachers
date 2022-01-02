@@ -19,6 +19,7 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = MovementSystem->RunSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = MovementSystem->CrouchSpeed;
+	GetCharacterMovement()->bCanWalkOffLedgesWhenCrouching = true;
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
@@ -53,82 +54,20 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if(MovementSystem) MovementSystem->SetPlayerInputComponent(PlayerInputComponent);
-	
-	PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &ACharacterBase::EquipPrimary);
-	PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &ACharacterBase::EquipSecondary);
-	PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &ACharacterBase::EquipMelee);
-	
-	PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &ACharacterBase::Server_StartFire);
-	PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &ACharacterBase::Server_StopFire);
+	if(WeaponSystem) WeaponSystem->SetPlayerInputComponent(PlayerInputComponent);
 }
 
-USkeletalMeshComponent* ACharacterBase::GetArmsMeshFP()
-{
-	return Arms_FP;
-}
-
-void ACharacterBase::EquipWeapon(AWeaponBase* Weapon)
-{
-	WeaponSystem->EquipWeapon(Weapon);
-}
-
-
-bool ACharacterBase::CanTakeWeapon(AWeaponBase* Weapon)
-{
-	return WeaponSystem->CanTakeWeapon(Weapon);
-}
-
-void ACharacterBase::TakeWeapon(AWeaponBase* Weapon)
-{
-	Server_TakeWeapon(Weapon);
-}
-
-void ACharacterBase::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
-{
-	WeaponSystem->TakeWeapon(Weapon);
-}
-
-void ACharacterBase::EquipPrimary()
-{
-	WeaponSystem->EquipPrimary();
-}
-
-void ACharacterBase::EquipSecondary()
-{
-	WeaponSystem->EquipSecondary();
-}
-
-void ACharacterBase::EquipMelee()
-{
-	WeaponSystem->EquipMelee();
-}
-
-void ACharacterBase::Server_StartFire_Implementation()
-{
-	StartFire();
-}
-
-void ACharacterBase::StartFire()
-{
-	WeaponSystem->StartFire();
-}
-
-void ACharacterBase::Server_StopFire_Implementation()
-{
-	StopFire();
-}
-
-void ACharacterBase::StopFire()
-{
-	WeaponSystem->StopFire();
-}
-
-FVector ACharacterBase::GetCameraLocation()
+FVector ACharacterBase::GetCameraLocation() const
 {
 	return CameraComponent->GetComponentLocation();
 }
 
-FVector ACharacterBase::GetCameraDirection()
+FVector ACharacterBase::GetCameraDirection() const
 {
 	return CameraComponent->GetComponentRotation().Vector();
+}
+
+USkeletalMeshComponent* ACharacterBase::GetArmsMeshFP() const
+{
+	return Arms_FP;
 }

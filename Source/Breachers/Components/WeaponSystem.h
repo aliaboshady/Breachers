@@ -13,14 +13,10 @@ class BREACHERS_API UWeaponSystem : public UActorComponent
 
 public:	
 	UWeaponSystem();
+	void SetPlayerInputComponent(UInputComponent* PlayerInputComponent);
 	void EquipWeapon(AWeaponBase* Weapon);
 	bool CanTakeWeapon(AWeaponBase* Weapon);
 	void TakeWeapon(AWeaponBase* Weapon);
-	void EquipPrimary();
-	void EquipSecondary();
-	void EquipMelee();
-	void StartFire();
-	void StopFire();
 	AWeaponBase* GetCurrentWeapon();
 
 protected:
@@ -29,6 +25,19 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipKnife();
 	void UnequipWeapon(AWeaponBase* Weapon);
+
+	void EquipPrimary();
+	void EquipSecondary();
+	void EquipMelee();
+
+	UFUNCTION(Server, Reliable)
+	void Server_TakeWeapon(AWeaponBase* Weapon);
+
+	UFUNCTION(Server, Reliable)
+	void Server_StartFire();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StopFire();
 	
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);

@@ -21,46 +21,28 @@ class BREACHERS_API ACharacterBase : public ACharacter
 
 public:
 	ACharacterBase();
-	USkeletalMeshComponent* GetArmsMeshFP();
+	USkeletalMeshComponent* GetArmsMeshFP() const;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void EquipWeapon(AWeaponBase* Weapon);
-	FVector GetCameraLocation();
-	FVector GetCameraDirection();
+	
+	FVector GetCameraLocation() const;
+	FVector GetCameraDirection() const;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;
 
-	bool CanTakeWeapon(AWeaponBase* Weapon);
-	void TakeWeapon(AWeaponBase* Weapon);
-
-	UFUNCTION(Server, Reliable)
-	void Server_TakeWeapon(AWeaponBase* Weapon);
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	void EquipPrimary();
-	void EquipSecondary();
-	void EquipMelee();
-
-	UFUNCTION(Server, Reliable)
-	void Server_StartFire();
-	void StartFire();
-
-	UFUNCTION(Server, Reliable)
-	void Server_StopFire();
-	void StopFire();
 
 	UPROPERTY(VisibleAnywhere)
 	UMovementSystem* MovementSystem;
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	USkeletalMeshComponent* Arms_FP;
 	
 	UPROPERTY(VisibleAnywhere)
 	UHealthSystem* HealthSystem;
+
+	UPROPERTY(VisibleAnywhere)
+	USkeletalMeshComponent* Arms_FP;
 };

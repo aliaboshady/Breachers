@@ -31,7 +31,20 @@ void UWeaponSystem::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(EquipKnifeHandle, this, &UWeaponSystem::EquipKnife, 1, false, 0.1);
 }
 
-void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
+void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	if(PlayerInputComponent && CharacterPlayer)
+	{
+		PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &UWeaponSystem::EquipPrimary);
+		PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &UWeaponSystem::EquipSecondary);
+		PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &UWeaponSystem::EquipMelee);
+	
+		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartFire);
+		PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &UWeaponSystem::Server_StopFire);
+	}
+}
+
+void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 {
 	if(Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr)
 	{
@@ -51,6 +64,10 @@ void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 	Weapon->SetOwner(CharacterPlayer);
 	Weapon->SetInstigator(CharacterPlayer);
 	EquipWeapon(Weapon);
+}
+void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
+{
+	Server_TakeWeapon(Weapon);
 }
 
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
@@ -97,7 +114,7 @@ void UWeaponSystem::EquipMelee()
 	
 }
 
-void UWeaponSystem::StartFire()
+void UWeaponSystem::Server_StartFire_Implementation()
 {
 	if(!CurrentWeapon) return;
 
@@ -116,7 +133,7 @@ void UWeaponSystem::StartFire()
 	}	
 }
 
-void UWeaponSystem::StopFire()
+void UWeaponSystem::Server_StopFire_Implementation()
 {
 	GetWorld()->GetTimerManager().ClearTimer(StartFireTimer);
 }
@@ -197,8 +214,4 @@ void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, boo
 	if(!Weapon) return;
 	Weapon->Mesh_TP->CastShadow = !bHidden;
 	Weapon->SetHidden(bHidden);
-}
-
-void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
 }
