@@ -198,3 +198,7 @@ void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, boo
 	Weapon->Mesh_TP->CastShadow = !bHidden;
 	Weapon->SetHidden(bHidden);
 }
+
+void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+}

@@ -1,5 +1,4 @@
 #include "CharacterBase.h"
-
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
@@ -12,15 +11,14 @@ ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	Tags.Add("Player");
-	CrouchSpeed = 200;
-	WalkSpeed = 300;
-	RunSpeed = 600;
-	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
-	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
-	GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed;
+	
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
 	HealthSystem = CreateDefaultSubobject<UHealthSystem>(TEXT("Health System"));
+	
+	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
+	GetCharacterMovement()->MaxWalkSpeed = MovementSystem->RunSpeed;
+	GetCharacterMovement()->MaxWalkSpeedCrouched = MovementSystem->CrouchSpeed;
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));
@@ -54,17 +52,7 @@ void ACharacterBase::BeginPlay()
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
-	PlayerInputComponent->BindAxis("MoveForward", this, &ACharacterBase::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacterBase::MoveRight);
-	PlayerInputComponent->BindAxis("LookUp", this, &ACharacterBase::AddControllerPitchInput);
-	PlayerInputComponent->BindAxis("Turn", this, &ACharacterBase::AddControllerYawInput);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacterBase::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacterBase::StopJumping);
-	PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &ACharacterBase::StartCrouch);
-	PlayerInputComponent->BindAction("Crouch", IE_Released, this, &ACharacterBase::StopCrouch);
-	PlayerInputComponent->BindAction("Walk", IE_Pressed, this, &ACharacterBase::Server_StartWalk);
-	PlayerInputComponent->BindAction("Walk", IE_Released, this, &ACharacterBase::Server_StopWalk);
+	if(MovementSystem) MovementSystem->SetPlayerInputComponent(PlayerInputComponent);
 	
 	PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &ACharacterBase::EquipPrimary);
 	PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &ACharacterBase::EquipSecondary);
@@ -72,61 +60,6 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	
 	PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &ACharacterBase::Server_StartFire);
 	PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &ACharacterBase::Server_StopFire);
-}
-
-void ACharacterBase::MoveForward(float Value)
-{
-	if(!MovementSystem) return;
-	MovementSystem->MoveForward(Value, this);
-}
-
-void ACharacterBase::MoveRight(float Value)
-{
-	if(!MovementSystem) return;
-	MovementSystem->MoveRight(Value, this);
-}
-
-void ACharacterBase::StartCrouch()
-{
-	Crouch();
-}
-
-void ACharacterBase::StopCrouch()
-{
-	UnCrouch();
-}
-
-void ACharacterBase::Client_StartWalk_Implementation()
-{
-	StartWalk();
-}
-
-void ACharacterBase::Server_StartWalk_Implementation()
-{
-	StartWalk();
-	Client_StartWalk();
-}
-
-void ACharacterBase::StartWalk()
-{
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-}
-
-
-void ACharacterBase::Client_StopWalk_Implementation()
-{
-	StopWalk();
-}
-
-void ACharacterBase::Server_StopWalk_Implementation()
-{
-	StopWalk();
-	Client_StopWalk();
-}
-
-void ACharacterBase::StopWalk()
-{
-	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
 }
 
 USkeletalMeshComponent* ACharacterBase::GetArmsMeshFP()

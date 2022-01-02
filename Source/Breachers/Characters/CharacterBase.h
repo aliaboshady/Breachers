@@ -40,23 +40,6 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	void MoveForward(float Value);
-	void MoveRight(float Value);
-	void StartCrouch();
-	void StopCrouch();
-
-	UFUNCTION(Client, Reliable)
-	void Client_StartWalk();
-	UFUNCTION(Server, Reliable)
-	void Server_StartWalk();
-	void StartWalk();
-
-	UFUNCTION(Client, Reliable)
-	void Client_StopWalk();
-	UFUNCTION(Server, Reliable)
-	void Server_StopWalk();
-	void StopWalk();
-
 	void EquipPrimary();
 	void EquipSecondary();
 	void EquipMelee();
@@ -80,13 +63,4 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	UHealthSystem* HealthSystem;
-
-	UPROPERTY(EditAnywhere)
-	float CrouchSpeed;
-	
-	UPROPERTY(EditAnywhere)
-	float WalkSpeed;
-
-	UPROPERTY(EditAnywhere)
-	float RunSpeed;
 };
