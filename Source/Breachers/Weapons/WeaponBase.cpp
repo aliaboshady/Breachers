@@ -1,4 +1,5 @@
 #include "WeaponBase.h"
+#include "DrawDebugHelpers.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -78,10 +79,10 @@ void AWeaponBase::OnTaken()
 
 void AWeaponBase::OnFire()
 {
-	Server_OnFire();
+	Client_OnFire();
 }
 
-void AWeaponBase::Server_OnFire_Implementation()
+void AWeaponBase::Client_OnFire_Implementation()
 {
 	if(!CharacterPlayer) return;
 	
@@ -95,10 +96,12 @@ void AWeaponBase::Server_OnFire_Implementation()
 	
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::ForDuration, OutHit, true);
-	ProcessShot(OutHit);
+
+	if(OutHit.bBlockingHit) End = OutHit.ImpactPoint;
+	Server_ProcessShot(OutHit);
 }
 
-void AWeaponBase::ProcessShot(FHitResult OutHit)
+void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 {
 	if(OutHit.bBlockingHit)
 	{

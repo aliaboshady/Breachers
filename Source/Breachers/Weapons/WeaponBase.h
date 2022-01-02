@@ -30,11 +30,14 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	FVector RecoilShot(float Spread) const;
-	void ProcessShot(FHitResult OutHit);
+	
 	int32 GetSurfaceDamage(FHitResult OutHit) const;
 	
+	UFUNCTION(Client, Reliable)
+	void Client_OnFire();
+
 	UFUNCTION(Server, Reliable)
-	void Server_OnFire();
+	void Server_ProcessShot(FHitResult OutHit);
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
