@@ -23,6 +23,8 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SelectDefender();
 
+	void OnSelectCharacter();
+
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnAttacker();
 
@@ -31,12 +33,19 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void Client_ShowTeamSelectionMenu();
+	
+	UFUNCTION(Client, Reliable)
+	void Client_ShowPlayerUI();
 
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> TeamSelectWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> PlayerUIWidgetClass;
+	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;
 };

@@ -46,16 +46,28 @@ void ABreachersPlayerController::Client_ShowTeamSelectionMenu_Implementation()
 
 void ABreachersPlayerController::SelectAttacker()
 {
-	if(TeamSelectWidget) TeamSelectWidget->RemoveFromParent();
-	SetInputUI(false);
 	Server_SpawnAttacker();
+	OnSelectCharacter();
 }
 
 void ABreachersPlayerController::SelectDefender()
 {
+	Server_SpawnDefender();
+	OnSelectCharacter();
+}
+
+void ABreachersPlayerController::OnSelectCharacter()
+{
 	if(TeamSelectWidget) TeamSelectWidget->RemoveFromParent();
 	SetInputUI(false);
-	Server_SpawnDefender();
+	Client_ShowPlayerUI();
+}
+
+void ABreachersPlayerController::Client_ShowPlayerUI_Implementation()
+{
+	if(!PlayerUIWidgetClass) return;
+	UUserWidget* UIWidget = CreateWidget(this, PlayerUIWidgetClass);
+	if(UIWidget) UIWidget->AddToViewport();
 }
 
 void ABreachersPlayerController::Server_SpawnAttacker_Implementation()
