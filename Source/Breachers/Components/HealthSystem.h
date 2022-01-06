@@ -5,6 +5,8 @@
 
 class ACharacterBase;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDie);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BREACHERS_API UHealthSystem : public UActorComponent
 {
@@ -13,12 +15,21 @@ class BREACHERS_API UHealthSystem : public UActorComponent
 public:	
 	UHealthSystem();
 
+	UPROPERTY()
+	FOnDie OnDie;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	UFUNCTION()
 	void OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser);
+
+	UFUNCTION(Server, Reliable)
+	void Server_KillPlayer();
+
+	UFUNCTION()
+	void OnRep_IsDead() const;
 	
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
@@ -28,4 +39,7 @@ protected:
 
 	UPROPERTY(Replicated)
 	int32 CurrentHealth;
+
+	UPROPERTY(ReplicatedUsing=OnRep_IsDead)
+	bool bIsDead;
 };

@@ -51,6 +51,11 @@ protected:
 	void Server_StopWalk();
 	void StopWalk();
 
+	UFUNCTION(Client, Reliable)
+	void Client_OnDie();
+
 	UPROPERTY()
 	ACharacterBase* CharacterPlayer;
+
+	bool bCanTakeInput;
 };

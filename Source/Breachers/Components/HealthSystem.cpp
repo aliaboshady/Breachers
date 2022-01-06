@@ -1,5 +1,6 @@
 #include "HealthSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
 
 UHealthSystem::UHealthSystem()
@@ -7,6 +8,7 @@ UHealthSystem::UHealthSystem()
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
 	MaxHealth = 100;
+	bIsDead = false;
 }
 
 void UHealthSystem::BeginPlay()
@@ -26,6 +28,7 @@ void UHealthSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UHealthSystem, CurrentHealth);
 	DOREPLIFETIME(UHealthSystem, CharacterPlayer);
+	DOREPLIFETIME(UHealthSystem, bIsDead);
 }
 
 void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy,
@@ -33,4 +36,20 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
 	const UDamageType* DamageType, AActor* DamageCauser)
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth - static_cast<int32>(Damage), 0, MaxHealth);
+	if(CurrentHealth <= 0 && !bIsDead)
+	{
+		bIsDead = true;
+		Server_KillPlayer();
+	}
+}
+
+void UHealthSystem::OnRep_IsDead() const
+{
+	if(!CharacterPlayer) return;
+	OnDie.Broadcast();
+}
+
+void UHealthSystem::Server_KillPlayer_Implementation()
+{
+	OnRep_IsDead();
 }

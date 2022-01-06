@@ -1,4 +1,5 @@
 #include "MovementSystem.h"
+#include "HealthSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -9,80 +10,85 @@ UMovementSystem::UMovementSystem()
 	CrouchSpeed = 200;
 	WalkSpeed = 300;
 	RunSpeed = 600;
+	bCanTakeInput = true;
 }
 
 void UMovementSystem::BeginPlay()
 {
 	Super::BeginPlay();
 	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
+	if(CharacterPlayer && CharacterPlayer->HealthSystem)
+	{
+		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &UMovementSystem::Client_OnDie);
+	}
 }
 
 void UMovementSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	if(PlayerInputComponent && CharacterPlayer)
 	{
-		PlayerInputComponent->BindAxis("MoveForward", this, &UMovementSystem::MoveForward);
-		PlayerInputComponent->BindAxis("MoveRight", this, &UMovementSystem::MoveRight);
+		PlayerInputComponent->BindAxis(INPUT_MoveForward, this, &UMovementSystem::MoveForward);
+		PlayerInputComponent->BindAxis(INPUT_MoveRight, this, &UMovementSystem::MoveRight);
 		
-		PlayerInputComponent->BindAxis("LookUp", this, &UMovementSystem::LookUp);
-		PlayerInputComponent->BindAxis("Turn", this, &UMovementSystem::Turn);
+		PlayerInputComponent->BindAxis(INPUT_LookUp, this, &UMovementSystem::LookUp);
+		PlayerInputComponent->BindAxis(INPUT_Turn, this, &UMovementSystem::Turn);
 		
-		PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &UMovementSystem::Jump);
-		PlayerInputComponent->BindAction("Jump", IE_Released, this, &UMovementSystem::StopJumping);
+		PlayerInputComponent->BindAction(INPUT_Jump, IE_Pressed, this, &UMovementSystem::Jump);
+		PlayerInputComponent->BindAction(INPUT_Jump, IE_Released, this, &UMovementSystem::StopJumping);
 		
-		PlayerInputComponent->BindAction("Crouch", IE_Pressed, this, &UMovementSystem::StartCrouch);
-		PlayerInputComponent->BindAction("Crouch", IE_Released, this, &UMovementSystem::StopCrouch);
+		PlayerInputComponent->BindAction(INPUT_Crouch, IE_Pressed, this, &UMovementSystem::StartCrouch);
+		PlayerInputComponent->BindAction(INPUT_Crouch, IE_Released, this, &UMovementSystem::StopCrouch);
 		
-		PlayerInputComponent->BindAction("Walk", IE_Pressed, this, &UMovementSystem::Server_StartWalk);
-		PlayerInputComponent->BindAction("Walk", IE_Released, this, &UMovementSystem::Server_StopWalk);
+		PlayerInputComponent->BindAction(INPUT_Walk, IE_Pressed, this, &UMovementSystem::Server_StartWalk);
+		PlayerInputComponent->BindAction(INPUT_Walk, IE_Released, this, &UMovementSystem::Server_StopWalk);
 	}
 }
 
 void UMovementSystem::MoveForward(float Value)
 {
-	if (Value == 0 || !CharacterPlayer) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorForwardVector(), Value);
 }
 
 void UMovementSystem::MoveRight(float Value)
 {
-	if (Value == 0 || !CharacterPlayer) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
 }
 
 void UMovementSystem::LookUp(float Value)
 {
-	if (Value == 0 || !CharacterPlayer) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->AddControllerPitchInput(Value);
 }
 
 void UMovementSystem::Turn(float Value)
 {
-	if (Value == 0 || !CharacterPlayer) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->AddControllerYawInput(Value);
 }
 
 void UMovementSystem::Jump()
 {
-	if (!CharacterPlayer) return;
+	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->Jump();
 }
 
 void UMovementSystem::StopJumping()
 {
-	if (!CharacterPlayer) return;
+	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->StopJumping();
 }
 
 void UMovementSystem::StartCrouch()
 {
-	if (!CharacterPlayer) return;
+	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->Crouch();
 }
 
 void UMovementSystem::StopCrouch()
 {
-	if (!CharacterPlayer) return;
+	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->UnCrouch();
 }
 
@@ -99,7 +105,7 @@ void UMovementSystem::Server_StartWalk_Implementation()
 
 void UMovementSystem::StartWalk()
 {
-	if (!CharacterPlayer) return;
+	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
@@ -116,6 +122,11 @@ void UMovementSystem::Server_StopWalk_Implementation()
 
 void UMovementSystem::StopWalk()
 {
-	if (!CharacterPlayer) return;
+	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+}
+
+void UMovementSystem::Client_OnDie_Implementation()
+{
+	bCanTakeInput = false;
 }
