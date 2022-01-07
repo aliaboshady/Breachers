@@ -6,7 +6,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "Sound/SoundCue.h"
 
 AWeaponBase::AWeaponBase()
 {
@@ -98,8 +100,8 @@ void AWeaponBase::Client_OnFire_Implementation()
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::ForDuration, OutHit, true);
 
-	if(OutHit.bBlockingHit) End = OutHit.ImpactPoint;
 	Server_ProcessShot(OutHit);
+	Server_OnFireEffects(OutHit);
 }
 
 void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
@@ -139,4 +141,50 @@ FVector AWeaponBase::RecoilShot(float Spread) const
 	NewLocation.Y += FMath::RandRange(-Spread, Spread);
 	NewLocation.Z += FMath::RandRange(-Spread, Spread);
 	return NewLocation;
+}
+
+void AWeaponBase::Server_OnFireEffects_Implementation(FHitResult OutHit)
+{
+	Client_OnFireEffects();
+	Multicast_OnFireEffects(OutHit);
+}
+
+void AWeaponBase::Client_OnFireEffects_Implementation()
+{
+	if(WeaponInfo.MuzzleFlashEffect)
+	{
+		UGameplayStatics::SpawnEmitterAttached(WeaponInfo.MuzzleFlashEffect, Mesh_FP, SOCKET_Muzzle);
+	}
+	
+	if(WeaponInfo.MuzzleFireSound)
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.MuzzleFireSound);
+	}
+}
+
+void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
+{
+	if(WeaponInfo.MuzzleFlashEffect)
+	{
+		UParticleSystemComponent* SpawnedEffect = UGameplayStatics::SpawnEmitterAttached(WeaponInfo.MuzzleFlashEffect, Mesh_TP, SOCKET_Muzzle);
+		SpawnedEffect->SetOwnerNoSee(true);
+	}
+
+	if(OutHit.bBlockingHit && WeaponInfo.ImpactEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponInfo.ImpactEffect, OutHit.ImpactPoint);
+	}
+
+	if(WeaponInfo.MuzzleFireSound)
+	{
+		 if(CharacterPlayer && !CharacterPlayer->IsLocallyControlled())
+		 {
+		 	UGameplayStatics::SpawnSoundAttached(WeaponInfo.MuzzleFireSound, Mesh_TP, SOCKET_Muzzle);
+		 }
+	}
+
+	if(OutHit.bBlockingHit && WeaponInfo.ImpactSound)
+	{
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.ImpactSound, OutHit.ImpactPoint);
+	}
 }

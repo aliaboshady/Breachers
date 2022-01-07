@@ -1,6 +1,8 @@
 #include "BreachersPlayerController.h"
 #include "BreachersGameModeBase.h"
 #include "Blueprint/UserWidget.h"
+#include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Components/HealthSystem.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -83,5 +85,14 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 	if(BreachersGameModeBase)
 	{
 		BreachersGameModeBase->RequestDefenderSpawn(this);
+	}
+}
+
+void ABreachersPlayerController::OnDie()
+{
+	ACharacterBase* CharacterPlayer = Cast<ACharacterBase>(GetPawn());
+	if(CharacterPlayer && CharacterPlayer->HealthSystem)
+	{
+		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &ABreachersPlayerController::OnDie);
 	}
 }

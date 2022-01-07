@@ -39,6 +39,15 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void Server_ProcessShot(FHitResult OutHit);
 
+	UFUNCTION(Server, Reliable)
+	void Server_OnFireEffects(FHitResult OutHit);
+
+	UFUNCTION(Client, Reliable)
+	void Client_OnFireEffects();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnFireEffects(FHitResult OutHit);
+
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
 

@@ -17,6 +17,7 @@ protected:
 	virtual void BeginPlay() override;
 	void PossessStartCamera();
 	void SetInputUI(bool bIsUI = true);
+	void OnDie();
 
 	UFUNCTION(BlueprintCallable)
 	void SelectAttacker();

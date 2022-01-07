@@ -2,6 +2,10 @@
 #include "CoreMinimal.h"
 #include "WeaponInfo.generated.h"
 
+#define SOCKET_Muzzle "MuzzleFlash"
+
+class USoundCue;
+
 UENUM(BlueprintType)
 enum EWeaponType
 {
@@ -71,4 +75,16 @@ struct FWeaponInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* WalkAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UParticleSystem* MuzzleFlashEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UParticleSystem* ImpactEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* MuzzleFireSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* ImpactSound;
 };
