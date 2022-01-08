@@ -23,13 +23,14 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh_TP;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
 	FWeaponInfo WeaponInfo;
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	FVector RecoilShot(float Spread) const;
+	void SetupWeaponInfo();
 	
 	int32 GetSurfaceDamage(FHitResult OutHit) const;
 	
@@ -58,10 +59,10 @@ protected:
 	USphereComponent* SphereComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float TraceLength;
-
+	FName DataTableKey;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float BulletRadius;
+	UDataTable* WeaponInfoDataTable;
 
 	UFUNCTION()
 	void OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);

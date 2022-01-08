@@ -16,8 +16,6 @@ AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
-	TraceLength = 10000;
-	BulletRadius = 2;
 
 	Mesh_TP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh_TP"));
 	RootComponent = Mesh_TP;
@@ -48,8 +46,19 @@ void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SetReplicateMovement(true);
+	SetupWeaponInfo();
 	
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapped);
+}
+
+void AWeaponBase::SetupWeaponInfo()
+{
+	if(WeaponInfoDataTable)
+	{
+		const FString ContextString(DataTableKey.ToString());
+		const FWeaponInfo* WeaponInfoFromDT = WeaponInfoDataTable->FindRow<FWeaponInfo>(DataTableKey, ContextString, true);
+		WeaponInfo = *WeaponInfoFromDT;
+	}
 }
 
 void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -93,14 +102,14 @@ void AWeaponBase::Client_OnFire_Implementation()
 	
 	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilFactor);
 	const FVector Start = CharacterPlayer->GetCameraLocation();
-	FVector End = CharacterPlayer->GetCameraDirection() * TraceLength + Start;
+	FVector End = CharacterPlayer->GetCameraDirection() * WeaponInfo.TraceLength + Start;
 	End += RecoilVector;
 	
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(CharacterPlayer);
 	
 	FHitResult OutHit;
-	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, WeaponInfo.BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 
 	Server_ProcessShot(OutHit);
 	Server_OnFireEffects(OutHit);
