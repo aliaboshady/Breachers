@@ -40,6 +40,8 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AWeaponBase, WeaponInfo);
 	DOREPLIFETIME(AWeaponBase, CharacterPlayer);
+	DOREPLIFETIME(AWeaponBase, CurrentTotalAmmo);
+	DOREPLIFETIME(AWeaponBase, CurrentAmmoInClip);
 }
 
 void AWeaponBase::BeginPlay()
@@ -49,6 +51,8 @@ void AWeaponBase::BeginPlay()
 	SetupWeaponInfo();
 	
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapped);
+	CurrentTotalAmmo = WeaponInfo.MaxTotalAmmo - WeaponInfo.MaxAmmoInClip;
+	CurrentAmmoInClip = WeaponInfo.MaxAmmoInClip;
 }
 
 void AWeaponBase::SetupWeaponInfo()
@@ -93,6 +97,7 @@ void AWeaponBase::OnTaken()
 
 void AWeaponBase::OnFire()
 {
+	CurrentAmmoInClip--;
 	Client_OnFire();
 }
 
@@ -247,6 +252,22 @@ void AWeaponBase::Reload()
 {
 	Client_OnReloadEffects();
 	Multicast_OnReloadEffects();
+}
+
+void AWeaponBase::FinishReload()
+{
+	const int32 NeededAmmo = WeaponInfo.MaxAmmoInClip - CurrentAmmoInClip;
+
+	if(CurrentTotalAmmo - NeededAmmo >= 0)
+	{
+		CurrentTotalAmmo = FMath::Clamp(CurrentTotalAmmo - NeededAmmo, 0, WeaponInfo.MaxTotalAmmo);
+		CurrentAmmoInClip += NeededAmmo;
+	}
+	else
+	{
+		CurrentAmmoInClip += CurrentTotalAmmo;
+		CurrentTotalAmmo = 0;
+	}
 }
 
 void AWeaponBase::Client_OnReloadEffects_Implementation()

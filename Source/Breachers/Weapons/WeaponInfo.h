@@ -115,7 +115,10 @@ struct FWeaponInfo : public FTableRowBase
 	float BulletsPerSpread;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 MaxAmmo;
+	int32 MaxTotalAmmo;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 MaxAmmoInClip;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TimeBetweenShots;

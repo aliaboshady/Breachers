@@ -119,7 +119,7 @@ void UWeaponSystem::EquipMelee()
 
 void UWeaponSystem::Server_StartFire_Implementation()
 {
-	if(!CurrentWeapon || bIsReloading) return;
+	if(!CurrentWeapon || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || bIsReloading) return;
 
 	const TEnumAsByte<EFireMode> FireMode = CurrentWeapon->WeaponInfo.WeaponFireMode;
 	if(FireMode == Auto)
@@ -143,7 +143,7 @@ void UWeaponSystem::Server_StopFire_Implementation()
 
 void UWeaponSystem::Fire()
 {
-	if(!bCanFire || !CurrentWeapon) return;
+	if(!bCanFire || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || !CurrentWeapon) return;
 	CurrentWeapon->OnFire();
 	bCanFire = false;
 	FTimerHandle ResetTimer;
@@ -186,7 +186,10 @@ FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 
 void UWeaponSystem::Server_Reload_Implementation()
 {
-	if(CurrentWeapon && !bIsReloading)
+	if(!CurrentWeapon || CurrentWeapon->GetCurrentTotalAmmo() <= 0) return;
+
+	const bool bCanReload = CurrentWeapon->GetCurrentAmmoInClip() < CurrentWeapon->WeaponInfo.MaxAmmoInClip;
+	if(bCanReload && !bIsReloading)
 	{
 		CurrentWeapon->Reload();
 		GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &UWeaponSystem::Server_FinishReload, 1, false, CurrentWeapon->WeaponInfo.ReloadTime);
@@ -196,7 +199,11 @@ void UWeaponSystem::Server_Reload_Implementation()
 
 void UWeaponSystem::Server_FinishReload_Implementation()
 {
-	bIsReloading = false;
+	if(CurrentWeapon)
+	{
+		CurrentWeapon->FinishReload();
+		bIsReloading = false;
+	}
 }
 
 void UWeaponSystem::Server_CancelReload_Implementation()

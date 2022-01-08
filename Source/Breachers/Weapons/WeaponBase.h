@@ -17,6 +17,9 @@ public:
 	void OnTaken();
 	void OnFire();
 	void Reload();
+	void FinishReload();
+	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
+	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
 
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh_FP;
@@ -73,4 +76,10 @@ protected:
 
 	UFUNCTION()
 	void OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	
+	UPROPERTY(Replicated)
+	int32 CurrentTotalAmmo;
+	
+	UPROPERTY(Replicated)
+	int32 CurrentAmmoInClip;
 };
