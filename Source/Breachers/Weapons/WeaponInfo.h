@@ -31,22 +31,34 @@ struct FWeaponAnimation
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* EquipAnim;
+	UAnimMontage* EquipAnim_ArmsFP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* HideAnim;
+	UAnimMontage* EquipAnim_ArmsTP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* FireAnim;
+	UAnimMontage* HideAnim_ArmsFP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* ReloadAnim;
+	UAnimMontage* HideAnim_ArmsTP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* IdleAnim;
+	UAnimMontage* FireAnim_Weapon;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* FireAnim_ArmsFP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* WalkAnim;
+	UAnimMontage* FireAnim_ArmsTP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* ReloadAnim_Weapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* ReloadAnim_ArmsFP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* ReloadAnim_ArmsTP;
 };
 
 USTRUCT(BlueprintType)
