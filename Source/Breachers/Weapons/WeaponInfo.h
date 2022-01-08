@@ -52,7 +52,10 @@ struct FWeaponAnimation
 	UAnimMontage* FireAnim_ArmsTP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* ReloadAnim_Weapon;
+	UAnimMontage* ReloadAnim_WeaponFP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* ReloadAnim_WeaponTP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* ReloadAnim_ArmsFP;
