@@ -121,6 +121,9 @@ struct FWeaponInfo : public FTableRowBase
 	float TimeBetweenShots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ReloadTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TraceLength;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

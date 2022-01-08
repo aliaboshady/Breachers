@@ -51,6 +51,15 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_HideWeapon(AWeaponBase* Weapon, bool bHidden);
 
+	UFUNCTION(Server, Reliable)
+	void Server_Reload();
+
+	UFUNCTION(Server, Reliable)
+	void Server_FinishReload();
+
+	UFUNCTION(Server, Reliable)
+	void Server_CancelReload();
+
 	void Fire();
 	void FireSpread();
 	void ResetCanFire();
@@ -74,5 +83,7 @@ protected:
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
 
 	FTimerHandle StartFireTimer;
+	FTimerHandle ReloadTimer;
 	bool bCanFire;
+	bool bIsReloading;
 };

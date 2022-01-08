@@ -191,14 +191,16 @@ void AWeaponBase::Client_OnFireEffects_Implementation()
 		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.WeaponEffects.MuzzleFireSound);
 	}
 
-	if(WeaponInfo.WeaponAnimations.FireAnim_Weapon)
+	UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
+	if(FireAnim_Weapon)
 	{
-		Mesh_FP->GetAnimInstance()->Montage_Play(WeaponInfo.WeaponAnimations.FireAnim_Weapon);
+		Mesh_FP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
 	}
 
-	if(CharacterPlayer && WeaponInfo.WeaponAnimations.FireAnim_ArmsFP)
+	UAnimMontage* FireAnim_ArmsFP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;
+	if(CharacterPlayer && FireAnim_ArmsFP)
 	{
-		CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_Play(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP);
+		CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_Play(FireAnim_ArmsFP);
 	}
 }
 
@@ -228,13 +230,43 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.ImpactSound, OutHit.ImpactPoint);
 	}
 
-	if(WeaponInfo.WeaponAnimations.FireAnim_Weapon)
+	UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
+	if(FireAnim_Weapon)
 	{
-		Mesh_TP->GetAnimInstance()->Montage_Play(WeaponInfo.WeaponAnimations.FireAnim_Weapon);
+		Mesh_TP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
 	}
 
-	if(CharacterPlayer && WeaponInfo.WeaponAnimations.FireAnim_ArmsTP)
+	UAnimMontage* FireAnim_ArmsTP = WeaponInfo.WeaponAnimations.FireAnim_ArmsTP;
+	if(CharacterPlayer && FireAnim_ArmsTP)
 	{
-		CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_Play(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP);
+		CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_Play(FireAnim_ArmsTP);
+	}
+}
+
+void AWeaponBase::Reload()
+{
+	Client_OnReloadEffects();
+	Multicast_OnReloadEffects();
+}
+
+void AWeaponBase::Client_OnReloadEffects_Implementation()
+{
+	UAnimMontage* ReloadAnim_ArmsFP = WeaponInfo.WeaponAnimations.ReloadAnim_ArmsFP;
+	if(CharacterPlayer && ReloadAnim_ArmsFP)
+	{
+		const float MontageLength = CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_Play(ReloadAnim_ArmsFP);
+		const float Rate = MontageLength / WeaponInfo.ReloadTime;
+		CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_ArmsFP, Rate);
+	}
+}
+
+void AWeaponBase::Multicast_OnReloadEffects_Implementation()
+{
+	UAnimMontage* ReloadAnim_ArmsTP = WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP;
+	if(CharacterPlayer && ReloadAnim_ArmsTP)
+	{
+		const float MontageLength = CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_Play(ReloadAnim_ArmsTP);
+		const float Rate = MontageLength / WeaponInfo.ReloadTime;
+		CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_ArmsTP, Rate);
 	}
 }

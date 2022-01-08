@@ -16,6 +16,7 @@ public:
 	AWeaponBase();
 	void OnTaken();
 	void OnFire();
+	void Reload();
 
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Mesh_FP;
@@ -51,6 +52,12 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SpawnBulletHoleDecal(FHitResult OutHit);
+
+	UFUNCTION(Client, Reliable)
+	void Client_OnReloadEffects();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnReloadEffects();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;

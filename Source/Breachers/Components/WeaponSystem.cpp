@@ -8,6 +8,7 @@ UWeaponSystem::UWeaponSystem()
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
 	bCanFire = true;
+	bIsReloading = false;
 }
 
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -41,6 +42,8 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 	
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartFire);
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &UWeaponSystem::Server_StopFire);
+
+		PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &UWeaponSystem::Server_Reload);
 	}
 }
 
@@ -116,7 +119,7 @@ void UWeaponSystem::EquipMelee()
 
 void UWeaponSystem::Server_StartFire_Implementation()
 {
-	if(!CurrentWeapon) return;
+	if(!CurrentWeapon || bIsReloading) return;
 
 	const TEnumAsByte<EFireMode> FireMode = CurrentWeapon->WeaponInfo.WeaponFireMode;
 	if(FireMode == Auto)
@@ -181,6 +184,25 @@ FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 	return AttachRules;
 }
 
+void UWeaponSystem::Server_Reload_Implementation()
+{
+	if(CurrentWeapon && !bIsReloading)
+	{
+		CurrentWeapon->Reload();
+		GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &UWeaponSystem::Server_FinishReload, 1, false, CurrentWeapon->WeaponInfo.ReloadTime);
+		bIsReloading = true;
+	}
+}
+
+void UWeaponSystem::Server_FinishReload_Implementation()
+{
+	bIsReloading = false;
+}
+
+void UWeaponSystem::Server_CancelReload_Implementation()
+{
+	bIsReloading = false;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////// NETWORK /////////////////////////////////////////////////////
