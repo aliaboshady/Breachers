@@ -87,4 +87,10 @@ struct FWeaponInfo
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USoundCue* ImpactSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterialInterface* BulletHoleDecal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DecalSize;
 };

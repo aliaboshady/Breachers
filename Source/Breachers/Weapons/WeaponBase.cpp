@@ -2,8 +2,10 @@
 #include "DrawDebugHelpers.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Particles/ParticleSystemComponent.h"
@@ -55,7 +57,7 @@ void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor*
 {
 	if(!HasAuthority()) return;
 	
-	if(OtherActor->ActorHasTag(FName("Player")))
+	if(OtherActor->ActorHasTag(TAG_Player))
 	{
 		if(const ACharacterBase* Player = Cast<ACharacterBase>(OtherActor))
 		{
@@ -98,7 +100,7 @@ void AWeaponBase::Client_OnFire_Implementation()
 	ActorsToIgnore.Add(CharacterPlayer);
 	
 	FHitResult OutHit;
-	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::ForDuration, OutHit, true);
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 
 	Server_ProcessShot(OutHit);
 	Server_OnFireEffects(OutHit);
@@ -108,8 +110,27 @@ void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 {
 	if(OutHit.bBlockingHit)
 	{
-		const int32 Damage = GetSurfaceDamage(OutHit);
-		UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), Damage, OutHit.TraceStart, OutHit, CharacterPlayer->GetController(), this, UDamageType::StaticClass());
+		if(OutHit.GetActor()->ActorHasTag(TAG_Player))
+		{
+			const int32 Damage = GetSurfaceDamage(OutHit);
+			UGameplayStatics::ApplyPointDamage(OutHit.GetActor(), Damage, OutHit.TraceStart, OutHit, CharacterPlayer->GetController(), this, UDamageType::StaticClass());
+		}
+		else
+		{
+			Multicast_SpawnBulletHoleDecal(OutHit);
+		}
+	}
+}
+
+void AWeaponBase::Multicast_SpawnBulletHoleDecal_Implementation(FHitResult OutHit)
+{
+	if(WeaponInfo.BulletHoleDecal)
+	{
+		FRotator DecalRotation = UKismetMathLibrary::MakeRotFromX(OutHit.ImpactNormal);
+		DecalRotation.Roll += 180;
+		DecalRotation.Pitch += 180;
+		UDecalComponent* SpawnedDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), WeaponInfo.BulletHoleDecal, FVector(WeaponInfo.DecalSize), OutHit.ImpactPoint, DecalRotation);
+		SpawnedDecal->SetFadeScreenSize(0.0001);
 	}
 }
 
@@ -170,7 +191,7 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 		SpawnedEffect->SetOwnerNoSee(true);
 	}
 
-	if(OutHit.bBlockingHit && WeaponInfo.ImpactEffect)
+	if(OutHit.bBlockingHit && WeaponInfo.ImpactEffect && !OutHit.GetActor()->ActorHasTag(TAG_Player))
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponInfo.ImpactEffect, OutHit.ImpactPoint);
 	}

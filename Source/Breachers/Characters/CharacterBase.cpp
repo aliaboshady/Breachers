@@ -12,7 +12,7 @@
 ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	Tags.Add("Player");
+	Tags.Add(TAG_Player);
 	
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
@@ -43,7 +43,6 @@ ACharacterBase::ACharacterBase()
 	DeathCameraComponent->SetupAttachment(DeathSpringArm);
 	DeathCameraComponent->SetAutoActivate(false);
 	DeathCameraComponent->SetActive(false);
-	//DeathCameraComponent->SetRelativeLocation(FVector(0, 0, 70));
 
 	Arms_FP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Arms FP"));
 	Arms_FP->SetupAttachment(CameraComponent);

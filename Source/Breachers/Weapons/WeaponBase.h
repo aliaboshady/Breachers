@@ -48,6 +48,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnFireEffects(FHitResult OutHit);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SpawnBulletHoleDecal(FHitResult OutHit);
+
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
 

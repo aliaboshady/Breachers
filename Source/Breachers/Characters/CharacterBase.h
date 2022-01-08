@@ -3,6 +3,8 @@
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
+#define TAG_Player "Player"
+
 #define COLLISION_CharacterPlayerTP "CharacterPlayerTP"
 #define COLLISION_ArmsFP "ArmsFP"
 #define COLLISION_Ragdoll "Ragdoll"
