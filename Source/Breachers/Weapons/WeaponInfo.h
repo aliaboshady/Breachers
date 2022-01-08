@@ -23,6 +23,55 @@ enum EFireMode
 	Burst,
 };
 
+
+USTRUCT(BlueprintType)
+struct FWeaponAnimation
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* EquipAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* HideAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* FireAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* ReloadAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* IdleAnim;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* WalkAnim;
+};
+
+USTRUCT(BlueprintType)
+struct FWeaponEffect
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UParticleSystem* MuzzleFlashEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UParticleSystem* ImpactEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* MuzzleFireSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* ImpactSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterialInterface* BulletHoleDecal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DecalSize;
+};
+
 USTRUCT(BlueprintType)
 struct FWeaponInfo
 {
@@ -59,38 +108,8 @@ struct FWeaponInfo
 	float TimeBetweenShots;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* EquipAnim;
+	FWeaponAnimation WeaponAnimations;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* HideAnim;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* FireAnim;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* ReloadAnim;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* IdleAnim;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* WalkAnim;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UParticleSystem* MuzzleFlashEffect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UParticleSystem* ImpactEffect;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	USoundCue* MuzzleFireSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	USoundCue* ImpactSound;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UMaterialInterface* BulletHoleDecal;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float DecalSize;
+	FWeaponEffect WeaponEffects;
 };

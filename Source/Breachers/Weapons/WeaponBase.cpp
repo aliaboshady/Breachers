@@ -124,12 +124,12 @@ void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 
 void AWeaponBase::Multicast_SpawnBulletHoleDecal_Implementation(FHitResult OutHit)
 {
-	if(WeaponInfo.BulletHoleDecal)
+	if(WeaponInfo.WeaponEffects.BulletHoleDecal)
 	{
 		FRotator DecalRotation = UKismetMathLibrary::MakeRotFromX(OutHit.ImpactNormal);
 		DecalRotation.Roll += 180;
 		DecalRotation.Pitch += 180;
-		UDecalComponent* SpawnedDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), WeaponInfo.BulletHoleDecal, FVector(WeaponInfo.DecalSize), OutHit.ImpactPoint, DecalRotation);
+		UDecalComponent* SpawnedDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), WeaponInfo.WeaponEffects.BulletHoleDecal, FVector(WeaponInfo.WeaponEffects.DecalSize), OutHit.ImpactPoint, DecalRotation);
 		SpawnedDecal->SetFadeScreenSize(0.0001);
 	}
 }
@@ -172,40 +172,40 @@ void AWeaponBase::Server_OnFireEffects_Implementation(FHitResult OutHit)
 
 void AWeaponBase::Client_OnFireEffects_Implementation()
 {
-	if(WeaponInfo.MuzzleFlashEffect)
+	if(WeaponInfo.WeaponEffects.MuzzleFlashEffect)
 	{
-		UGameplayStatics::SpawnEmitterAttached(WeaponInfo.MuzzleFlashEffect, Mesh_FP, SOCKET_Muzzle);
+		UGameplayStatics::SpawnEmitterAttached(WeaponInfo.WeaponEffects.MuzzleFlashEffect, Mesh_FP, SOCKET_Muzzle);
 	}
 	
-	if(WeaponInfo.MuzzleFireSound)
+	if(WeaponInfo.WeaponEffects.MuzzleFireSound)
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.MuzzleFireSound);
+		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.WeaponEffects.MuzzleFireSound);
 	}
 }
 
 void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 {
-	if(WeaponInfo.MuzzleFlashEffect)
+	if(WeaponInfo.WeaponEffects.MuzzleFlashEffect)
 	{
-		UParticleSystemComponent* SpawnedEffect = UGameplayStatics::SpawnEmitterAttached(WeaponInfo.MuzzleFlashEffect, Mesh_TP, SOCKET_Muzzle);
+		UParticleSystemComponent* SpawnedEffect = UGameplayStatics::SpawnEmitterAttached(WeaponInfo.WeaponEffects.MuzzleFlashEffect, Mesh_TP, SOCKET_Muzzle);
 		SpawnedEffect->SetOwnerNoSee(true);
 	}
 
-	if(OutHit.bBlockingHit && WeaponInfo.ImpactEffect && !OutHit.GetActor()->ActorHasTag(TAG_Player))
+	if(OutHit.bBlockingHit && WeaponInfo.WeaponEffects.ImpactEffect && !OutHit.GetActor()->ActorHasTag(TAG_Player))
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponInfo.ImpactEffect, OutHit.ImpactPoint);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WeaponInfo.WeaponEffects.ImpactEffect, OutHit.ImpactPoint);
 	}
 
-	if(WeaponInfo.MuzzleFireSound)
+	if(WeaponInfo.WeaponEffects.MuzzleFireSound)
 	{
 		 if(CharacterPlayer && !CharacterPlayer->IsLocallyControlled())
 		 {
-		 	UGameplayStatics::SpawnSoundAttached(WeaponInfo.MuzzleFireSound, Mesh_TP, SOCKET_Muzzle);
+		 	UGameplayStatics::SpawnSoundAttached(WeaponInfo.WeaponEffects.MuzzleFireSound, Mesh_TP, SOCKET_Muzzle);
 		 }
 	}
 
-	if(OutHit.bBlockingHit && WeaponInfo.ImpactSound)
+	if(OutHit.bBlockingHit && WeaponInfo.WeaponEffects.ImpactSound)
 	{
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.ImpactSound, OutHit.ImpactPoint);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.ImpactSound, OutHit.ImpactPoint);
 	}
 }
