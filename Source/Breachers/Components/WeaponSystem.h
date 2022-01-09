@@ -23,12 +23,17 @@ protected:
 	virtual void BeginPlay() override;
 	FAttachmentTransformRules CreateAttachRules();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	void EquipKnife();
+	void EquipSecondaryAtStartUp();
 	void UnequipWeapon(AWeaponBase* Weapon);
 
-	void EquipPrimary();
-	void EquipSecondary();
-	void EquipMelee();
+	UFUNCTION(Server, Reliable)
+	void Server_EquipPrimary();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EquipSecondary();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EquipMelee();
 
 	UFUNCTION(Server, Reliable)
 	void Server_TakeWeapon(AWeaponBase* Weapon);
@@ -40,7 +45,7 @@ protected:
 	void Server_StopFire();
 	
 	UFUNCTION(Server, Reliable)
-	void Server_SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
+	void Server_SpawnStartWeapons();
 
 	UFUNCTION(Client, Reliable)
 	void Client_EquipWeaponVisualsFP(AWeaponBase* Weapon);
@@ -81,6 +86,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AWeaponBase> PistolWeaponClass;
 
 	FTimerHandle StartFireTimer;
 	FTimerHandle ReloadTimer;
