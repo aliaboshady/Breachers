@@ -100,6 +100,9 @@ struct FWeaponInfo : public FTableRowBase
 	TEnumAsByte<EFireMode> WeaponFireMode;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FTransform ArmsTransformFP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 HeadDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
