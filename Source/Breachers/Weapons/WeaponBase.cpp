@@ -196,11 +196,11 @@ void AWeaponBase::Client_OnFireEffects_Implementation()
 		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.WeaponEffects.MuzzleFireSound);
 	}
 
-	// UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
-	// if(FireAnim_Weapon && Mesh_FP->GetAnimInstance())
-	// {
-	// 	Mesh_FP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
-	// }
+	UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
+	if(FireAnim_Weapon && Mesh_FP->GetAnimInstance())
+	{
+		Mesh_FP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
+	}
 
 	UAnimMontage* FireAnim_ArmsFP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;
 	if(CharacterPlayer && FireAnim_ArmsFP)
@@ -235,12 +235,11 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.ImpactSound, OutHit.ImpactPoint);
 	}
 
-	// UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
-	// if(FireAnim_Weapon && Mesh_TP->GetAnimInstance())
-	// {
-	// 	Mesh_TP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
-	// 	UE_LOG(LogTemp, Warning, TEXT("FIRING ANIMATION"));
-	// }
+	UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
+	if(FireAnim_Weapon && Mesh_TP->GetAnimInstance())
+	{
+		Mesh_TP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
+	}
 
 	UAnimMontage* FireAnim_ArmsTP = WeaponInfo.WeaponAnimations.FireAnim_ArmsTP;
 	if(CharacterPlayer && FireAnim_ArmsTP)
