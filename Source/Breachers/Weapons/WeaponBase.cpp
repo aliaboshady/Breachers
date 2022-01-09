@@ -251,8 +251,8 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 
 void AWeaponBase::Reload()
 {
-	Client_OnReloadEffects();
-	Multicast_OnReloadEffects();
+	Client_OnReloadAnimations();
+	Multicast_OnReloadAnimations();
 }
 
 void AWeaponBase::FinishReload()
@@ -271,13 +271,13 @@ void AWeaponBase::FinishReload()
 	}
 }
 
-void AWeaponBase::Client_OnReloadEffects_Implementation()
+void AWeaponBase::Client_OnReloadAnimations_Implementation()
 {
 	UAnimMontage* ReloadAnim_WeaponFP = WeaponInfo.WeaponAnimations.ReloadAnim_WeaponFP;
 	if(ReloadAnim_WeaponFP)
 	{
 		const float MontageLength = Mesh_FP->GetAnimInstance()->Montage_Play(ReloadAnim_WeaponFP);
-		const float Rate = MontageLength / WeaponInfo.ReloadTime;
+		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
 		Mesh_FP->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_WeaponFP, Rate);
 	}
 	
@@ -285,12 +285,12 @@ void AWeaponBase::Client_OnReloadEffects_Implementation()
 	if(CharacterPlayer && ReloadAnim_ArmsFP)
 	{
 		const float MontageLength = CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_Play(ReloadAnim_ArmsFP);
-		const float Rate = MontageLength / WeaponInfo.ReloadTime;
+		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
 		CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_ArmsFP, Rate);
 	}
 }
 
-void AWeaponBase::Multicast_OnReloadEffects_Implementation()
+void AWeaponBase::Multicast_OnReloadAnimations_Implementation()
 {
 	if(!CharacterPlayer || CharacterPlayer->IsLocallyControlled()) return;;
 	
@@ -298,7 +298,7 @@ void AWeaponBase::Multicast_OnReloadEffects_Implementation()
 	if(ReloadAnim_WeaponTP)
 	{
 		const float MontageLength = Mesh_TP->GetAnimInstance()->Montage_Play(ReloadAnim_WeaponTP);
-		const float Rate = MontageLength / WeaponInfo.ReloadTime;
+		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
 		Mesh_TP->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_WeaponTP, Rate);
 	}
 	
@@ -306,7 +306,7 @@ void AWeaponBase::Multicast_OnReloadEffects_Implementation()
 	if(CharacterPlayer && ReloadAnim_ArmsTP)
 	{
 		const float MontageLength = CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_Play(ReloadAnim_ArmsTP);
-		const float Rate = MontageLength / WeaponInfo.ReloadTime;
+		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
 		CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_ArmsTP, Rate);
 	}
 }

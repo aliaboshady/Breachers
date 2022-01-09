@@ -57,10 +57,10 @@ protected:
 	void Multicast_SpawnBulletHoleDecal(FHitResult OutHit);
 
 	UFUNCTION(Client, Reliable)
-	void Client_OnReloadEffects();
+	void Client_OnReloadAnimations();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_OnReloadEffects();
+	void Multicast_OnReloadAnimations();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
