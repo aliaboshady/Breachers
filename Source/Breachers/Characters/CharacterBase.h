@@ -46,7 +46,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthSystem* HealthSystem;
 
 protected:

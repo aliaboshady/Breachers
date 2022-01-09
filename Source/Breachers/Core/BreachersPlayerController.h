@@ -3,6 +3,7 @@
 #include "GameFramework/PlayerController.h"
 #include "BreachersPlayerController.generated.h"
 
+class ACharacterBase;
 class ABreachersGameModeBase;
 
 UCLASS()
@@ -17,6 +18,10 @@ protected:
 	virtual void BeginPlay() override;
 	void PossessStartCamera();
 	void SetInputUI(bool bIsUI = true);
+	virtual void OnPossess(APawn* InPawn) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UFUNCTION()
 	void OnDie();
 
 	UFUNCTION(BlueprintCallable)
@@ -40,6 +45,9 @@ protected:
 
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	ACharacterBase* CharacterPlayer;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> TeamSelectWidgetClass;

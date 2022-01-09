@@ -5,12 +5,19 @@
 #include "Breachers/Components/HealthSystem.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 void ABreachersPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	PossessStartCamera();
 	BreachersGameModeBase = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());
+}
+
+void ABreachersPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABreachersPlayerController, CharacterPlayer);
 }
 
 void ABreachersPlayerController::PossessStartCamera()
@@ -90,7 +97,13 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 
 void ABreachersPlayerController::OnDie()
 {
-	ACharacterBase* CharacterPlayer = Cast<ACharacterBase>(GetPawn());
+	UE_LOG(LogTemp, Warning, TEXT("Controller OnDie"));
+}
+
+void ABreachersPlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	CharacterPlayer = Cast<ACharacterBase>(InPawn);
 	if(CharacterPlayer && CharacterPlayer->HealthSystem)
 	{
 		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &ABreachersPlayerController::OnDie);

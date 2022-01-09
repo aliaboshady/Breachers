@@ -37,7 +37,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 MaxHealth;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 CurrentHealth;
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsDead)
