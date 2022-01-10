@@ -98,6 +98,9 @@ struct FWeaponInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform ArmsTransformFP;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsDroppable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 HeadDamage;

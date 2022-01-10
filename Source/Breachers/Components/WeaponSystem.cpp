@@ -15,6 +15,7 @@ UWeaponSystem::UWeaponSystem()
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UWeaponSystem, PreviousWeapon);
 	DOREPLIFETIME(UWeaponSystem, CurrentWeapon);
 	DOREPLIFETIME(UWeaponSystem, PrimaryWeapon);
 	DOREPLIFETIME(UWeaponSystem, SecondaryWeapon);
@@ -42,6 +43,7 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &UWeaponSystem::Server_StopFire);
 
 		PlayerInputComponent->BindAction("SecondaryFire", IE_Pressed, this, &UWeaponSystem::Server_SecondaryFire);
+		PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, this, &UWeaponSystem::Server_EquipPreviousWeapon);
 
 		PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &UWeaponSystem::Server_Reload);
 	}
@@ -67,19 +69,17 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 	if(Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr)
 	{
 		PrimaryWeapon = Weapon;
-		Multicast_HideWeapon(Weapon, true);
 	}
 	else if(Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr)
 	{
 		SecondaryWeapon = Weapon;
-		Multicast_HideWeapon(Weapon, true);
 	}
 	else if(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr)
 	{
 		MeleeWeapon = Weapon;
-		Multicast_HideWeapon(Weapon, true);
 	}
 
+	Multicast_HideWeapon(Weapon, true);
 	Weapon->SetOwner(CharacterPlayer);
 	Weapon->SetInstigator(CharacterPlayer);
 }
@@ -88,10 +88,21 @@ void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 	Server_TakeWeapon(Weapon);
 }
 
+
+void UWeaponSystem::Server_DropWeapon_Implementation(AWeaponBase* Weapon)
+{
+	if(!Weapon->WeaponInfo.bIsDroppable) return;
+}
+void UWeaponSystem::DropWeapon(AWeaponBase* Weapon)
+{
+	Server_DropWeapon(Weapon);
+}
+
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 {
 	if(CurrentWeapon)
 	{
+		PreviousWeapon = CurrentWeapon;
 		UnequipWeapon(CurrentWeapon);
 		if(bIsEquipping) CurrentWeapon->OnCancelEquip();
 	}
@@ -108,6 +119,11 @@ void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 void UWeaponSystem::FinishEquip()
 {
 	bIsEquipping = false;
+}
+
+void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
+{
+	if(PreviousWeapon) EquipWeapon(PreviousWeapon);
 }
 
 void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)

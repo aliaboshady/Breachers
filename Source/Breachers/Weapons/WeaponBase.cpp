@@ -297,6 +297,10 @@ void AWeaponBase::OnTaken()
 	if(SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AWeaponBase::OnDrop()
+{
+}
+
 void AWeaponBase::OnEquip()
 {
 	Client_OnEquipAnimations();

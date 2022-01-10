@@ -17,6 +17,7 @@ public:
 	void EquipWeapon(AWeaponBase* Weapon);
 	bool CanTakeWeapon(AWeaponBase* Weapon);
 	void TakeWeapon(AWeaponBase* Weapon);
+	void DropWeapon(AWeaponBase* Weapon);
 	AWeaponBase* GetCurrentWeapon();
 
 protected:
@@ -26,6 +27,9 @@ protected:
 	void EquipSecondaryAtStartUp();
 	void UnequipWeapon(AWeaponBase* Weapon);
 	void FinishEquip();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EquipPreviousWeapon();
 
 	UFUNCTION(Server, Reliable)
 	void Server_EquipPrimary();
@@ -38,6 +42,9 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void Server_TakeWeapon(AWeaponBase* Weapon);
+
+	UFUNCTION(Server, Reliable)
+	void Server_DropWeapon(AWeaponBase* Weapon);
 
 	UFUNCTION(Server, Reliable)
 	void Server_StartFire();
@@ -77,6 +84,9 @@ protected:
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
 
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	AWeaponBase* PreviousWeapon;
+	
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	AWeaponBase* CurrentWeapon;
 
