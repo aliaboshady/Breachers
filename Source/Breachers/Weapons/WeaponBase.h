@@ -38,6 +38,8 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	FVector RecoilShot(float Spread) const;
 	void SetupWeaponInfo();
+	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
+	void CancelAllAnimations();
 	
 	int32 GetSurfaceDamage(FHitResult OutHit) const;
 	

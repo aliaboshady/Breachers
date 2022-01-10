@@ -213,6 +213,7 @@ void UWeaponSystem::ResetCanFire()
 void UWeaponSystem::Server_Reload_Implementation()
 {
 	if(!CurrentWeapon || CurrentWeapon->GetCurrentTotalAmmo() <= 0 || bIsEquipping) return;
+	Server_StopFire();
 
 	const bool bCanReload = CurrentWeapon->GetCurrentAmmoInClip() < CurrentWeapon->WeaponInfo.MaxAmmoInClip;
 	if(bCanReload && !bIsReloading)

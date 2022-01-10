@@ -277,51 +277,20 @@ void AWeaponBase::OnCancelReload()
 
 void AWeaponBase::Client_OnReloadAnimations_Implementation()
 {
-	UAnimMontage* ReloadAnim_WeaponFP = WeaponInfo.WeaponAnimations.ReloadAnim_WeaponFP;
-	if(ReloadAnim_WeaponFP)
-	{
-		const float MontageLength = Mesh_FP->GetAnimInstance()->Montage_Play(ReloadAnim_WeaponFP);
-		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
-		Mesh_FP->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_WeaponFP, Rate);
-	}
-	
-	UAnimMontage* ReloadAnim_ArmsFP = WeaponInfo.WeaponAnimations.ReloadAnim_ArmsFP;
-	if(CharacterPlayer && ReloadAnim_ArmsFP)
-	{
-		const float MontageLength = CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_Play(ReloadAnim_ArmsFP);
-		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
-		CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_ArmsFP, Rate);
-	}
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponFP, Mesh_FP, WeaponInfo.ReloadTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadTime);
 }
 
 void AWeaponBase::Multicast_OnReloadAnimations_Implementation()
 {
 	if(!CharacterPlayer || CharacterPlayer->IsLocallyControlled()) return;
-	
-	UAnimMontage* ReloadAnim_WeaponTP = WeaponInfo.WeaponAnimations.ReloadAnim_WeaponTP;
-	if(ReloadAnim_WeaponTP)
-	{
-		const float MontageLength = Mesh_TP->GetAnimInstance()->Montage_Play(ReloadAnim_WeaponTP);
-		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
-		Mesh_TP->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_WeaponTP, Rate);
-	}
-	
-	UAnimMontage* ReloadAnim_ArmsTP = WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP;
-	if(CharacterPlayer && ReloadAnim_ArmsTP)
-	{
-		const float MontageLength = CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_Play(ReloadAnim_ArmsTP);
-		const float Rate = MontageLength / (WeaponInfo.ReloadTime + 0.01);
-		CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_SetPlayRate(ReloadAnim_ArmsTP, Rate);
-	}
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponTP, Mesh_TP, WeaponInfo.ReloadTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadTime);
 }
 
 void AWeaponBase::Multicast_OnCancelReloadAnimations_Implementation()
 {
-	if(!CharacterPlayer) return;
-	Mesh_FP->GetAnimInstance()->StopAllMontages(0);
-	Mesh_TP->GetAnimInstance()->StopAllMontages(0);
-	CharacterPlayer->GetMesh()->GetAnimInstance()->StopAllMontages(0);
-	CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->StopAllMontages(0);
+	CancelAllAnimations();
 }
 
 
@@ -338,46 +307,31 @@ void AWeaponBase::OnCancelEquip()
 
 void AWeaponBase::Client_OnEquipAnimations_Implementation()
 {
-	//WeaponAnimationMontage, ArmsAnimationMontage, Time, 
-	UAnimMontage* EquipAnim_Weapon = WeaponInfo.WeaponAnimations.EquipAnim_Weapon;
-	if(EquipAnim_Weapon)
-	{
-		const float MontageLength = Mesh_FP->GetAnimInstance()->Montage_Play(EquipAnim_Weapon);
-		const float Rate = MontageLength / (WeaponInfo.EquipTime + 0.01);
-		Mesh_FP->GetAnimInstance()->Montage_SetPlayRate(EquipAnim_Weapon, Rate);
-	}
-	
-	UAnimMontage* EquipAnim_ArmsFP = WeaponInfo.WeaponAnimations.EquipAnim_ArmsFP;
-	if(CharacterPlayer && EquipAnim_ArmsFP)
-	{
-		const float MontageLength = CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_Play(EquipAnim_ArmsFP);
-		const float Rate = MontageLength / (WeaponInfo.EquipTime + 0.01);
-		CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_SetPlayRate(EquipAnim_ArmsFP, Rate);
-	}
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_FP, WeaponInfo.EquipTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.EquipTime);
 }
 
 void AWeaponBase::Multicast_OnEquipAnimations_Implementation()
 {
 	if(!CharacterPlayer || CharacterPlayer->IsLocallyControlled()) return;
-	
-	UAnimMontage* EquipAnim_Weapon = WeaponInfo.WeaponAnimations.EquipAnim_Weapon;
-	if(EquipAnim_Weapon)
-	{
-		const float MontageLength = Mesh_TP->GetAnimInstance()->Montage_Play(EquipAnim_Weapon);
-		const float Rate = MontageLength / (WeaponInfo.EquipTime + 0.01);
-		Mesh_TP->GetAnimInstance()->Montage_SetPlayRate(EquipAnim_Weapon, Rate);
-	}
-	
-	UAnimMontage* EquipAnim_ArmsTP = WeaponInfo.WeaponAnimations.EquipAnim_ArmsTP;
-	if(CharacterPlayer && EquipAnim_ArmsTP)
-	{
-		const float MontageLength = CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_Play(EquipAnim_ArmsTP);
-		const float Rate = MontageLength / (WeaponInfo.EquipTime + 0.01);
-		CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_SetPlayRate(EquipAnim_ArmsTP, Rate);
-	}
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_TP, WeaponInfo.EquipTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.EquipTime);
 }
 
 void AWeaponBase::Multicast_OnCancelEquipAnimations_Implementation()
+{
+	CancelAllAnimations();
+}
+
+void AWeaponBase::PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time)
+{
+	if(!AnimationMontage || !Mesh || !Mesh->GetAnimInstance()) return;
+	const float MontageLength = Mesh->GetAnimInstance()->Montage_Play(AnimationMontage);
+	const float Rate = MontageLength / (Time + 0.01);
+	Mesh->GetAnimInstance()->Montage_SetPlayRate(AnimationMontage, Rate);
+}
+
+void AWeaponBase::CancelAllAnimations()
 {
 	if(!CharacterPlayer) return;
 	Mesh_FP->GetAnimInstance()->StopAllMontages(0);
