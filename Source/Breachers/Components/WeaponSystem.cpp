@@ -44,6 +44,21 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 	}
 }
 
+void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
+{
+	if(MeleeWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(MeleeWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+	if(PistolWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(PistolWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+	if(SecondaryWeapon)
+	{
+		FTimerHandle EquipSecondaryHandle;
+		GetWorld()->GetTimerManager().SetTimer(EquipSecondaryHandle, this, &UWeaponSystem::EquipSecondaryAtStartUp, 1, false, 0.1);
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////// Equip/Take Weapons ///////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 {
 	if(Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr)
@@ -99,21 +114,30 @@ bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 void UWeaponSystem::Server_EquipPrimary_Implementation()
 {
 	if(!PrimaryWeapon || CurrentWeapon == PrimaryWeapon) return;
+	if(bIsReloading) Server_CancelReload();
 	EquipWeapon(PrimaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipSecondary_Implementation()
 {
 	if(!SecondaryWeapon || CurrentWeapon == SecondaryWeapon) return;
+	if(bIsReloading) Server_CancelReload();
 	EquipWeapon(SecondaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipMelee_Implementation()
 {
 	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon) return;
+	if(bIsReloading) Server_CancelReload();
 	EquipWeapon(MeleeWeapon);
 }
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// Fire //////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///
 void UWeaponSystem::Server_StartFire_Implementation()
 {
 	if(!CurrentWeapon || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || bIsReloading) return;
@@ -166,20 +190,10 @@ void UWeaponSystem::ResetCanFire()
 	bCanFire = true;
 }
 
-AWeaponBase* UWeaponSystem::GetCurrentWeapon()
-{
-	if(CurrentWeapon) return CurrentWeapon;
-	return nullptr;
-}
 
-FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
-{
-	FAttachmentTransformRules AttachRules = FAttachmentTransformRules( EAttachmentRule::KeepRelative, true );;
-	AttachRules.LocationRule = EAttachmentRule::SnapToTarget;
-	AttachRules.RotationRule = EAttachmentRule::SnapToTarget;
-	AttachRules.ScaleRule = EAttachmentRule::SnapToTarget;
-	return AttachRules;
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// Reload //////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void UWeaponSystem::Server_Reload_Implementation()
 {
@@ -205,23 +219,17 @@ void UWeaponSystem::Server_FinishReload_Implementation()
 
 void UWeaponSystem::Server_CancelReload_Implementation()
 {
-	bIsReloading = false;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////// NETWORK /////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
-{
-	if(MeleeWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(MeleeWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
-	if(PistolWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(PistolWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
-	if(SecondaryWeapon)
+	if(CurrentWeapon)
 	{
-		FTimerHandle EquipSecondaryHandle;
-		GetWorld()->GetTimerManager().SetTimer(EquipSecondaryHandle, this, &UWeaponSystem::EquipSecondaryAtStartUp, 1, false, 0.1);
+		CurrentWeapon->CancelReload();
+		GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
+		bIsReloading = false;
 	}
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// Visuals /////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void UWeaponSystem::Client_EquipWeaponVisualsFP_Implementation(AWeaponBase* Weapon)
 {
@@ -251,4 +259,25 @@ void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, boo
 	Weapon->Mesh_TP->CastShadow = !bHidden;
 	Weapon->Mesh_TP->SetHiddenInGame(bHidden);
 	Weapon->Mesh_FP->SetHiddenInGame(bHidden);
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////// Helpers //////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+AWeaponBase* UWeaponSystem::GetCurrentWeapon()
+{
+	if(CurrentWeapon) return CurrentWeapon;
+	return nullptr;
+}
+
+FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
+{
+	FAttachmentTransformRules AttachRules = FAttachmentTransformRules( EAttachmentRule::KeepRelative, true );;
+	AttachRules.LocationRule = EAttachmentRule::SnapToTarget;
+	AttachRules.RotationRule = EAttachmentRule::SnapToTarget;
+	AttachRules.ScaleRule = EAttachmentRule::SnapToTarget;
+	return AttachRules;
 }

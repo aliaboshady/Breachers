@@ -18,6 +18,7 @@ public:
 	void OnFire();
 	void Reload();
 	void FinishReload();
+	void CancelReload();
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
 
@@ -61,6 +62,9 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnReloadAnimations();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnCancelReloadAnimations();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
