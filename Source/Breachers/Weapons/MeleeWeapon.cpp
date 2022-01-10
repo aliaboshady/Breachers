@@ -6,7 +6,6 @@ AMeleeWeapon::AMeleeWeapon()
 	SecondaryAttackTime = 1;
 	PrimaryTimeBetweenHits = 1;
 	SecondaryTimeBetweenHits = 2;
-	WeaponInfo.TraceLength = 100;
 }
 
 void AMeleeWeapon::OnFire(bool bShouldDecreaseBullets)
