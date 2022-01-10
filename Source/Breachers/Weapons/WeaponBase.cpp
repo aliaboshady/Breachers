@@ -74,6 +74,8 @@ void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		if(const ACharacterBase* Player = Cast<ACharacterBase>(OtherActor))
 		{
+			if(PreviousOwner && PreviousOwner == Player) return;
+			
 			if(Player->WeaponSystem->CanTakeWeapon(this))
 			{
 				Player->WeaponSystem->TakeWeapon(this);
@@ -297,8 +299,27 @@ void AWeaponBase::OnTaken()
 	if(SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
-void AWeaponBase::OnDrop()
+void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 {
+	PreviousOwner = DropperCharacter;
+	
+	Mesh_TP->SetEnableGravity(true);
+	Mesh_TP->SetSimulatePhysics(true);
+	Mesh_TP->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
+	const FVector Force = DropperCharacter->GetActorForwardVector() * DropperCharacter->WeaponSystem->WeaponThrowForce;
+	Mesh_TP->AddImpulse(Force);
+	
+	FTimerHandle OverlapHandle;
+	GetWorldTimerManager().SetTimer(OverlapHandle, this, &AWeaponBase::OnDropEnableOverlap, 1, false, TIME_PickWeaponAfterDrop);
+}
+
+void AWeaponBase::OnDropEnableOverlap()
+{
+	PreviousOwner = nullptr;
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void AWeaponBase::OnEquip()
@@ -342,7 +363,7 @@ void AWeaponBase::PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeleta
 	Mesh->GetAnimInstance()->Montage_SetPlayRate(AnimationMontage, Rate);
 }
 
-void AWeaponBase::CancelAllAnimations()
+void AWeaponBase::CancelAllAnimations() const
 {
 	if(!CharacterPlayer) return;
 	Mesh_FP->GetAnimInstance()->StopAllMontages(0);

@@ -17,8 +17,11 @@ public:
 	void EquipWeapon(AWeaponBase* Weapon);
 	bool CanTakeWeapon(AWeaponBase* Weapon);
 	void TakeWeapon(AWeaponBase* Weapon);
-	void DropWeapon(AWeaponBase* Weapon);
+	void DropWeapon();
 	AWeaponBase* GetCurrentWeapon();
+
+	UPROPERTY(EditAnywhere)
+	float WeaponThrowForce;
 
 protected:
 	virtual void BeginPlay() override;
@@ -44,7 +47,7 @@ protected:
 	void Server_TakeWeapon(AWeaponBase* Weapon);
 
 	UFUNCTION(Server, Reliable)
-	void Server_DropWeapon(AWeaponBase* Weapon);
+	void Server_DropWeapon();
 
 	UFUNCTION(Server, Reliable)
 	void Server_StartFire();
@@ -63,6 +66,9 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_EquipWeaponVisualsTP(AWeaponBase* Weapon);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_DropWeaponVisualsTP(AWeaponBase* Weapon);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_HideWeapon(AWeaponBase* Weapon, bool bHidden);

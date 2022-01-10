@@ -15,7 +15,7 @@ class BREACHERS_API AWeaponBase : public AActor
 public:	
 	AWeaponBase();
 	void OnTaken();
-	void OnDrop();
+	void OnDrop(ACharacterBase* DropperCharacter);
 	virtual void OnFire(bool bShouldDecreaseBullets = true);
 	virtual void OnSecondaryFire(bool bShouldDecreaseBullets = true);
 	void OnReload();
@@ -41,7 +41,8 @@ protected:
 	FVector RecoilShot(float Spread) const;
 	void SetupWeaponInfo();
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
-	void CancelAllAnimations();
+	void CancelAllAnimations() const;
+	void OnDropEnableOverlap();
 	
 	int32 GetSurfaceDamage(FHitResult OutHit) const;
 	
@@ -101,4 +102,7 @@ protected:
 	
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 CurrentAmmoInClip;
+
+	UPROPERTY()
+	ACharacterBase* PreviousOwner;
 };

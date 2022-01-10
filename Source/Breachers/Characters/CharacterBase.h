@@ -4,6 +4,7 @@
 #include "CharacterBase.generated.h"
 
 #define TAG_Player "Player"
+#define TIME_PickWeaponAfterDrop 1
 
 #define COLLISION_CharacterPlayerTP "CharacterPlayerTP"
 #define COLLISION_ArmsFP "ArmsFP"

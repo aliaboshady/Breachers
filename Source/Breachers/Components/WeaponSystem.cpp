@@ -10,6 +10,7 @@ UWeaponSystem::UWeaponSystem()
 	bCanFire = true;
 	bIsReloading = false;
 	bIsEquipping = false;
+	WeaponThrowForce = 40000;
 }
 
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -44,6 +45,7 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 		PlayerInputComponent->BindAction("SecondaryFire", IE_Pressed, this, &UWeaponSystem::Server_SecondaryFire);
 		PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, this, &UWeaponSystem::Server_EquipPreviousWeapon);
+		PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &UWeaponSystem::Server_DropWeapon);
 
 		PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &UWeaponSystem::Server_Reload);
 	}
@@ -89,13 +91,32 @@ void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 }
 
 
-void UWeaponSystem::Server_DropWeapon_Implementation(AWeaponBase* Weapon)
+void UWeaponSystem::Server_DropWeapon_Implementation()
 {
-	if(!Weapon->WeaponInfo.bIsDroppable) return;
+	if(!CurrentWeapon || !CurrentWeapon->WeaponInfo.bIsDroppable || !CharacterPlayer) return;
+	
+	if(CurrentWeapon->WeaponInfo.WeaponType == Primary)
+	{
+		PrimaryWeapon = nullptr;
+	}
+	else if(CurrentWeapon->WeaponInfo.WeaponType == Secondary)
+	{
+		SecondaryWeapon = nullptr;
+	}
+
+	Multicast_DropWeaponVisualsTP(CurrentWeapon);
+	CurrentWeapon->OnDrop(CharacterPlayer);
+	CurrentWeapon->SetOwner(nullptr);
+	CurrentWeapon->SetInstigator(nullptr);
+	CurrentWeapon = nullptr;
+
+	if(PreviousWeapon) EquipWeapon(PreviousWeapon);
+	else if(MeleeWeapon) EquipWeapon(MeleeWeapon);
+	PreviousWeapon = nullptr;
 }
-void UWeaponSystem::DropWeapon(AWeaponBase* Weapon)
+void UWeaponSystem::DropWeapon()
 {
-	Server_DropWeapon(Weapon);
+	Server_DropWeapon();
 }
 
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
@@ -295,6 +316,16 @@ void UWeaponSystem::Multicast_EquipWeaponVisualsTP_Implementation(AWeaponBase* W
 		Weapon->Mesh_TP->SetHiddenInGame(false);
 	}
 }
+
+void UWeaponSystem::Multicast_DropWeaponVisualsTP_Implementation(AWeaponBase* Weapon)
+{
+	if(CharacterPlayer && Weapon)
+	{
+		const FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, true);
+		Weapon->Mesh_TP->DetachFromComponent(DetachmentTransformRules);
+	}
+}
+
 void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, bool bHidden)
 {
 	if(!Weapon) return;
@@ -302,7 +333,6 @@ void UWeaponSystem::Multicast_HideWeapon_Implementation(AWeaponBase* Weapon, boo
 	Weapon->Mesh_TP->SetHiddenInGame(bHidden);
 	Weapon->Mesh_FP->SetHiddenInGame(bHidden);
 }
-
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
