@@ -46,6 +46,9 @@ protected:
 	void Server_StopFire();
 	
 	UFUNCTION(Server, Reliable)
+	void Server_SecondaryFire();
+	
+	UFUNCTION(Server, Reliable)
 	void Server_SpawnStartWeapons();
 
 	UFUNCTION(Client, Reliable)

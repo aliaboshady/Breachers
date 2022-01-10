@@ -15,7 +15,8 @@ class BREACHERS_API AWeaponBase : public AActor
 public:	
 	AWeaponBase();
 	void OnTaken();
-	void OnFire();
+	virtual void OnFire(bool bShouldDecreaseBullets = true);
+	virtual void OnSecondaryFire(bool bShouldDecreaseBullets = true);
 	void OnReload();
 	void OnFinishReload();
 	void OnCancelReload();

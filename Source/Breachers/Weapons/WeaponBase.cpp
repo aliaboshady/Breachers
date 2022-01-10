@@ -83,21 +83,19 @@ void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor*
 	}
 }
 
-void AWeaponBase::OnTaken()
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////// Fire //////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void AWeaponBase::OnFire(bool bShouldDecreaseBullets)
 {
-	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
-	if(Mesh_TP)
-	{
-		Mesh_TP->SetEnableGravity(false);
-		Mesh_TP->SetSimulatePhysics(false);
-		Mesh_TP->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-	if(SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	if(bShouldDecreaseBullets) CurrentAmmoInClip--;
+	Client_OnFire();
 }
 
-void AWeaponBase::OnFire()
+void AWeaponBase::OnSecondaryFire(bool bShouldDecreaseBullets)
 {
-	CurrentAmmoInClip--;
+	if(bShouldDecreaseBullets) CurrentAmmoInClip--;
 	Client_OnFire();
 }
 
@@ -196,17 +194,8 @@ void AWeaponBase::Client_OnFireEffects_Implementation()
 		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.WeaponEffects.MuzzleFireSound);
 	}
 
-	UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
-	if(FireAnim_Weapon && Mesh_FP->GetAnimInstance())
-	{
-		Mesh_FP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
-	}
-
-	UAnimMontage* FireAnim_ArmsFP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;
-	if(CharacterPlayer && FireAnim_ArmsFP)
-	{
-		CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->Montage_Play(FireAnim_ArmsFP);
-	}
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_FP, WeaponInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.FireAnimationTime);
 }
 
 void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
@@ -235,18 +224,15 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.ImpactSound, OutHit.ImpactPoint);
 	}
 
-	UAnimMontage* FireAnim_Weapon = WeaponInfo.WeaponAnimations.FireAnim_Weapon;
-	if(FireAnim_Weapon && Mesh_TP->GetAnimInstance())
-	{
-		Mesh_TP->GetAnimInstance()->Montage_Play(FireAnim_Weapon);
-	}
-
-	UAnimMontage* FireAnim_ArmsTP = WeaponInfo.WeaponAnimations.FireAnim_ArmsTP;
-	if(CharacterPlayer && FireAnim_ArmsTP)
-	{
-		CharacterPlayer->GetMesh()->GetAnimInstance()->Montage_Play(FireAnim_ArmsTP);
-	}
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_TP, WeaponInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.FireAnimationTime);
 }
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////// Reload //////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void AWeaponBase::OnReload()
 {
@@ -294,6 +280,23 @@ void AWeaponBase::Multicast_OnCancelReloadAnimations_Implementation()
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////// Equip/Take Weapons ///////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void AWeaponBase::OnTaken()
+{
+	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
+	if(Mesh_TP)
+	{
+		Mesh_TP->SetEnableGravity(false);
+		Mesh_TP->SetSimulatePhysics(false);
+		Mesh_TP->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	if(SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void AWeaponBase::OnEquip()
 {
 	Client_OnEquipAnimations();
@@ -327,7 +330,11 @@ void AWeaponBase::PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeleta
 {
 	if(!AnimationMontage || !Mesh || !Mesh->GetAnimInstance()) return;
 	const float MontageLength = Mesh->GetAnimInstance()->Montage_Play(AnimationMontage);
-	const float Rate = MontageLength / (Time + 0.01);
+	
+	float Rate;
+	if(Time == 0) Rate = 1;
+	else Rate = MontageLength / (Time + 0.01);
+	
 	Mesh->GetAnimInstance()->Montage_SetPlayRate(AnimationMontage, Rate);
 }
 

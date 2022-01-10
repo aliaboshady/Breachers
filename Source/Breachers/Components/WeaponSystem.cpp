@@ -41,6 +41,8 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartFire);
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &UWeaponSystem::Server_StopFire);
 
+		PlayerInputComponent->BindAction("SecondaryFire", IE_Pressed, this, &UWeaponSystem::Server_SecondaryFire);
+
 		PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &UWeaponSystem::Server_Reload);
 	}
 }
@@ -152,7 +154,6 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////// Fire //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///
 void UWeaponSystem::Server_StartFire_Implementation()
 {
 	if(!CurrentWeapon || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || bIsReloading || bIsEquipping) return;
@@ -162,7 +163,7 @@ void UWeaponSystem::Server_StartFire_Implementation()
 	{
 		GetWorld()->GetTimerManager().SetTimer(StartFireTimer, this, &UWeaponSystem::Fire, CurrentWeapon->WeaponInfo.TimeBetweenShots + 0.01, true, 0);
 	}
-	if(FireMode == Spread)
+	else if(FireMode == Spread)
 	{
 		FireSpread();
 	}
@@ -177,9 +178,18 @@ void UWeaponSystem::Server_StopFire_Implementation()
 	GetWorld()->GetTimerManager().ClearTimer(StartFireTimer);
 }
 
+void UWeaponSystem::Server_SecondaryFire_Implementation()
+{
+	if(!bCanFire || !CurrentWeapon || bIsReloading || bIsEquipping) return;
+	CurrentWeapon->OnSecondaryFire();
+	bCanFire = false;
+	FTimerHandle ResetTimer;
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &UWeaponSystem::ResetCanFire, 1, false, CurrentWeapon->WeaponInfo.TimeBetweenShots);
+}
+
 void UWeaponSystem::Fire()
 {
-	if(!bCanFire || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || !CurrentWeapon) return;
+	if(!bCanFire || !CurrentWeapon || bIsReloading || bIsEquipping || CurrentWeapon->GetCurrentAmmoInClip() <= 0) return;
 	CurrentWeapon->OnFire();
 	bCanFire = false;
 	FTimerHandle ResetTimer;

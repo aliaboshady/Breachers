@@ -21,7 +21,7 @@ enum EFireMode
 	Single,
 	Auto,
 	Spread,
-	Burst,
+	Burst
 };
 
 
@@ -125,6 +125,9 @@ struct FWeaponInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TimeBetweenShots;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float FireAnimationTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ReloadTime;
