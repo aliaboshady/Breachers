@@ -29,18 +29,15 @@ USTRUCT(BlueprintType)
 struct FWeaponAnimation
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimMontage* EquipAnim_Weapon;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* EquipAnim_ArmsFP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* EquipAnim_ArmsTP;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* HideAnim_ArmsFP;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UAnimMontage* HideAnim_ArmsTP;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* FireAnim_Weapon;
@@ -131,6 +128,9 @@ struct FWeaponInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ReloadTime;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float EquipTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TraceLength;

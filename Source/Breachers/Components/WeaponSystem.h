@@ -25,6 +25,7 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipSecondaryAtStartUp();
 	void UnequipWeapon(AWeaponBase* Weapon);
+	void FinishEquip();
 
 	UFUNCTION(Server, Reliable)
 	void Server_EquipPrimary();
@@ -65,6 +66,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void Server_CancelReload();
 
+
 	void Fire();
 	void FireSpread();
 	void ResetCanFire();
@@ -92,6 +94,8 @@ protected:
 
 	FTimerHandle StartFireTimer;
 	FTimerHandle ReloadTimer;
+	FTimerHandle EquipTimer;
 	bool bCanFire;
 	bool bIsReloading;
+	bool bIsEquipping;
 };

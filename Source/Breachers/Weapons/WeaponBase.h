@@ -16,9 +16,11 @@ public:
 	AWeaponBase();
 	void OnTaken();
 	void OnFire();
-	void Reload();
-	void FinishReload();
-	void CancelReload();
+	void OnReload();
+	void OnFinishReload();
+	void OnCancelReload();
+	void OnEquip();
+	void OnCancelEquip();
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
 
@@ -65,6 +67,15 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnCancelReloadAnimations();
+
+	UFUNCTION(Client, Reliable)
+	void Client_OnEquipAnimations();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnEquipAnimations();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnCancelEquipAnimations();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;

@@ -9,6 +9,7 @@ UWeaponSystem::UWeaponSystem()
 	SetIsReplicated(true);
 	bCanFire = true;
 	bIsReloading = false;
+	bIsEquipping = false;
 }
 
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -87,10 +88,24 @@ void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 {
-	if(CurrentWeapon) UnequipWeapon(CurrentWeapon);
+	if(CurrentWeapon)
+	{
+		UnequipWeapon(CurrentWeapon);
+		if(bIsEquipping) CurrentWeapon->OnCancelEquip();
+	}
+	bIsEquipping = true;
 	CurrentWeapon = Weapon;
+	CurrentWeapon->OnEquip();
+	Server_StopFire();
+
 	Multicast_EquipWeaponVisualsTP(Weapon);
 	Client_EquipWeaponVisualsFP(Weapon);
+	GetWorld()->GetTimerManager().SetTimer(EquipTimer, this, &UWeaponSystem::FinishEquip, 1, false, CurrentWeapon->WeaponInfo.EquipTime);
+}
+
+void UWeaponSystem::FinishEquip()
+{
+	bIsEquipping = false;
 }
 
 void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
@@ -140,7 +155,7 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 ///
 void UWeaponSystem::Server_StartFire_Implementation()
 {
-	if(!CurrentWeapon || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || bIsReloading) return;
+	if(!CurrentWeapon || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || bIsReloading || bIsEquipping) return;
 
 	const TEnumAsByte<EFireMode> FireMode = CurrentWeapon->WeaponInfo.WeaponFireMode;
 	if(FireMode == Auto)
@@ -197,12 +212,12 @@ void UWeaponSystem::ResetCanFire()
 
 void UWeaponSystem::Server_Reload_Implementation()
 {
-	if(!CurrentWeapon || CurrentWeapon->GetCurrentTotalAmmo() <= 0) return;
+	if(!CurrentWeapon || CurrentWeapon->GetCurrentTotalAmmo() <= 0 || bIsEquipping) return;
 
 	const bool bCanReload = CurrentWeapon->GetCurrentAmmoInClip() < CurrentWeapon->WeaponInfo.MaxAmmoInClip;
 	if(bCanReload && !bIsReloading)
 	{
-		CurrentWeapon->Reload();
+		CurrentWeapon->OnReload();
 		GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &UWeaponSystem::Server_FinishReload, 1, false, CurrentWeapon->WeaponInfo.ReloadTime);
 		bIsReloading = true;
 	}
@@ -212,7 +227,7 @@ void UWeaponSystem::Server_FinishReload_Implementation()
 {
 	if(CurrentWeapon)
 	{
-		CurrentWeapon->FinishReload();
+		CurrentWeapon->OnFinishReload();
 		bIsReloading = false;
 	}
 }
@@ -221,7 +236,7 @@ void UWeaponSystem::Server_CancelReload_Implementation()
 {
 	if(CurrentWeapon)
 	{
-		CurrentWeapon->CancelReload();
+		CurrentWeapon->OnCancelReload();
 		GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
 		bIsReloading = false;
 	}
