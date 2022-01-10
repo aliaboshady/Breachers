@@ -55,11 +55,9 @@ void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
 {
 	if(MeleeWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(MeleeWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
 	if(PistolWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(PistolWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
-	if(SecondaryWeapon)
-	{
-		FTimerHandle EquipSecondaryHandle;
-		GetWorld()->GetTimerManager().SetTimer(EquipSecondaryHandle, this, &UWeaponSystem::EquipSecondaryAtStartUp, 1, false, 0.1);
-	}
+
+	FTimerHandle EquipSecondaryHandle;
+	GetWorld()->GetTimerManager().SetTimer(EquipSecondaryHandle, this, &UWeaponSystem::EquipSecondaryAtStartUp, 1, false, 0.1);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -154,6 +152,7 @@ void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::EquipSecondaryAtStartUp()
 {
+	if(MeleeWeapon) EquipWeapon(MeleeWeapon);
 	if(SecondaryWeapon) EquipWeapon(SecondaryWeapon);
 }
 
