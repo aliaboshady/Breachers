@@ -31,6 +31,9 @@ struct FWeaponAnimation
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequenceBase* IdlePose_ArmsFP;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* EquipAnim_Weapon;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

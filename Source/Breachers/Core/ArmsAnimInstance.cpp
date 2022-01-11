@@ -23,6 +23,6 @@ void UArmsAnimInstance::Client_ChangePose_Implementation()
 	if(!OwnerCharacter) return;
 	if(const AWeaponBase* CurrentWeapon = OwnerCharacter->WeaponSystem->GetCurrentWeapon())
 	{
-		WeaponType = CurrentWeapon->WeaponInfo.WeaponType;
+		IdlePose_ArmsFP = CurrentWeapon->WeaponInfo.WeaponAnimations.IdlePose_ArmsFP;
 	}
 }

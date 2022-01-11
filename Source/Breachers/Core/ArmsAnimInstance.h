@@ -22,5 +22,5 @@ protected:
 	ACharacterBase* OwnerCharacter;
 	
 	UPROPERTY(BlueprintReadOnly)
-	TEnumAsByte<EWeaponType> WeaponType;
+	UAnimSequenceBase* IdlePose_ArmsFP;
 };
