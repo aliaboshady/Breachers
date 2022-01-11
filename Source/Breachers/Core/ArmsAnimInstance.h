@@ -1,7 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "Breachers/Weapons/WeaponInfo.h"
 #include "ArmsAnimInstance.generated.h"
 
 class ACharacterBase;

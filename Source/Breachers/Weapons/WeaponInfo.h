@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Animation/AimOffsetBlendSpace1D.h"
 #include "Engine/DataTable.h"
 #include "WeaponInfo.generated.h"
 
@@ -32,6 +33,12 @@ struct FWeaponAnimation
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimSequenceBase* IdlePose_ArmsFP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequenceBase* IdlePose_ArmsTP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAimOffsetBlendSpace1D* BlendSpace_ArmsTP;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* EquipAnim_Weapon;

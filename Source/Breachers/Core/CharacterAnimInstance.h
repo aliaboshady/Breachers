@@ -1,10 +1,10 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "Breachers/Weapons/WeaponInfo.h"
 #include "CharacterAnimInstance.generated.h"
 
 class ACharacterBase;
+class UAimOffsetBlendSpace1D;
 
 UCLASS()
 class BREACHERS_API UCharacterAnimInstance : public UAnimInstance
@@ -39,5 +39,13 @@ protected:
 	bool bIsCrouching;
 
 	UPROPERTY(BlueprintReadOnly)
-	TEnumAsByte<EWeaponType> WeaponType;
+	UAnimSequenceBase* IdlePose_ArmsTP;
+	
+	UPROPERTY(BlueprintReadOnly)
+	UAimOffsetBlendSpace1D* BlendSpace_ArmsTP;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bDidBeginPlay;
+
+	void BeginAfterTime();
 };
