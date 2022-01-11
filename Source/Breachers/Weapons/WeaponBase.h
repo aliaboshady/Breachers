@@ -4,6 +4,9 @@
 #include "GameFramework/Actor.h"
 #include "WeaponBase.generated.h"
 
+#define COLLISION_Weapon "Weapon"
+#define COLLISION_WeaponOverlapSphere "WeaponOverlapSphere"
+
 class ACharacterBase;
 class USphereComponent;
 

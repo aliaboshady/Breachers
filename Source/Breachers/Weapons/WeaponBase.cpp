@@ -23,6 +23,8 @@ AWeaponBase::AWeaponBase()
 	Mesh_TP->bOwnerNoSee = true;
 	Mesh_TP->bCastHiddenShadow = true;
 	Mesh_TP->SetSimulatePhysics(true);
+	Mesh_TP->SetCollisionProfileName(COLLISION_Weapon, true);
+	Mesh_TP->CanCharacterStepUpOn = ECB_No;
 
 	Mesh_FP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh_FP"));
 	Mesh_FP->SetupAttachment(RootComponent);
@@ -33,6 +35,7 @@ AWeaponBase::AWeaponBase()
 	SphereComponent->SetSphereRadius(40);
 	SphereComponent->SetupAttachment(RootComponent);
 	SphereComponent->SetRelativeLocation(FVector(0, 20, 5));
+	SphereComponent->SetCollisionProfileName(COLLISION_WeaponOverlapSphere, true);
 }
 
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
