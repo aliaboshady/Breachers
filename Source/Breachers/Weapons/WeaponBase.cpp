@@ -38,6 +38,7 @@ AWeaponBase::AWeaponBase()
 	SphereComponent->SetCollisionProfileName(COLLISION_WeaponOverlapSphere, true);
 
 	bCanFire = true;
+	bIsFiring = false;
 	bIsReloading = false;
 	bIsEquipping = false;
 }
@@ -101,6 +102,9 @@ void AWeaponBase::OnPrimaryFire()
 	if(!bCanFire || !CharacterPlayer || bIsReloading || bIsEquipping || CurrentAmmoInClip <= 0) return;
 	
 	bCanFire = false;
+	bIsFiring = true;
+	FTimerHandle IsFiringTimer;
+	GetWorld()->GetTimerManager().SetTimer(IsFiringTimer, this, &AWeaponBase::ResetIsFiring, 1, false, WeaponInfo.FireAnimationTime);
 
 	if(WeaponInfo.WeaponFireMode == Auto)
 	{
@@ -140,6 +144,11 @@ void AWeaponBase::FireSpread()
 void AWeaponBase::ResetCanFire()
 {
 	bCanFire = true;
+}
+
+void AWeaponBase::ResetIsFiring()
+{
+	bIsFiring = false;
 }
 
 void AWeaponBase::Client_OnFire_Implementation()
@@ -284,7 +293,7 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 
 void AWeaponBase::OnReload()
 {
-	if(CurrentTotalAmmo <= 0 || CurrentAmmoInClip >= WeaponInfo.MaxAmmoInClip || bIsEquipping || bIsReloading) return;
+	if(CurrentTotalAmmo <= 0 || CurrentAmmoInClip >= WeaponInfo.MaxAmmoInClip || bIsEquipping || bIsReloading || bIsFiring) return;
 	OnStopFire();
 	
 	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &AWeaponBase::OnFinishReload, 1, false, WeaponInfo.ReloadTime);

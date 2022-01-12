@@ -88,6 +88,7 @@ protected:
 	
 	void FireSpread();
 	void ResetCanFire();
+	void ResetIsFiring();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
@@ -117,6 +118,7 @@ protected:
 	FTimerHandle ReloadTimer;
 	FTimerHandle EquipTimer;
 	bool bCanFire;
+	bool bIsFiring;
 	bool bIsReloading;
 	bool bIsEquipping;
 };
