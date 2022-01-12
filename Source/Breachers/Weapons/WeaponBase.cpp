@@ -36,6 +36,10 @@ AWeaponBase::AWeaponBase()
 	SphereComponent->SetupAttachment(RootComponent);
 	SphereComponent->SetRelativeLocation(FVector(0, 20, 5));
 	SphereComponent->SetCollisionProfileName(COLLISION_WeaponOverlapSphere, true);
+
+	bCanFire = true;
+	bIsReloading = false;
+	bIsEquipping = false;
 }
 
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -92,21 +96,55 @@ void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor*
 //////////////////////////////////////////////////// Fire //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void AWeaponBase::OnFire(bool bShouldDecreaseBullets)
+void AWeaponBase::OnPrimaryFire()
 {
-	if(bShouldDecreaseBullets) CurrentAmmoInClip--;
-	Client_OnFire();
+	if(!bCanFire || !CharacterPlayer || bIsReloading || bIsEquipping || CurrentAmmoInClip <= 0) return;
+	
+	bCanFire = false;
+
+	if(WeaponInfo.WeaponFireMode == Auto)
+	{
+		GetWorld()->GetTimerManager().SetTimer(StartFireTimer, this, &AWeaponBase::Client_OnFire, WeaponInfo.TimeBetweenShots + 0.01, true, 0);
+	}
+	else if(WeaponInfo.WeaponFireMode == Spread)
+	{
+		FireSpread();
+	}
+	else
+	{
+		Client_OnFire();
+	}
 }
 
-void AWeaponBase::OnSecondaryFire(bool bShouldDecreaseBullets)
+void AWeaponBase::OnStopFire()
 {
-	if(bShouldDecreaseBullets) CurrentAmmoInClip--;
-	Client_OnFire();
+	GetWorld()->GetTimerManager().ClearTimer(StartFireTimer);
+}
+
+void AWeaponBase::OnSecondaryFire()
+{
+	
+}
+
+void AWeaponBase::FireSpread()
+{
+	for (int32 i = 0; i < WeaponInfo.BulletsPerSpread; i++)
+	{
+		Client_OnFire();
+	}
+	bCanFire = false;
+	FTimerHandle ResetTimer;
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AWeaponBase::ResetCanFire, 1, false, WeaponInfo.TimeBetweenShots);
+}
+
+void AWeaponBase::ResetCanFire()
+{
+	bCanFire = true;
 }
 
 void AWeaponBase::Client_OnFire_Implementation()
 {
-	if(!CharacterPlayer) return;
+	if(CurrentAmmoInClip <= 0) return;
 	
 	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilFactor);
 	const FVector Start = CharacterPlayer->GetCameraLocation();
@@ -120,11 +158,15 @@ void AWeaponBase::Client_OnFire_Implementation()
 	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, WeaponInfo.BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 
 	Server_ProcessShot(OutHit);
-	Server_OnFireEffects(OutHit);
 }
 
 void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 {
+	if(CurrentAmmoInClip <= 0) return;
+	CurrentAmmoInClip = FMath::Clamp(--CurrentAmmoInClip, 0, WeaponInfo.MaxAmmoInClip);
+	FTimerHandle ResetTimer;
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AWeaponBase::ResetCanFire, 1, false, WeaponInfo.TimeBetweenShots);
+	
 	if(OutHit.bBlockingHit)
 	{
 		if(OutHit.GetActor()->ActorHasTag(TAG_Player))
@@ -137,6 +179,7 @@ void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 			Multicast_SpawnBulletHoleDecal(OutHit);
 		}
 	}
+	Server_OnFireEffects(OutHit);
 }
 
 void AWeaponBase::Multicast_SpawnBulletHoleDecal_Implementation(FHitResult OutHit)
@@ -241,12 +284,19 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 
 void AWeaponBase::OnReload()
 {
+	if(CurrentTotalAmmo <= 0 || CurrentAmmoInClip >= WeaponInfo.MaxAmmoInClip || bIsEquipping || bIsReloading) return;
+	OnStopFire();
+	
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &AWeaponBase::OnFinishReload, 1, false, WeaponInfo.ReloadTime);
+	bIsReloading = true;
+	
 	Client_OnReloadAnimations();
 	Multicast_OnReloadAnimations();
 }
 
 void AWeaponBase::OnFinishReload()
 {
+	bIsReloading = false;
 	const int32 NeededAmmo = WeaponInfo.MaxAmmoInClip - CurrentAmmoInClip;
 
 	if(CurrentTotalAmmo - NeededAmmo >= 0)
@@ -263,6 +313,8 @@ void AWeaponBase::OnFinishReload()
 
 void AWeaponBase::OnCancelReload()
 {
+	GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
+	bIsReloading = false;
 	Multicast_OnCancelReloadAnimations();
 }
 
@@ -327,13 +379,19 @@ void AWeaponBase::OnDropEnableOverlap()
 
 void AWeaponBase::OnEquip()
 {
+	bIsEquipping = true;
+	GetWorld()->GetTimerManager().SetTimer(EquipTimer, this, &AWeaponBase::OnCancelEquip, 1, false, WeaponInfo.EquipTime);
 	Client_OnEquipAnimations();
 	Multicast_OnEquipAnimations();
 }
 
 void AWeaponBase::OnCancelEquip()
 {
-	Multicast_OnCancelEquipAnimations();
+	if(bIsEquipping)
+	{
+		Multicast_OnCancelEquipAnimations();
+		bIsEquipping = false;
+	}
 }
 
 void AWeaponBase::Client_OnEquipAnimations_Implementation()

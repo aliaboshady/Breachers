@@ -1,6 +1,6 @@
 #include "AssaultRifleWeapon.h"
 
-void AAssaultRifleWeapon::OnSecondaryFire(bool bShouldDecreaseBullets)
+void AAssaultRifleWeapon::OnSecondaryFire()
 {
 	
 }

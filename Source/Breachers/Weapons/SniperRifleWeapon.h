@@ -8,5 +8,5 @@ class BREACHERS_API ASniperRifleWeapon : public AWeaponBase
 {
 	GENERATED_BODY()
 
-	virtual void OnSecondaryFire(bool bShouldDecreaseBullets) override;
+	virtual void OnSecondaryFire() override;
 };

@@ -29,7 +29,6 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipSecondaryAtStartUp();
 	void UnequipWeapon(AWeaponBase* Weapon);
-	void FinishEquip();
 
 	UFUNCTION(Server, Reliable)
 	void Server_EquipPreviousWeapon();
@@ -50,10 +49,10 @@ protected:
 	void Server_DropWeapon();
 
 	UFUNCTION(Server, Reliable)
-	void Server_StartFire();
+	void Server_StartPrimaryFire();
 
 	UFUNCTION(Server, Reliable)
-	void Server_StopFire();
+	void Server_StopPrimaryFire();
 	
 	UFUNCTION(Server, Reliable)
 	void Server_SecondaryFire();
@@ -77,15 +76,7 @@ protected:
 	void Server_Reload();
 
 	UFUNCTION(Server, Reliable)
-	void Server_FinishReload();
-
-	UFUNCTION(Server, Reliable)
 	void Server_CancelReload();
-
-
-	void Fire();
-	void FireSpread();
-	void ResetCanFire();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
@@ -110,11 +101,4 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> PistolWeaponClass;
-
-	FTimerHandle StartFireTimer;
-	FTimerHandle ReloadTimer;
-	FTimerHandle EquipTimer;
-	bool bCanFire;
-	bool bIsReloading;
-	bool bIsEquipping;
 };

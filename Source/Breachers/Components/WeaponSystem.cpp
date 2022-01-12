@@ -7,9 +7,6 @@ UWeaponSystem::UWeaponSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
-	bCanFire = true;
-	bIsReloading = false;
-	bIsEquipping = false;
 	WeaponThrowForce = 40000;
 }
 
@@ -40,8 +37,8 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &UWeaponSystem::Server_EquipSecondary);
 		PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &UWeaponSystem::Server_EquipMelee);
 	
-		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartFire);
-		PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &UWeaponSystem::Server_StopFire);
+		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartPrimaryFire);
+		PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &UWeaponSystem::Server_StopPrimaryFire);
 
 		PlayerInputComponent->BindAction("SecondaryFire", IE_Pressed, this, &UWeaponSystem::Server_SecondaryFire);
 		PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, this, &UWeaponSystem::Server_EquipPreviousWeapon);
@@ -119,25 +116,20 @@ void UWeaponSystem::DropWeapon()
 
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 {
+	Server_CancelReload();
 	if(CurrentWeapon)
 	{
 		PreviousWeapon = CurrentWeapon;
 		UnequipWeapon(CurrentWeapon);
-		if(bIsEquipping) CurrentWeapon->OnCancelEquip();
+		CurrentWeapon->OnCancelEquip();
+		CurrentWeapon->OnStopFire();
 	}
-	bIsEquipping = true;
 	CurrentWeapon = Weapon;
 	CurrentWeapon->OnEquip();
-	Server_StopFire();
+	Server_StopPrimaryFire();
 
 	Multicast_EquipWeaponVisualsTP(Weapon);
 	Client_EquipWeaponVisualsFP(Weapon);
-	GetWorld()->GetTimerManager().SetTimer(EquipTimer, this, &UWeaponSystem::FinishEquip, 1, false, CurrentWeapon->WeaponInfo.EquipTime);
-}
-
-void UWeaponSystem::FinishEquip()
-{
-	bIsEquipping = false;
 }
 
 void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
@@ -167,21 +159,18 @@ bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 void UWeaponSystem::Server_EquipPrimary_Implementation()
 {
 	if(!PrimaryWeapon || CurrentWeapon == PrimaryWeapon) return;
-	if(bIsReloading) Server_CancelReload();
 	EquipWeapon(PrimaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipSecondary_Implementation()
 {
 	if(!SecondaryWeapon || CurrentWeapon == SecondaryWeapon) return;
-	if(bIsReloading) Server_CancelReload();
 	EquipWeapon(SecondaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipMelee_Implementation()
 {
 	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon) return;
-	if(bIsReloading) Server_CancelReload();
 	EquipWeapon(MeleeWeapon);
 }
 
@@ -190,65 +179,19 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////// Fire //////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-void UWeaponSystem::Server_StartFire_Implementation()
+void UWeaponSystem::Server_StartPrimaryFire_Implementation()
 {
-	if(!CurrentWeapon || CurrentWeapon->GetCurrentAmmoInClip() <= 0 || bIsReloading || bIsEquipping) return;
-
-	const TEnumAsByte<EFireMode> FireMode = CurrentWeapon->WeaponInfo.WeaponFireMode;
-	if(FireMode == Auto)
-	{
-		GetWorld()->GetTimerManager().SetTimer(StartFireTimer, this, &UWeaponSystem::Fire, CurrentWeapon->WeaponInfo.TimeBetweenShots + 0.01, true, 0);
-	}
-	else if(FireMode == Spread)
-	{
-		FireSpread();
-	}
-	else
-	{
-		Fire();
-	}	
+	if(CurrentWeapon) CurrentWeapon->OnPrimaryFire();
 }
 
-void UWeaponSystem::Server_StopFire_Implementation()
+void UWeaponSystem::Server_StopPrimaryFire_Implementation()
 {
-	GetWorld()->GetTimerManager().ClearTimer(StartFireTimer);
+	if(CurrentWeapon) CurrentWeapon->OnStopFire();
 }
 
 void UWeaponSystem::Server_SecondaryFire_Implementation()
 {
-	if(!bCanFire || !CurrentWeapon || bIsReloading || bIsEquipping) return;
-	CurrentWeapon->OnSecondaryFire();
-	bCanFire = false;
-	FTimerHandle ResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &UWeaponSystem::ResetCanFire, 1, false, CurrentWeapon->WeaponInfo.TimeBetweenShots);
-}
-
-void UWeaponSystem::Fire()
-{
-	if(!bCanFire || !CurrentWeapon || bIsReloading || bIsEquipping || CurrentWeapon->GetCurrentAmmoInClip() <= 0) return;
-	CurrentWeapon->OnFire();
-	bCanFire = false;
-	FTimerHandle ResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &UWeaponSystem::ResetCanFire, 1, false, CurrentWeapon->WeaponInfo.TimeBetweenShots);
-}
-
-void UWeaponSystem::FireSpread()
-{
-	if(!bCanFire || !CurrentWeapon) return;
-	
-	const int32 ShotsCount = CurrentWeapon->WeaponInfo.BulletsPerSpread;
-	for (int32 i = 0; i < ShotsCount; i++)
-	{
-		CurrentWeapon->OnFire();
-	}
-	bCanFire = false;
-	FTimerHandle ResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &UWeaponSystem::ResetCanFire, 1, false, CurrentWeapon->WeaponInfo.TimeBetweenShots);
-}
-
-void UWeaponSystem::ResetCanFire()
-{
-	bCanFire = true;
+	if(CurrentWeapon) CurrentWeapon->OnSecondaryFire();
 }
 
 
@@ -258,35 +201,12 @@ void UWeaponSystem::ResetCanFire()
 
 void UWeaponSystem::Server_Reload_Implementation()
 {
-	if(!CurrentWeapon || CurrentWeapon->GetCurrentTotalAmmo() <= 0 || bIsEquipping) return;
-	Server_StopFire();
-
-	const bool bCanReload = CurrentWeapon->GetCurrentAmmoInClip() < CurrentWeapon->WeaponInfo.MaxAmmoInClip;
-	if(bCanReload && !bIsReloading)
-	{
-		CurrentWeapon->OnReload();
-		GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &UWeaponSystem::Server_FinishReload, 1, false, CurrentWeapon->WeaponInfo.ReloadTime);
-		bIsReloading = true;
-	}
-}
-
-void UWeaponSystem::Server_FinishReload_Implementation()
-{
-	if(CurrentWeapon)
-	{
-		CurrentWeapon->OnFinishReload();
-		bIsReloading = false;
-	}
+	if(CurrentWeapon) CurrentWeapon->OnReload();
 }
 
 void UWeaponSystem::Server_CancelReload_Implementation()
 {
-	if(CurrentWeapon)
-	{
-		CurrentWeapon->OnCancelReload();
-		GetWorld()->GetTimerManager().ClearTimer(ReloadTimer);
-		bIsReloading = false;
-	}
+	if(CurrentWeapon) CurrentWeapon->OnCancelReload();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

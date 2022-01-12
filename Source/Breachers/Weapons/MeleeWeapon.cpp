@@ -8,20 +8,27 @@ AMeleeWeapon::AMeleeWeapon()
 	SecondaryTimeBetweenHits = 2;
 }
 
-void AMeleeWeapon::OnFire(bool bShouldDecreaseBullets)
+void AMeleeWeapon::OnPrimaryFire()
 {
 	WeaponInfo.FireAnimationTime = PrimaryAttackTime;
 	WeaponInfo.TimeBetweenShots = PrimaryTimeBetweenHits;
 	if(PrimaryAttackAnim_ArmsFP) WeaponInfo.WeaponAnimations.FireAnim_ArmsFP = PrimaryAttackAnim_ArmsFP;
 	if(PrimaryAttackAnim_ArmsTP) WeaponInfo.WeaponAnimations.FireAnim_ArmsTP = PrimaryAttackAnim_ArmsTP;
-	Super::OnFire(false);
+	CurrentAmmoInClip++;
+	Super::OnPrimaryFire();
 }
 
-void AMeleeWeapon::OnSecondaryFire(bool bShouldDecreaseBullets)
+void AMeleeWeapon::OnSecondaryFire()
 {
+	if(!bCanFire) return;
+	
 	WeaponInfo.FireAnimationTime = SecondaryAttackTime;
 	WeaponInfo.TimeBetweenShots = SecondaryTimeBetweenHits;
 	if(SecondaryAttackAnim_ArmsFP) WeaponInfo.WeaponAnimations.FireAnim_ArmsFP = SecondaryAttackAnim_ArmsFP;
 	if(SecondaryAttackAnim_ArmsTP) WeaponInfo.WeaponAnimations.FireAnim_ArmsTP = SecondaryAttackAnim_ArmsTP;
-	Super::OnSecondaryFire(false);
+
+	bCanFire = false;
+	CurrentAmmoInClip++;
+	Client_OnFire();
+	Super::OnSecondaryFire();
 }

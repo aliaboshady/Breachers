@@ -19,8 +19,9 @@ public:
 	AWeaponBase();
 	void OnTaken();
 	void OnDrop(ACharacterBase* DropperCharacter);
-	virtual void OnFire(bool bShouldDecreaseBullets = true);
-	virtual void OnSecondaryFire(bool bShouldDecreaseBullets = true);
+	virtual void OnPrimaryFire();
+	virtual void OnSecondaryFire();
+	virtual void OnStopFire();
 	void OnReload();
 	void OnFinishReload();
 	void OnCancelReload();
@@ -84,6 +85,9 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnCancelEquipAnimations();
+	
+	void FireSpread();
+	void ResetCanFire();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
@@ -108,4 +112,11 @@ protected:
 
 	UPROPERTY()
 	ACharacterBase* PreviousOwner;
+
+	FTimerHandle StartFireTimer;
+	FTimerHandle ReloadTimer;
+	FTimerHandle EquipTimer;
+	bool bCanFire;
+	bool bIsReloading;
+	bool bIsEquipping;
 };

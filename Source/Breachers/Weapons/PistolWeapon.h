@@ -9,5 +9,5 @@ class BREACHERS_API APistolWeapon : public AWeaponBase
 	GENERATED_BODY()
 
 public:
-	virtual void OnSecondaryFire(bool bShouldDecreaseBullets) override;
+	virtual void OnSecondaryFire() override;
 };

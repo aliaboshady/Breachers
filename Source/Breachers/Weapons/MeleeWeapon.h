@@ -10,8 +10,8 @@ class BREACHERS_API AMeleeWeapon : public AWeaponBase
 
 public:
 	AMeleeWeapon();
-	virtual void OnFire(bool bShouldDecreaseBullets) override;
-	virtual void OnSecondaryFire(bool bShouldDecreaseBullets) override;
+	virtual void OnPrimaryFire() override;
+	virtual void OnSecondaryFire() override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
