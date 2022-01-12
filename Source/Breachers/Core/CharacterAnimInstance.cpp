@@ -11,9 +11,6 @@ void UCharacterAnimInstance::NativeBeginPlay()
 	{
 		OwnerCharacter = Cast<ACharacterBase>(OwnerPawn);
 	}
-	bDidBeginPlay = false;
-	FTimerHandle BeginTimer;
-	GetWorld()->GetTimerManager().SetTimer(BeginTimer, this, &UCharacterAnimInstance::BeginAfterTime, 1, false, 0.1);
 }
 
 void UCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -49,9 +46,4 @@ void UCharacterAnimInstance::Multicast_ChangePose_Implementation()
 		BlendSpace_ArmsTP = CurrentWeapon->WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
 		IdlePose_ArmsTP = CurrentWeapon->WeaponInfo.WeaponAnimations.IdlePose_ArmsTP;
 	}
-}
-
-void UCharacterAnimInstance::BeginAfterTime()
-{
-	bDidBeginPlay = true;
 }

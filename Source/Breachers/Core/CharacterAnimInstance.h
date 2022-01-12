@@ -38,14 +38,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	bool bIsCrouching;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimSequenceBase* IdlePose_ArmsTP;
 	
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAimOffsetBlendSpace1D* BlendSpace_ArmsTP;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool bDidBeginPlay;
-
-	void BeginAfterTime();
 };
