@@ -36,7 +36,7 @@ protected:
 	void Client_ScopeHandle_FP(FTransform Transform1, FTransform Transform2, float Alpha);
 	
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_ScopeHandle_TP(FTransform Transform1, FTransform Transform2, float Alpha);
+	void Multicast_ScopeHandle_TP();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.01", UIMin = "0.01"));
 	float ScopingTime;
@@ -47,11 +47,24 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform ArmsFP_Transform_Scoped;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAnimSequenceBase* ScopedIdlePose_ArmsTP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAimOffsetBlendSpace1D* ScopedBlendSpace_ArmsTP;
+
+	UPROPERTY()
+	UAnimSequenceBase* UnscopedIdlePose_ArmsTP;
+
+	UPROPERTY()
+	UAimOffsetBlendSpace1D* UnscopedBlendSpace_ArmsTP;
+	
 	FTransform OldTransform;
 	FTransform NewTransform;
 
 	FTimerHandle ScopeTimer;
 	bool bCanScope;
 	bool bWantsToScope;
+	bool bIsInScope;
 	float ScopeTimeAlpha;
 };

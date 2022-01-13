@@ -8,6 +8,7 @@ ASniperRifleWeapon::ASniperRifleWeapon()
 	ScopingCooldown = 0.5;
 	bWantsToScope = false;
 	bCanScope = true;
+	bIsInScope = false;
 }
 
 void ASniperRifleWeapon::BeginPlay()
@@ -15,6 +16,8 @@ void ASniperRifleWeapon::BeginPlay()
 	Super::BeginPlay();
 	OldTransform = WeaponInfo.ArmsTransformFP;
 	NewTransform = ArmsFP_Transform_Scoped;
+	UnscopedIdlePose_ArmsTP = WeaponInfo.WeaponAnimations.IdlePose_ArmsTP;
+	UnscopedBlendSpace_ArmsTP = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
 }
 
 void ASniperRifleWeapon::Tick(float DeltaSeconds)
@@ -32,17 +35,6 @@ void ASniperRifleWeapon::OnPrimaryFire()
 	Super::OnPrimaryFire();
 }
 
-void ASniperRifleWeapon::OnSecondaryFire()
-{
-	if(bIsFiring || bIsReloading || bIsEquipping || !bCanScope) return;
-	SetActorTickEnabled(true);
-	ScopeTimeAlpha = 0;
-	bWantsToScope = true;
-	bCanScope = false;
-	bCanFire = false;
-	GetWorldTimerManager().SetTimer(StartFireTimer, this, &ASniperRifleWeapon::ResetCanFire, 1, false, ScopingTime);
-}
-
 void ASniperRifleWeapon::OnReload()
 {
 	Server_ForceUnscope();
@@ -53,6 +45,26 @@ void ASniperRifleWeapon::OnEquip()
 {
 	Server_ForceUnscope();
 	Super::OnEquip();
+}
+
+void ASniperRifleWeapon::ResetCanScope()
+{
+	bCanScope = true;
+}
+
+void ASniperRifleWeapon::OnSecondaryFire()
+{
+	if(bIsFiring || bIsReloading || bIsEquipping || !bCanScope) return;
+	SetActorTickEnabled(true);
+	ScopeTimeAlpha = 0;
+	bWantsToScope = true;
+	bCanScope = false;
+	bCanFire = false;
+	GetWorldTimerManager().SetTimer(StartFireTimer, this, &ASniperRifleWeapon::ResetCanFire, 1, false, ScopingTime);
+
+	if(bIsInScope) Multicast_ForceUnscope_TP();
+	else Multicast_ScopeHandle_TP();
+	bIsInScope = ! bIsInScope;
 }
 
 void ASniperRifleWeapon::Server_HandleTickDisabling_Implementation(float Alpha)
@@ -76,18 +88,10 @@ void ASniperRifleWeapon::Client_ScopeHandle_FP_Implementation(FTransform Transfo
 	CharacterPlayer->GetArmsMeshFP()->SetRelativeTransform(CurrentTransform);
 }
 
-void ASniperRifleWeapon::ResetCanScope()
+void ASniperRifleWeapon::Multicast_ScopeHandle_TP_Implementation()
 {
-	bCanScope = true;
-}
-
-void ASniperRifleWeapon::Multicast_ForceUnscope_TP_Implementation()
-{
-}
-
-void ASniperRifleWeapon::Multicast_ScopeHandle_TP_Implementation(FTransform Transform1, FTransform Transform2,
-	float Alpha)
-{
+	WeaponInfo.WeaponAnimations.IdlePose_ArmsTP = ScopedIdlePose_ArmsTP;
+	WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP = ScopedBlendSpace_ArmsTP;
 }
 
 void ASniperRifleWeapon::Server_ForceUnscope_Implementation()
@@ -105,4 +109,11 @@ void ASniperRifleWeapon::Server_ForceUnscope_Implementation()
 void ASniperRifleWeapon::Client_ForceUnscope_FP_Implementation()
 {
 	CharacterPlayer->GetArmsMeshFP()->SetRelativeTransform(OldTransform);
+	Multicast_ForceUnscope_TP();
+}
+
+void ASniperRifleWeapon::Multicast_ForceUnscope_TP_Implementation()
+{
+	WeaponInfo.WeaponAnimations.IdlePose_ArmsTP = UnscopedIdlePose_ArmsTP;
+	WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP = UnscopedBlendSpace_ArmsTP;
 }
