@@ -22,7 +22,7 @@ public:
 	virtual void OnPrimaryFire();
 	virtual void OnSecondaryFire();
 	virtual void OnStopFire();
-	void OnReload();
+	virtual void OnReload();
 	void OnFinishReload();
 	void OnCancelReload();
 	void OnEquip();
