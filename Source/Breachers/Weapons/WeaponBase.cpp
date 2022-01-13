@@ -14,7 +14,7 @@
 
 AWeaponBase::AWeaponBase()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
 
 	Mesh_TP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh_TP"));
@@ -56,6 +56,7 @@ void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SetReplicateMovement(true);
+	SetActorTickEnabled(false);
 	SetupWeaponInfo();
 	
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapped);
