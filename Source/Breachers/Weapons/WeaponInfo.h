@@ -155,6 +155,9 @@ struct FWeaponInfo : public FTableRowBase
 	float BulletRadius;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DefaultFOV;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FWeaponAnimation WeaponAnimations;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

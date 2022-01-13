@@ -17,8 +17,8 @@ class BREACHERS_API AWeaponBase : public AActor
 	
 public:	
 	AWeaponBase();
-	void OnTaken();
-	void OnDrop(ACharacterBase* DropperCharacter);
+	virtual void OnTaken();
+	virtual void OnDrop(ACharacterBase* DropperCharacter);
 	virtual void OnPrimaryFire();
 	virtual void OnSecondaryFire();
 	virtual void OnStopFire();
@@ -26,6 +26,7 @@ public:
 	void OnFinishReload();
 	void OnCancelReload();
 	virtual void OnEquip();
+	virtual void OnUnquip();
 	void OnCancelEquip();
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}

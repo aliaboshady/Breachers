@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "CharacterBase.generated.h"
 
@@ -43,6 +44,7 @@ public:
 	
 	FVector GetCameraLocation() const;
 	FVector GetCameraDirection() const;
+	FORCEINLINE void SetCameraFOV(float FOV){CameraComponent->FieldOfView = FOV;}
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;

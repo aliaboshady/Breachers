@@ -1,5 +1,7 @@
 #include "SniperRifleWeapon.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Blueprint/UserWidget.h"
+#include "Breachers/Core/BreachersPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ASniperRifleWeapon::ASniperRifleWeapon()
@@ -9,6 +11,7 @@ ASniperRifleWeapon::ASniperRifleWeapon()
 	bWantsToScope = false;
 	bCanScope = true;
 	bIsInScope = false;
+	ScopeZoomMultiplier = 1.5;
 }
 
 void ASniperRifleWeapon::BeginPlay()
@@ -18,6 +21,7 @@ void ASniperRifleWeapon::BeginPlay()
 	NewTransform = ArmsFP_Transform_Scoped;
 	UnscopedIdlePose_ArmsTP = WeaponInfo.WeaponAnimations.IdlePose_ArmsTP;
 	UnscopedBlendSpace_ArmsTP = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
+	DefaultScopingZoom = WeaponInfo.DefaultFOV;
 }
 
 void ASniperRifleWeapon::Tick(float DeltaSeconds)
@@ -47,6 +51,23 @@ void ASniperRifleWeapon::OnEquip()
 	Super::OnEquip();
 }
 
+void ASniperRifleWeapon::OnUnquip()
+{
+	Super::OnUnquip();
+	Server_ForceUnscope();
+}
+
+
+void ASniperRifleWeapon::OnTaken()
+{
+	Super::OnTaken();
+}
+
+void ASniperRifleWeapon::OnDrop(ACharacterBase* DropperCharacter)
+{
+	Super::OnDrop(DropperCharacter);
+}
+
 void ASniperRifleWeapon::ResetCanScope()
 {
 	bCanScope = true;
@@ -62,8 +83,15 @@ void ASniperRifleWeapon::OnSecondaryFire()
 	bCanFire = false;
 	GetWorldTimerManager().SetTimer(StartFireTimer, this, &ASniperRifleWeapon::ResetCanFire, 1, false, ScopingTime);
 
-	if(bIsInScope) Multicast_ForceUnscope_TP();
-	else Multicast_ScopeHandle_TP();
+	if(bIsInScope)
+	{
+		Client_ShowScopeWidget(false);
+		Multicast_ForceUnscope_TP();
+	}
+	else
+	{
+		Multicast_ScopeHandle_TP();
+	}
 	bIsInScope = ! bIsInScope;
 }
 
@@ -77,13 +105,13 @@ void ASniperRifleWeapon::Server_HandleTickDisabling_Implementation(float Alpha)
 		OldTransform = NewTransform;
 		NewTransform = TempTransform;
 		GetWorldTimerManager().SetTimer(ScopeTimer, this, &ASniperRifleWeapon::ResetCanScope, 1, false, ScopingCooldown);
+		if(bIsInScope) Client_ShowScopeWidget(true);
 	}
 }
 
 void ASniperRifleWeapon::Client_ScopeHandle_FP_Implementation(FTransform Transform1, FTransform Transform2, float Alpha)
 {
 	if(!CharacterPlayer) return;
-	
 	const FTransform CurrentTransform = UKismetMathLibrary::TLerp(Transform1, Transform2, Alpha);
 	CharacterPlayer->GetArmsMeshFP()->SetRelativeTransform(CurrentTransform);
 }
@@ -100,9 +128,11 @@ void ASniperRifleWeapon::Server_ForceUnscope_Implementation()
 	ScopeTimeAlpha = 0;
 	bWantsToScope = false;
 	bCanScope = false;
+	bIsInScope = false;
 	OldTransform = WeaponInfo.ArmsTransformFP;
 	NewTransform = ArmsFP_Transform_Scoped;
 	Client_ForceUnscope_FP();
+	Multicast_ForceUnscope_TP();
 	GetWorldTimerManager().SetTimer(ScopeTimer, this, &ASniperRifleWeapon::ResetCanScope, 1, false, ScopingCooldown);
 }
 
@@ -110,10 +140,41 @@ void ASniperRifleWeapon::Client_ForceUnscope_FP_Implementation()
 {
 	CharacterPlayer->GetArmsMeshFP()->SetRelativeTransform(OldTransform);
 	Multicast_ForceUnscope_TP();
+	Client_ShowScopeWidget(false);
 }
 
 void ASniperRifleWeapon::Multicast_ForceUnscope_TP_Implementation()
 {
 	WeaponInfo.WeaponAnimations.IdlePose_ArmsTP = UnscopedIdlePose_ArmsTP;
 	WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP = UnscopedBlendSpace_ArmsTP;
+}
+
+void ASniperRifleWeapon::Client_CreatScopeWidget_Implementation()
+{
+	if(!CharacterPlayer) return;
+	if(ABreachersPlayerController* PC = Cast<ABreachersPlayerController>(CharacterPlayer->GetController()))
+	{
+		if(ScopeWidgetClass) ScopeWidget = CreateWidget(PC, ScopeWidgetClass);
+	}
+}
+
+void ASniperRifleWeapon::Client_ShowScopeWidget_Implementation(bool bShowScope)
+{
+	if(!ScopeWidget) Client_CreatScopeWidget();
+	if(!ScopeWidget || !CharacterPlayer) return;
+	if(DefaultScopingZoom == 0) DefaultScopingZoom = 90;
+	
+	if(bShowScope)
+	{
+		ScopeWidget->AddToViewport();
+		CharacterPlayer->SetCameraFOV(DefaultScopingZoom / ScopeZoomMultiplier);
+	}
+	else
+	{
+		CharacterPlayer->SetCameraFOV(DefaultScopingZoom);
+		ScopeWidget->RemoveFromViewport();
+	}
+	
+	Mesh_FP->SetHiddenInGame(bShowScope);
+	CharacterPlayer->GetArmsMeshFP()->SetHiddenInGame(bShowScope);
 }

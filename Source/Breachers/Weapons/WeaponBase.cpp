@@ -395,6 +395,10 @@ void AWeaponBase::OnEquip()
 	Multicast_OnEquipAnimations();
 }
 
+void AWeaponBase::OnUnquip()
+{
+}
+
 void AWeaponBase::OnCancelEquip()
 {
 	if(bIsEquipping)

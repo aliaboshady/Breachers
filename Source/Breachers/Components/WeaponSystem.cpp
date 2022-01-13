@@ -139,6 +139,7 @@ void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
 
 void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
 {
+	Weapon->OnUnquip();
 	Multicast_HideWeapon(Weapon, true);
 }
 

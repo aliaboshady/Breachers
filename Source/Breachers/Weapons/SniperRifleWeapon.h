@@ -16,8 +16,11 @@ protected:
 	virtual void OnSecondaryFire() override;
 	virtual void OnReload() override;
 	virtual void OnEquip() override;
+	virtual void OnUnquip() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+	virtual void OnTaken() override;
+	virtual void OnDrop(ACharacterBase* DropperCharacter) override;
 	void ResetCanScope();
 
 	UFUNCTION(Server, Reliable)
@@ -37,6 +40,15 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ScopeHandle_TP();
+	
+	UFUNCTION(Client, Reliable)
+	void Client_CreatScopeWidget();
+
+	UFUNCTION(Client, Reliable)
+	void Client_ShowScopeWidget(bool bShowScope);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ScopeZoomMultiplier;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.01", UIMin = "0.01"));
 	float ScopingTime;
@@ -53,11 +65,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAimOffsetBlendSpace1D* ScopedBlendSpace_ArmsTP;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UUserWidget> ScopeWidgetClass;
+
 	UPROPERTY()
 	UAnimSequenceBase* UnscopedIdlePose_ArmsTP;
 
 	UPROPERTY()
 	UAimOffsetBlendSpace1D* UnscopedBlendSpace_ArmsTP;
+
+	UPROPERTY()
+	UUserWidget* ScopeWidget;
 	
 	FTransform OldTransform;
 	FTransform NewTransform;
@@ -67,4 +85,5 @@ protected:
 	bool bWantsToScope;
 	bool bIsInScope;
 	float ScopeTimeAlpha;
+	float DefaultScopingZoom;
 };
