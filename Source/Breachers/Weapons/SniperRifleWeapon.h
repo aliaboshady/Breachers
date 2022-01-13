@@ -27,13 +27,19 @@ protected:
 	void Server_ForceUnscope();
 
 	UFUNCTION(Client, Reliable)
-	void Client_ForceUnscope();
+	void Client_ForceUnscope_FP();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ForceUnscope_TP();
 	
 	UFUNCTION(Client, Reliable)
-	void Client_ScopeHandle(FTransform Transform1, FTransform Transform2, float Alpha);
+	void Client_ScopeHandle_FP(FTransform Transform1, FTransform Transform2, float Alpha);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ScopeHandle_TP(FTransform Transform1, FTransform Transform2, float Alpha);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float ScopingSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta = (ClampMin = "0.01", UIMin = "0.01"));
+	float ScopingTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ScopingCooldown;
