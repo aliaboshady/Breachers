@@ -15,6 +15,8 @@ protected:
 	virtual void OnPrimaryFire() override;
 	virtual void OnSecondaryFire() override;
 	virtual void OnReload() override;
+	virtual void OnEquip() override;
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	void ResetCanScope();
 
@@ -23,6 +25,9 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void Server_ForceUnscope();
+
+	UFUNCTION(Client, Reliable)
+	void Client_ForceUnscope();
 	
 	UFUNCTION(Client, Reliable)
 	void Client_ScopeHandle(FTransform Transform1, FTransform Transform2, float Alpha);
@@ -41,7 +46,6 @@ protected:
 
 	FTimerHandle ScopeTimer;
 	bool bCanScope;
-	bool bIsInScope;
-	bool bIsScoping;
+	bool bWantsToScope;
 	float ScopeTimeAlpha;
 };

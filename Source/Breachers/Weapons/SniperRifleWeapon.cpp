@@ -6,9 +6,15 @@ ASniperRifleWeapon::ASniperRifleWeapon()
 {
 	ScopingSpeed = 6;
 	ScopingCooldown = 0.5;
-	bIsInScope = false;
-	bIsScoping = false;
+	bWantsToScope = false;
 	bCanScope = true;
+}
+
+void ASniperRifleWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	OldTransform = WeaponInfo.ArmsTransformFP;
+	NewTransform = ArmsFP_Transform_Scoped;
 }
 
 void ASniperRifleWeapon::Tick(float DeltaSeconds)
@@ -16,8 +22,7 @@ void ASniperRifleWeapon::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	ScopeTimeAlpha += DeltaSeconds * ScopingSpeed;
 	
-	if(bIsInScope) Client_ScopeHandle(OldTransform, NewTransform, ScopeTimeAlpha);
-	else Client_ScopeHandle(OldTransform, NewTransform, ScopeTimeAlpha);
+	if(bWantsToScope) Client_ScopeHandle(OldTransform, NewTransform, ScopeTimeAlpha);
 	Server_HandleTickDisabling(ScopeTimeAlpha);
 }
 
@@ -29,22 +34,12 @@ void ASniperRifleWeapon::OnPrimaryFire()
 
 void ASniperRifleWeapon::OnSecondaryFire()
 {
-	if(bIsFiring || bIsReloading || bIsEquipping || bIsScoping || !bCanScope) return;
+	if(bIsFiring || bIsReloading || bIsEquipping || !bCanScope) return;
 	SetActorTickEnabled(true);
 	ScopeTimeAlpha = 0;
-	bIsScoping = true;
+	bWantsToScope = true;
 	bCanScope = false;
-	
-	if(bIsInScope)
-	{
-		OldTransform = ArmsFP_Transform_Scoped;
-		NewTransform = WeaponInfo.ArmsTransformFP;
-	}
-	else
-	{
-		OldTransform = WeaponInfo.ArmsTransformFP;
-		NewTransform = ArmsFP_Transform_Scoped;
-	}
+	bCanFire = false;
 }
 
 void ASniperRifleWeapon::OnReload()
@@ -53,13 +48,21 @@ void ASniperRifleWeapon::OnReload()
 	Super::OnReload();
 }
 
+void ASniperRifleWeapon::OnEquip()
+{
+	Server_ForceUnscope();
+	Super::OnEquip();
+}
+
 void ASniperRifleWeapon::Server_HandleTickDisabling_Implementation(float Alpha)
 {
 	if(Alpha >= 1)
 	{
 		SetActorTickEnabled(false);
-		bIsScoping = false;
-		bIsInScope = !bIsInScope;
+		bWantsToScope = false;
+		const FTransform TempTransform = OldTransform;
+		OldTransform = NewTransform;
+		NewTransform = TempTransform;
 		GetWorldTimerManager().SetTimer(ScopeTimer, this, &ASniperRifleWeapon::ResetCanScope, 1, false, ScopingCooldown);
 	}
 }
@@ -67,25 +70,30 @@ void ASniperRifleWeapon::Server_HandleTickDisabling_Implementation(float Alpha)
 void ASniperRifleWeapon::Client_ScopeHandle_Implementation(FTransform Transform1, FTransform Transform2, float Alpha)
 {
 	if(!CharacterPlayer) return;
+	
 	const FTransform CurrentTransform = UKismetMathLibrary::TLerp(Transform1, Transform2, Alpha);
 	CharacterPlayer->GetArmsMeshFP()->SetRelativeTransform(CurrentTransform);
 }
 
-
 void ASniperRifleWeapon::ResetCanScope()
 {
 	bCanScope = true;
+	bCanFire = true;
 }
 
 void ASniperRifleWeapon::Server_ForceUnscope_Implementation()
 {
-	if(bIsFiring || bIsReloading || bIsEquipping || bIsScoping || !bCanScope) return;
-	SetActorTickEnabled(true);
+	SetActorTickEnabled(false);
 	ScopeTimeAlpha = 0;
-	bIsScoping = true;
+	bWantsToScope = false;
 	bCanScope = false;
-	
-	bIsInScope = true;
-	OldTransform = ArmsFP_Transform_Scoped;
-	NewTransform = WeaponInfo.ArmsTransformFP;
+	OldTransform = WeaponInfo.ArmsTransformFP;
+	NewTransform = ArmsFP_Transform_Scoped;
+	Client_ForceUnscope();
+	GetWorldTimerManager().SetTimer(ScopeTimer, this, &ASniperRifleWeapon::ResetCanScope, 1, false, ScopingCooldown);
+}
+
+void ASniperRifleWeapon::Client_ForceUnscope_Implementation()
+{
+	CharacterPlayer->GetArmsMeshFP()->SetRelativeTransform(OldTransform);
 }

@@ -25,7 +25,7 @@ public:
 	virtual void OnReload();
 	void OnFinishReload();
 	void OnCancelReload();
-	void OnEquip();
+	virtual void OnEquip();
 	void OnCancelEquip();
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
