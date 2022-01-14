@@ -441,8 +441,22 @@ void AWeaponBase::PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeleta
 void AWeaponBase::CancelAllAnimations() const
 {
 	if(!CharacterPlayer) return;
-	Mesh_FP->GetAnimInstance()->StopAllMontages(0);
-	Mesh_TP->GetAnimInstance()->StopAllMontages(0);
-	CharacterPlayer->GetMesh()->GetAnimInstance()->StopAllMontages(0);
-	CharacterPlayer->GetArmsMeshFP()->GetAnimInstance()->StopAllMontages(0);
+	UAnimInstance* AnimIn_Mesh_FP = Mesh_FP->GetAnimInstance();
+	UAnimInstance* AnimIn_Mesh_TP = Mesh_TP->GetAnimInstance();
+	UAnimInstance* AnimIn_CharacterMesh_FP = CharacterPlayer->GetArmsMeshFP()->GetAnimInstance();
+	UAnimInstance* AnimIn_CharacterMesh_TP = CharacterPlayer->GetMesh()->GetAnimInstance();
+	
+	if(AnimIn_CharacterMesh_FP)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Got anim instance"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NO anim instance"));
+	}
+	
+	if(AnimIn_Mesh_FP) AnimIn_Mesh_FP->StopAllMontages(0);
+	if(AnimIn_Mesh_TP) AnimIn_Mesh_TP->StopAllMontages(0);
+	if(AnimIn_CharacterMesh_FP) AnimIn_CharacterMesh_FP->StopAllMontages(0);
+	if(AnimIn_CharacterMesh_TP) AnimIn_CharacterMesh_TP->StopAllMontages(0);
 }

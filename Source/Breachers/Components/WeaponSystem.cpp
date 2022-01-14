@@ -145,7 +145,7 @@ void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::EquipSecondaryAtStartUp()
 {
-	if(MeleeWeapon) EquipWeapon(MeleeWeapon);
+	if(MeleeWeapon)EquipWeapon(MeleeWeapon);
 	if(SecondaryWeapon) EquipWeapon(SecondaryWeapon);
 }
 
