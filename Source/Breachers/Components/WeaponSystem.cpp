@@ -221,9 +221,7 @@ void UWeaponSystem::Client_EquipWeaponVisualsFP_Implementation(AWeaponBase* Weap
 		USkeletalMeshComponent* ArmsFP = CharacterPlayer->GetArmsMeshFP();
 		Weapon->Mesh_FP->AttachToComponent(ArmsFP, CreateAttachRules(), "WeaponSocket");
 		Weapon->Mesh_FP->SetHiddenInGame(false);
-		
-		const FTransform ArmsTransform = Weapon->WeaponInfo.ArmsTransformFP;
-		if(ArmsTransform.GetLocation().Size() != 0) ArmsFP->SetRelativeTransform(ArmsTransform);
+		ArmsFP->SetRelativeTransform(Weapon->WeaponInfo.ArmsTransformFP);
 	}
 }
 void UWeaponSystem::Multicast_EquipWeaponVisualsTP_Implementation(AWeaponBase* Weapon)
