@@ -101,6 +101,9 @@ struct FWeaponInfo : public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* WeaponIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<EWeaponType> WeaponType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
