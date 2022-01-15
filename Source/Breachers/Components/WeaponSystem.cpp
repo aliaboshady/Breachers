@@ -8,6 +8,7 @@ UWeaponSystem::UWeaponSystem()
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
 	WeaponThrowForce = 40000;
+	bShootingEnabled = true;
 }
 
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -19,6 +20,7 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, SecondaryWeapon);
 	DOREPLIFETIME(UWeaponSystem, MeleeWeapon);
 	DOREPLIFETIME(UWeaponSystem, CharacterPlayer);
+	DOREPLIFETIME(UWeaponSystem, bShootingEnabled);
 }
 
 void UWeaponSystem::BeginPlay()
@@ -182,6 +184,7 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void UWeaponSystem::Server_StartPrimaryFire_Implementation()
 {
+	if(!bShootingEnabled) return;
 	if(CurrentWeapon) CurrentWeapon->OnPrimaryFire();
 }
 
@@ -192,6 +195,7 @@ void UWeaponSystem::Server_StopPrimaryFire_Implementation()
 
 void UWeaponSystem::Server_SecondaryFire_Implementation()
 {
+	if(!bShootingEnabled) return;
 	if(CurrentWeapon) CurrentWeapon->OnSecondaryFire();
 }
 
@@ -270,4 +274,9 @@ FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 	AttachRules.RotationRule = EAttachmentRule::SnapToTarget;
 	AttachRules.ScaleRule = EAttachmentRule::SnapToTarget;
 	return AttachRules;
+}
+
+void UWeaponSystem::EnableShooting(bool bEnableShooting)
+{
+	bShootingEnabled = bEnableShooting;
 }

@@ -18,6 +18,7 @@ public:
 	bool CanTakeWeapon(AWeaponBase* Weapon);
 	void TakeWeapon(AWeaponBase* Weapon);
 	void DropWeapon();
+	void EnableShooting(bool bEnableShooting);
 	AWeaponBase* GetCurrentWeapon();
 
 	UPROPERTY(EditAnywhere)
@@ -101,4 +102,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> PistolWeaponClass;
+
+	UPROPERTY(Replicated)
+	bool bShootingEnabled;
 };

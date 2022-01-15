@@ -55,23 +55,17 @@ void UBuyMenu::ShowHideBuyMenu()
 	if(!bBuyMenuOpen) BuyMenuWidget->AddToViewport();
 	else BuyMenuWidget->RemoveFromViewport();
 	bBuyMenuOpen = !bBuyMenuOpen;
-	SetInputUI(true);
+	SetInputUI(bBuyMenuOpen);
 }
 
 void UBuyMenu::SetInputUI(bool bIsUI)
 {
 	if(!PC) return;
 	
-	if(bIsUI)
-	{
-		PC->SetInputMode(FInputModeGameOnly());
-		PC->bShowMouseCursor = false;
-	}
-	else
-	{
-		PC->SetInputMode(FInputModeGameAndUI());
-		PC->bShowMouseCursor = true;
-	}
+	if(bIsUI) PC->SetInputMode(FInputModeGameAndUI());
+	else PC->SetInputMode(FInputModeGameOnly());
+	PC->bShowMouseCursor = bIsUI;
+	PC->EnableShooting(!bIsUI);
 }
 
 void UBuyMenu::EnableBuying(bool bEnableBuying)

@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/HealthSystem.h"
+#include "Breachers/Components/WeaponSystem.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -108,4 +109,14 @@ void ABreachersPlayerController::OnPossess(APawn* InPawn)
 	{
 		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &ABreachersPlayerController::OnDie);
 	}
+}
+
+void ABreachersPlayerController::EnableShooting(bool bEnableShooting)
+{
+	Server_EnableShooting(bEnableShooting);
+}
+
+void ABreachersPlayerController::Server_EnableShooting_Implementation(bool bEnableShooting)
+{
+	CharacterPlayer->WeaponSystem->EnableShooting(bEnableShooting);
 }

@@ -13,6 +13,7 @@ class BREACHERS_API ABreachersPlayerController : public APlayerController
 
 public:
 	void ShowTeamSelectionMenu();
+	void EnableShooting(bool bEnableShooting);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -20,6 +21,9 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void SetInputUI(bool bIsUI = true);
+
+	UFUNCTION(Server, Reliable)
+	void Server_EnableShooting(bool bEnableShooting);
 
 	UFUNCTION()
 	void OnDie();
