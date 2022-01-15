@@ -14,6 +14,7 @@ UWeaponSystem::UWeaponSystem()
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UWeaponSystem, LastTakenWeapon);
 	DOREPLIFETIME(UWeaponSystem, PreviousWeapon);
 	DOREPLIFETIME(UWeaponSystem, CurrentWeapon);
 	DOREPLIFETIME(UWeaponSystem, PrimaryWeapon);
@@ -55,8 +56,8 @@ void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
 	if(MeleeWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(MeleeWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
 	if(PistolWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(PistolWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
 
-	FTimerHandle EquipSecondaryHandle;
-	GetWorld()->GetTimerManager().SetTimer(EquipSecondaryHandle, this, &UWeaponSystem::EquipSecondaryAtStartUp, 1, false, 0.1);
+	FTimerHandle SpawnedWeaponHandle;
+	GetWorld()->GetTimerManager().SetTimer(SpawnedWeaponHandle, this, &UWeaponSystem::EquipStartUpWeapons, 1, false, 0.05);
 }
 
 void UWeaponSystem::SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass)
@@ -68,7 +69,20 @@ void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> W
 {
 	if(WeaponClass)
 	{
-		GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+		AWeaponBase* SpawnedWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+		FTimerHandle SpawnedWeaponHandle;
+
+		if(!LastTakenWeapon || !PrimaryWeapon || !SecondaryWeapon) return;
+
+		EWeaponType WeaponType = SpawnedWeapon->WeaponInfo.WeaponType;
+		if(WeaponType == Primary && LastTakenWeapon == PrimaryWeapon)
+		{
+			GetWorld()->GetTimerManager().SetTimer(SpawnedWeaponHandle, this, &UWeaponSystem::Server_EquipPrimary, 1, false, 0.05);
+		}
+		else if(WeaponType == Secondary && LastTakenWeapon == SecondaryWeapon)
+		{
+			GetWorld()->GetTimerManager().SetTimer(SpawnedWeaponHandle, this, &UWeaponSystem::Server_EquipSecondary, 1, false, 0.05);
+		}
 	}
 }
 
@@ -91,6 +105,7 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 		MeleeWeapon = Weapon;
 	}
 
+	LastTakenWeapon = Weapon;
 	Multicast_HideWeapon(Weapon, true);
 	Weapon->SetOwner(CharacterPlayer);
 	Weapon->SetInstigator(CharacterPlayer);
@@ -99,7 +114,6 @@ void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 {
 	Server_TakeWeapon(Weapon);
 }
-
 
 void UWeaponSystem::Server_DropWeapon_Implementation()
 {
@@ -158,9 +172,9 @@ void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
 	Multicast_HideWeapon(Weapon, true);
 }
 
-void UWeaponSystem::EquipSecondaryAtStartUp()
+void UWeaponSystem::EquipStartUpWeapons()
 {
-	if(MeleeWeapon)EquipWeapon(MeleeWeapon);
+	if(MeleeWeapon)TakeWeapon(MeleeWeapon);
 	if(SecondaryWeapon) EquipWeapon(SecondaryWeapon);
 }
 

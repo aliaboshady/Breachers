@@ -29,7 +29,7 @@ protected:
 	virtual void BeginPlay() override;
 	FAttachmentTransformRules CreateAttachRules();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	void EquipSecondaryAtStartUp();
+	void EquipStartUpWeapons();
 	void UnequipWeapon(AWeaponBase* Weapon);
 
 	UFUNCTION(Server, Reliable)
@@ -85,6 +85,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	AWeaponBase* LastTakenWeapon;
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	AWeaponBase* PreviousWeapon;
