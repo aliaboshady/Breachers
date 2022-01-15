@@ -3,6 +3,8 @@
 #include "GameFramework/PlayerController.h"
 #include "BreachersPlayerController.generated.h"
 
+class UBuyMenu;
+class UMoneySystem;
 class ACharacterBase;
 class ABreachersGameModeBase;
 
@@ -12,8 +14,18 @@ class BREACHERS_API ABreachersPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	ABreachersPlayerController();
 	void ShowTeamSelectionMenu();
 	void EnableShooting(bool bEnableShooting);
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UMoneySystem* MoneySystem;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBuyMenu* BuyMenu;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	ACharacterBase* CharacterPlayer;
 	
 protected:
 	virtual void BeginPlay() override;
@@ -49,9 +61,6 @@ protected:
 
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
-
-	UPROPERTY(Replicated, BlueprintReadOnly)
-	ACharacterBase* CharacterPlayer;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> TeamSelectWidgetClass;

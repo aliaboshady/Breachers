@@ -18,17 +18,15 @@ void UBuyMenu::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UBuyMenu, bCanBuy);
-	DOREPLIFETIME(UBuyMenu, CharacterPlayer);
 	DOREPLIFETIME(UBuyMenu, PC);
 }
 
 void UBuyMenu::BeginPlay()
 {
 	Super::BeginPlay();
-	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
 
 	FTimerHandle BuyMenuHandle;
-	GetWorld()->GetTimerManager().SetTimer(BuyMenuHandle, this, &UBuyMenu::Client_CreateBuyMenu, 1, false, 0.2);
+	GetWorld()->GetTimerManager().SetTimer(BuyMenuHandle, this, &UBuyMenu::GetPC, 1, false, 0.2);
 }
 
 void UBuyMenu::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -39,16 +37,15 @@ void UBuyMenu::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	}
 }
 
+void UBuyMenu::GetPC()
+{
+	PC = Cast<ABreachersPlayerController>(GetOwner());
+	Client_CreateBuyMenu();
+}
+
 void UBuyMenu::Client_CreateBuyMenu_Implementation()
 {
-	if(BuyMenuWidgetClass && CharacterPlayer)
-	{
-		PC = Cast<ABreachersPlayerController>(CharacterPlayer->GetController());
-		if(PC)
-		{
-			BuyMenuWidget = CreateWidget(PC, BuyMenuWidgetClass);
-		}
-	}
+	if(BuyMenuWidgetClass && PC) BuyMenuWidget = CreateWidget(PC, BuyMenuWidgetClass);
 }
 
 void UBuyMenu::ShowHideBuyMenu()
@@ -83,9 +80,9 @@ void UBuyMenu::BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass)
 
 void UBuyMenu::Server_BuyWeapon_Implementation(int32 Price, TSubclassOf<AWeaponBase> WeaponClass)
 {
-	if(CharacterPlayer && WeaponClass)
+	if(WeaponClass && PC)
 	{
-		CharacterPlayer->MoneySystem->AddToCurrentMoney(-Price);
-		CharacterPlayer->WeaponSystem->SpawnWeapon(WeaponClass);
+		PC->MoneySystem->AddToCurrentMoney(-Price);
+		PC->CharacterPlayer->WeaponSystem->SpawnWeapon(WeaponClass);
 	}
 }

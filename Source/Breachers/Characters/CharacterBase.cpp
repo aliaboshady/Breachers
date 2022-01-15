@@ -1,9 +1,9 @@
 #include "CharacterBase.h"
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
-#include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Breachers/Core/BreachersPlayerController.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -19,8 +19,6 @@ ACharacterBase::ACharacterBase()
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
 	HealthSystem = CreateDefaultSubobject<UHealthSystem>(TEXT("Health System"));
-	BuyMenu = CreateDefaultSubobject<UBuyMenu>(TEXT("Buy Menu"));
-	MoneySystem = CreateDefaultSubobject<UMoneySystem>(TEXT("Money System"));
 	
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = MovementSystem->RunSpeed;
@@ -66,6 +64,7 @@ ACharacterBase::ACharacterBase()
 void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ACharacterBase, PC);
 	//DOREPLIFETIME(ACharacterBase, bIsDead);
 }
 
@@ -78,12 +77,18 @@ void ACharacterBase::BeginPlay()
 	}
 }
 
+void ACharacterBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	PC = Cast<ABreachersPlayerController>(NewController);
+}
+
 void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if(MovementSystem) MovementSystem->SetPlayerInputComponent(PlayerInputComponent);
 	if(WeaponSystem) WeaponSystem->SetPlayerInputComponent(PlayerInputComponent);
-	if(BuyMenu) BuyMenu->SetPlayerInputComponent(PlayerInputComponent);
+	PlayerInputComponent->BindAction(INPUT_OpenBuyMenu, IE_Pressed, this, &ACharacterBase::ShowHideBuyMenu);
 }
 
 void ACharacterBase::Server_OnDie_Implementation()
@@ -148,4 +153,10 @@ void ACharacterBase::DeathCameraAnimation()
 void ACharacterBase::StopRagdollMovement() const
 {
 	GetMesh()->SetComponentTickEnabled(false);
+}
+
+void ACharacterBase::ShowHideBuyMenu()
+{
+	if(!PC) return;
+	PC->BuyMenu->ShowHideBuyMenu();
 }

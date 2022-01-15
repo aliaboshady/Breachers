@@ -22,15 +22,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass);
 
+	void ShowHideBuyMenu();
+	
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	void ShowHideBuyMenu();
 	void SetInputUI(bool bIsUI);
+	void GetPC();
 
 	UFUNCTION(Server, Reliable)
 	void Server_BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass);
-	
 
 	UFUNCTION(Client, Reliable)
 	void Client_CreateBuyMenu();
@@ -40,9 +41,6 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bCanBuy;
-
-	UPROPERTY(Replicated)
-	ACharacterBase* CharacterPlayer;
 	
 	UPROPERTY(Replicated)
 	ABreachersPlayerController* PC;

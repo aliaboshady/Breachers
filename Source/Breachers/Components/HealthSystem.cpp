@@ -2,6 +2,7 @@
 
 #include "MoneySystem.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Core/BreachersPlayerController.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -35,20 +36,15 @@ void UHealthSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 }
 
 void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy,
-	FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
-	const UDamageType* DamageType, AActor* DamageCauser)
+                                      FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
+                                      const UDamageType* DamageType, AActor* DamageCauser)
 {
 	CurrentHealth = FMath::Clamp(CurrentHealth - static_cast<int32>(Damage), 0, MaxHealth);
 	if(CurrentHealth <= 0 && !bIsDead)
 	{
-		AWeaponBase* KillerWeapon = Cast<AWeaponBase>(DamageCauser);
-		ACharacterBase* KillerCharacter = Cast<ACharacterBase>(InstigatedBy->GetPawn());
-		if(KillerCharacter && KillerWeapon)
-		{
-			KillerCharacter->MoneySystem->AddToCurrentMoney(KillerWeapon->WeaponInfo.KillRewardMoney);
-		}
 		bIsDead = true;
 		Server_KillPlayer();
+		RewardKiller(InstigatedBy, DamageCauser);
 	}
 }
 
@@ -61,4 +57,14 @@ void UHealthSystem::OnRep_IsDead() const
 void UHealthSystem::Server_KillPlayer_Implementation()
 {
 	OnRep_IsDead();
+}
+
+void UHealthSystem::RewardKiller(AController* InstigatedBy, AActor* DamageCauser)
+{
+	AWeaponBase* KillerWeapon = Cast<AWeaponBase>(DamageCauser);
+	ACharacterBase* KillerCharacter = Cast<ACharacterBase>(InstigatedBy->GetPawn());
+	if(KillerCharacter && KillerWeapon)
+	{
+		KillerCharacter->GetBreacherPC()->MoneySystem->AddToCurrentMoney(KillerWeapon->WeaponInfo.KillRewardMoney);
+	}
 }

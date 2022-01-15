@@ -54,6 +54,6 @@ void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> Characte
 	if(ACharacterBase* Character = GetWorld()->SpawnActor<ACharacterBase>(CharacterClass, SpawnTransform, SpawnParameters))
 	{
 		Controller->Possess(Character);
-		if(Character->BuyMenu) Character->BuyMenu->EnableBuying(true);
+		if(ABreachersPlayerController* PC = Cast<ABreachersPlayerController>(Controller)) PC->BuyMenu->EnableBuying(true);
 	}
 }

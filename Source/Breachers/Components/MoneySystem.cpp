@@ -19,7 +19,6 @@ void UMoneySystem::BeginPlay()
 void UMoneySystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(UMoneySystem, CharacterPlayer);
 	DOREPLIFETIME(UMoneySystem, CurrentMoney);
 }
 

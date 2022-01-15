@@ -2,11 +2,19 @@
 #include "BreachersGameModeBase.h"
 #include "Blueprint/UserWidget.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
+#include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+
+ABreachersPlayerController::ABreachersPlayerController()
+{
+	MoneySystem = CreateDefaultSubobject<UMoneySystem>(TEXT("Money System"));
+	BuyMenu = CreateDefaultSubobject<UBuyMenu>(TEXT("Buy Menu"));
+}
 
 void ABreachersPlayerController::BeginPlay()
 {

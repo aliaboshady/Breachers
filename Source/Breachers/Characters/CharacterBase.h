@@ -47,6 +47,7 @@ public:
 	FVector GetCameraLocation() const;
 	FVector GetCameraDirection() const;
 	FORCEINLINE void SetCameraFOV(float FOV){CameraComponent->FieldOfView = FOV;}
+	FORCEINLINE ABreachersPlayerController* GetBreacherPC(){return PC;}
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;
@@ -54,20 +55,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthSystem* HealthSystem;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UBuyMenu* BuyMenu;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	UMoneySystem* MoneySystem;
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void PossessedBy(AController* NewController) override;
 	void SwitchToDeathCamera();
 	void DeathCameraAnimation();
 	FTimerHandle DeathTimerHandle;
 	float DeathAnimationRate;
 	void StopRagdollMovement() const;
+	void ShowHideBuyMenu();
 
 	UFUNCTION(Server, Reliable)
 	void Server_OnDie();
@@ -92,6 +89,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* Arms_FP;
+
+	UPROPERTY(Replicated)
+	ABreachersPlayerController* PC;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float DeathAnimationSpeed;
