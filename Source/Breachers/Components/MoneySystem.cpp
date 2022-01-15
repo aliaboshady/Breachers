@@ -23,7 +23,12 @@ void UMoneySystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(UMoneySystem, CurrentMoney);
 }
 
-void UMoneySystem::AddToCurrentMoney(int32 AddedMoney)
+void UMoneySystem::Server_AddToCurrentMoney_Implementation(int32 AddedMoney)
 {
 	CurrentMoney = FMath::Clamp(CurrentMoney + AddedMoney, 0, MaxMoney);
+}
+
+void UMoneySystem::AddToCurrentMoney(int32 AddedMoney)
+{
+	Server_AddToCurrentMoney(AddedMoney);
 }

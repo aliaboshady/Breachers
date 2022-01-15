@@ -110,6 +110,9 @@ struct FWeaponInfo : public FTableRowBase
 	int32 WeaponPrice;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 KillRewardMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<EWeaponType> WeaponType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

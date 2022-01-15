@@ -21,6 +21,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(Server, Reliable)
+	void Server_AddToCurrentMoney(int32 AddedMoney);
+
 	UPROPERTY(EditAnywhere)
 	int32 StartUpMoney;
 	
