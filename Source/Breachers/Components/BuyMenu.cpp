@@ -1,4 +1,6 @@
 #include "BuyMenu.h"
+
+#include "MoneySystem.h"
 #include "Blueprint/UserWidget.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Core/BreachersPlayerController.h"
@@ -71,4 +73,17 @@ void UBuyMenu::SetInputUI(bool bIsUI)
 void UBuyMenu::EnableBuying(bool bEnableBuying)
 {
 	bCanBuy = bEnableBuying;
+}
+
+void UBuyMenu::BuyWeapon(int32 Price)
+{
+	Server_BuyWeapon(Price);
+}
+
+void UBuyMenu::Server_BuyWeapon_Implementation(int32 Price)
+{
+	if(CharacterPlayer)
+	{
+		CharacterPlayer->MoneySystem->AddToCurrentMoney(-Price);
+	}
 }

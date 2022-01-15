@@ -18,11 +18,18 @@ public:
 	void SetPlayerInputComponent(UInputComponent* PlayerInputComponent);
 	void EnableBuying(bool bEnableBuying);
 
+	UFUNCTION(BlueprintCallable)
+	void BuyWeapon(int32 Price);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void ShowHideBuyMenu();
 	void SetInputUI(bool bIsUI);
+
+	UFUNCTION(Server, Reliable)
+	void Server_BuyWeapon(int32 Price);
+	
 
 	UFUNCTION(Client, Reliable)
 	void Client_CreateBuyMenu();
