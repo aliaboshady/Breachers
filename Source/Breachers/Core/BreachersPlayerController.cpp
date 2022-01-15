@@ -106,7 +106,7 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 
 void ABreachersPlayerController::OnDie()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Controller OnDie"));
+	if(BreachersGameModeBase) BreachersGameModeBase->OnPlayerDied(this);
 }
 
 void ABreachersPlayerController::OnPossess(APawn* InPawn)

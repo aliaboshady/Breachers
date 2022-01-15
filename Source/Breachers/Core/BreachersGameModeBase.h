@@ -5,6 +5,7 @@
 
 class APlayerStart;
 class ACharacterBase;
+class ABreachersPlayerController;
 
 UCLASS()
 class BREACHERS_API ABreachersGameModeBase : public AGameModeBase
@@ -12,14 +13,24 @@ class BREACHERS_API ABreachersGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	ABreachersGameModeBase();
+
+	UFUNCTION()
 	void RequestAttackerSpawn(AController* Controller);
+	
+	UFUNCTION()
 	void RequestDefenderSpawn(AController* Controller);
+	
+	void OnPlayerDied(ABreachersPlayerController* Controller);
 
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void GetPlayersStarts();
 	void SpawnCharacter(TSubclassOf<ACharacterBase> CharacterClass, FTransform SpawnTransform, AController* Controller) const;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RespawnTime;
 
 	UPROPERTY()
 	TArray<AActor*> AttackerSpawns;

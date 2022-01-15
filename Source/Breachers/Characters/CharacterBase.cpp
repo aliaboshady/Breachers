@@ -15,6 +15,7 @@ ACharacterBase::ACharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	Tags.Add(TAG_Player);
+	Team = Attacker;
 	
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
@@ -74,6 +75,17 @@ void ACharacterBase::BeginPlay()
 	if(HealthSystem)
 	{
 		HealthSystem->OnDie.AddDynamic(this, &ACharacterBase::Server_OnDie);
+	}
+	
+	switch (Team)
+	{
+		case Attacker:
+			Tags.Add(TAG_Attacker);
+			break;
+		case Defender:
+			Tags.Add(TAG_Defender);
+		break;
+		default:;
 	}
 }
 

@@ -5,6 +5,8 @@
 #include "CharacterBase.generated.h"
 
 #define TAG_Player "Player"
+#define TAG_Attacker "Attacker"
+#define TAG_Defender "Defender"
 #define TIME_PickWeaponAfterDrop 1
 
 #define COLLISION_CharacterPlayerTP "CharacterPlayerTP"
@@ -23,6 +25,13 @@
 #define INPUT_Jump			"Jump"
 #define INPUT_Crouch		"Crouch"
 #define INPUT_Walk			"Walk"
+
+UENUM(BlueprintType)
+enum ETeam
+{
+	Attacker,
+	Defender
+};
 
 class UBuyMenu;
 class AWeaponBase;
@@ -54,6 +63,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthSystem* HealthSystem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<ETeam> Team;
 
 protected:
 	virtual void BeginPlay() override;
