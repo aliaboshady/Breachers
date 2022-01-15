@@ -14,6 +14,7 @@ class BREACHERS_API UMovementSystem : public UActorComponent
 public:	
 	UMovementSystem();
 	void SetPlayerInputComponent(UInputComponent* PlayerInputComponent);
+	void SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float CrouchSpeed;
@@ -26,6 +27,14 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed);
+
+	UFUNCTION(Client, Reliable)
+	void Client_SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed);
+
+	void PR_Client_SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed);
 	
 	void MoveForward(float Value);
 	void MoveRight(float Value);
@@ -58,4 +67,5 @@ protected:
 	ACharacterBase* CharacterPlayer;
 
 	bool bCanTakeInput;
+	bool bIsWalking;
 };

@@ -11,6 +11,7 @@ UMovementSystem::UMovementSystem()
 	WalkSpeed = 300;
 	RunSpeed = 600;
 	bCanTakeInput = true;
+	bIsWalking = false;
 }
 
 void UMovementSystem::BeginPlay()
@@ -42,6 +43,33 @@ void UMovementSystem::SetPlayerInputComponent(UInputComponent* PlayerInputCompon
 		PlayerInputComponent->BindAction(INPUT_Walk, IE_Pressed, this, &UMovementSystem::Server_StartWalk);
 		PlayerInputComponent->BindAction(INPUT_Walk, IE_Released, this, &UMovementSystem::Server_StopWalk);
 	}
+}
+
+
+void UMovementSystem::Server_SetSpeedsOfWeapon_Implementation(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed)
+{
+	PR_Client_SetSpeedsOfWeapon(WeaponRunSpeed, WeaponWalkSpeed, WeaponCrouchSpeed);
+	Client_SetSpeedsOfWeapon(WeaponRunSpeed, WeaponWalkSpeed, WeaponCrouchSpeed);
+}
+
+void UMovementSystem::Client_SetSpeedsOfWeapon_Implementation(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed)
+{
+	PR_Client_SetSpeedsOfWeapon(WeaponRunSpeed, WeaponWalkSpeed, WeaponCrouchSpeed);
+}
+
+void UMovementSystem::PR_Client_SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed)
+{
+	CrouchSpeed = WeaponCrouchSpeed;
+	WalkSpeed = WeaponWalkSpeed;
+	RunSpeed = WeaponRunSpeed;
+	if(bIsWalking) CharacterPlayer->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	else CharacterPlayer->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+	CharacterPlayer->GetCharacterMovement()->MaxWalkSpeedCrouched = CrouchSpeed;
+}
+
+void UMovementSystem::SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed)
+{
+	Server_SetSpeedsOfWeapon(WeaponRunSpeed, WeaponWalkSpeed, WeaponCrouchSpeed);
 }
 
 void UMovementSystem::MoveForward(float Value)
@@ -107,6 +135,7 @@ void UMovementSystem::StartWalk()
 {
 	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	bIsWalking = true;
 }
 
 void UMovementSystem::Client_StopWalk_Implementation()
@@ -124,6 +153,7 @@ void UMovementSystem::StopWalk()
 {
 	if (!CharacterPlayer || !bCanTakeInput) return;
 	CharacterPlayer->GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+	bIsWalking = false;
 }
 
 void UMovementSystem::Client_OnDie_Implementation()

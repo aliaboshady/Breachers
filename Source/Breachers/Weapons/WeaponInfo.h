@@ -125,6 +125,15 @@ struct FWeaponInfo : public FTableRowBase
 	bool bIsDroppable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CarryWeaponRunSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CarryWeaponWalkSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CarryWeaponCrouchSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 HeadDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

@@ -1,4 +1,6 @@
 #include "WeaponSystem.h"
+
+#include "MovementSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Net/UnrealNetwork.h"
@@ -155,6 +157,12 @@ void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 	}
 	CurrentWeapon = Weapon;
 	CurrentWeapon->OnEquip();
+
+	float RunSpeed = CurrentWeapon->WeaponInfo.CarryWeaponRunSpeed;
+	float WalkSpeed = CurrentWeapon->WeaponInfo.CarryWeaponWalkSpeed;
+	float CrouchSpeed = CurrentWeapon->WeaponInfo.CarryWeaponCrouchSpeed;
+	CharacterPlayer->MovementSystem->SetSpeedsOfWeapon(RunSpeed, WalkSpeed, CrouchSpeed);
+	
 	Server_StopPrimaryFire();
 
 	Multicast_EquipWeaponVisualsTP(Weapon);

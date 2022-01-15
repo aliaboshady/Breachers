@@ -63,6 +63,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthSystem* HealthSystem;
+	
+	UPROPERTY(VisibleAnywhere)
+	UMovementSystem* MovementSystem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<ETeam> Team;
@@ -86,9 +89,6 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnDie_Ragdoll();
-
-	UPROPERTY(VisibleAnywhere)
-	UMovementSystem* MovementSystem;
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
