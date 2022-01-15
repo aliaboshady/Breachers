@@ -1,6 +1,7 @@
 #include "BuyMenu.h"
-
+#include "Breachers/Weapons/WeaponBase.h"
 #include "MoneySystem.h"
+#include "WeaponSystem.h"
 #include "Blueprint/UserWidget.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Core/BreachersPlayerController.h"
@@ -75,15 +76,16 @@ void UBuyMenu::EnableBuying(bool bEnableBuying)
 	bCanBuy = bEnableBuying;
 }
 
-void UBuyMenu::BuyWeapon(int32 Price)
+void UBuyMenu::BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass)
 {
-	Server_BuyWeapon(Price);
+	Server_BuyWeapon(Price, WeaponClass);
 }
 
-void UBuyMenu::Server_BuyWeapon_Implementation(int32 Price)
+void UBuyMenu::Server_BuyWeapon_Implementation(int32 Price, TSubclassOf<AWeaponBase> WeaponClass)
 {
-	if(CharacterPlayer)
+	if(CharacterPlayer && WeaponClass)
 	{
 		CharacterPlayer->MoneySystem->AddToCurrentMoney(-Price);
+		CharacterPlayer->WeaponSystem->SpawnWeapon(WeaponClass);
 	}
 }

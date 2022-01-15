@@ -5,6 +5,7 @@
 
 #define INPUT_OpenBuyMenu "BuyMenu"
 
+class AWeaponBase;
 class ACharacterBase;
 class ABreachersPlayerController;
 
@@ -19,7 +20,7 @@ public:
 	void EnableBuying(bool bEnableBuying);
 
 	UFUNCTION(BlueprintCallable)
-	void BuyWeapon(int32 Price);
+	void BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass);
 
 protected:
 	virtual void BeginPlay() override;
@@ -28,7 +29,7 @@ protected:
 	void SetInputUI(bool bIsUI);
 
 	UFUNCTION(Server, Reliable)
-	void Server_BuyWeapon(int32 Price);
+	void Server_BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass);
 	
 
 	UFUNCTION(Client, Reliable)

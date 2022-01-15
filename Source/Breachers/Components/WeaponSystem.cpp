@@ -59,6 +59,19 @@ void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
 	GetWorld()->GetTimerManager().SetTimer(EquipSecondaryHandle, this, &UWeaponSystem::EquipSecondaryAtStartUp, 1, false, 0.1);
 }
 
+void UWeaponSystem::SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass)
+{
+	Server_SpawnWeapon(WeaponClass);
+}
+
+void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass)
+{
+	if(WeaponClass)
+	{
+		GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////// Equip/Take Weapons ///////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////

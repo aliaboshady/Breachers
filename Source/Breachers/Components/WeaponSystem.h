@@ -20,6 +20,7 @@ public:
 	void DropWeapon();
 	void EnableShooting(bool bEnableShooting);
 	AWeaponBase* GetCurrentWeapon();
+	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
@@ -60,6 +61,9 @@ protected:
 	
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnStartWeapons();
+
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
 
 	UFUNCTION(Client, Reliable)
 	void Client_EquipWeaponVisualsFP(AWeaponBase* Weapon);
