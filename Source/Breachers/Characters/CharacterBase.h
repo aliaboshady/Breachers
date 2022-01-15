@@ -26,6 +26,7 @@
 
 class UBuyMenu;
 class AWeaponBase;
+class UMoneySystem;
 class UWeaponSystem;
 class UHealthSystem;
 class UMovementSystem;
@@ -55,6 +56,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UBuyMenu* BuyMenu;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UMoneySystem* MoneySystem;
 
 protected:
 	virtual void BeginPlay() override;

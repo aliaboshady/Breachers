@@ -1,6 +1,7 @@
 #include "CharacterBase.h"
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
+#include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/Weapons/WeaponBase.h"
@@ -19,6 +20,7 @@ ACharacterBase::ACharacterBase()
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
 	HealthSystem = CreateDefaultSubobject<UHealthSystem>(TEXT("Health System"));
 	BuyMenu = CreateDefaultSubobject<UBuyMenu>(TEXT("Buy Menu"));
+	MoneySystem = CreateDefaultSubobject<UMoneySystem>(TEXT("Money System"));
 	
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = MovementSystem->RunSpeed;
