@@ -1,4 +1,5 @@
 #include "CharacterBase.h"
+#include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
@@ -17,6 +18,7 @@ ACharacterBase::ACharacterBase()
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
 	HealthSystem = CreateDefaultSubobject<UHealthSystem>(TEXT("Health System"));
+	BuyMenu = CreateDefaultSubobject<UBuyMenu>(TEXT("Buy Menu"));
 	
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = MovementSystem->RunSpeed;
@@ -79,6 +81,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if(MovementSystem) MovementSystem->SetPlayerInputComponent(PlayerInputComponent);
 	if(WeaponSystem) WeaponSystem->SetPlayerInputComponent(PlayerInputComponent);
+	if(BuyMenu) BuyMenu->SetPlayerInputComponent(PlayerInputComponent);
 }
 
 void ACharacterBase::Server_OnDie_Implementation()

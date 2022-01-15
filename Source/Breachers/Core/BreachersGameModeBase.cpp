@@ -2,6 +2,7 @@
 #include "BreachersPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Components/BuyMenu.h"
 
 void ABreachersGameModeBase::BeginPlay()
 {
@@ -50,6 +51,9 @@ void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> Characte
 {
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	ACharacterBase* Character = GetWorld()->SpawnActor<ACharacterBase>(CharacterClass, SpawnTransform, SpawnParameters);
-	Controller->Possess(Character);
+	if(ACharacterBase* Character = GetWorld()->SpawnActor<ACharacterBase>(CharacterClass, SpawnTransform, SpawnParameters))
+	{
+		Controller->Possess(Character);
+		if(Character->BuyMenu) Character->BuyMenu->EnableBuying(true);
+	}
 }

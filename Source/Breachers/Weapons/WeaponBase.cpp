@@ -446,15 +446,6 @@ void AWeaponBase::CancelAllAnimations() const
 	UAnimInstance* AnimIn_CharacterMesh_FP = CharacterPlayer->GetArmsMeshFP()->GetAnimInstance();
 	UAnimInstance* AnimIn_CharacterMesh_TP = CharacterPlayer->GetMesh()->GetAnimInstance();
 	
-	if(AnimIn_CharacterMesh_FP)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Got anim instance"));
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("NO anim instance"));
-	}
-	
 	if(AnimIn_Mesh_FP) AnimIn_Mesh_FP->StopAllMontages(0);
 	if(AnimIn_Mesh_TP) AnimIn_Mesh_TP->StopAllMontages(0);
 	if(AnimIn_CharacterMesh_FP) AnimIn_CharacterMesh_FP->StopAllMontages(0);

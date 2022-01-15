@@ -17,9 +17,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	void PossessStartCamera();
-	void SetInputUI(bool bIsUI = true);
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	void SetInputUI(bool bIsUI = true);
 
 	UFUNCTION()
 	void OnDie();

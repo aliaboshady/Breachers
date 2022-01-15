@@ -24,6 +24,7 @@
 #define INPUT_Crouch		"Crouch"
 #define INPUT_Walk			"Walk"
 
+class UBuyMenu;
 class AWeaponBase;
 class UWeaponSystem;
 class UHealthSystem;
@@ -51,6 +52,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UHealthSystem* HealthSystem;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UBuyMenu* BuyMenu;
 
 protected:
 	virtual void BeginPlay() override;
