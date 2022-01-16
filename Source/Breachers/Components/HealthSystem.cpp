@@ -5,6 +5,7 @@
 #include "Breachers/Core/BreachersPlayerController.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 UHealthSystem::UHealthSystem()
@@ -39,7 +40,9 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
                                       FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
                                       const UDamageType* DamageType, AActor* DamageCauser)
 {
-	CurrentHealth = FMath::Clamp(CurrentHealth - static_cast<int32>(Damage), 0, MaxHealth);
+	int32 DamageDealt = static_cast<int32>(Damage);
+	if(DamageDealt > 0) Multicast_ShowBlood(HitLocation);
+	CurrentHealth = FMath::Clamp(CurrentHealth - DamageDealt, 0, MaxHealth);
 	if(CurrentHealth <= 0 && !bIsDead)
 	{
 		bIsDead = true;
@@ -47,6 +50,11 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
 		RewardKiller(InstigatedBy, DamageCauser);
 		CharacterPlayer->PushOnDeath(DamageCauser, CharacterPlayer->GetActorLocation() - ShotFromDirection);
 	}
+}
+
+void UHealthSystem::Multicast_ShowBlood_Implementation(FVector HitLocation)
+{
+	if(BloodEffect) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BloodEffect, HitLocation);
 }
 
 void UHealthSystem::OnRep_IsDead() const

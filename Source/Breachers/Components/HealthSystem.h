@@ -26,6 +26,9 @@ protected:
 	UFUNCTION()
 	void OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ShowBlood(FVector HitLocation);
+	
 	UFUNCTION(Server, Reliable)
 	void Server_KillPlayer();
 
@@ -37,6 +40,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 MaxHealth;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* BloodEffect;
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	int32 CurrentHealth;
