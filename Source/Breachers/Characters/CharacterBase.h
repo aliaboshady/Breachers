@@ -57,6 +57,7 @@ public:
 	FVector GetCameraDirection() const;
 	FORCEINLINE void SetCameraFOV(float FOV){CameraComponent->FieldOfView = FOV;}
 	FORCEINLINE ABreachersPlayerController* GetBreacherPC(){return PC;}
+	void PushOnDeath(AActor* DamageCauser, FVector PushDirection);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;
@@ -89,6 +90,9 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnDie_Ragdoll();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PushOnDeath(AActor* DamageCauser, FVector ShotFromDirection);
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;

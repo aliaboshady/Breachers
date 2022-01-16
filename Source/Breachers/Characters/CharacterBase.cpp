@@ -124,6 +124,8 @@ void ACharacterBase::Multicast_OnDie_Ragdoll_Implementation()
 
 	FTimerHandle PhysicsTimer;
 	GetWorldTimerManager().SetTimer(PhysicsTimer, this, &ACharacterBase::StopRagdollMovement, 1, false, StopRagdollMovementAfterTime);
+
+	
 }
 
 FVector ACharacterBase::GetCameraLocation() const
@@ -165,6 +167,20 @@ void ACharacterBase::DeathCameraAnimation()
 void ACharacterBase::StopRagdollMovement() const
 {
 	GetMesh()->SetComponentTickEnabled(false);
+}
+
+void ACharacterBase::PushOnDeath(AActor* DamageCauser, FVector ShotFromDirection)
+{
+	Multicast_PushOnDeath(DamageCauser, ShotFromDirection);
+}
+
+void ACharacterBase::Multicast_PushOnDeath_Implementation(AActor* DamageCauser, FVector PushDirection)
+{
+	if(AWeaponBase* KillerWeapon = Cast<AWeaponBase>(DamageCauser))
+	{
+		GetMesh()->AddImpulse(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.KillPushForce * 3, NAME_None, true);
+		LaunchCharacter(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.KillPushForce, true, true);
+	}
 }
 
 void ACharacterBase::ShowHideBuyMenu()

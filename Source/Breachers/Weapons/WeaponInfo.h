@@ -134,6 +134,9 @@ struct FWeaponInfo : public FTableRowBase
 	float CarryWeaponCrouchSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float KillPushForce;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 HeadDamage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

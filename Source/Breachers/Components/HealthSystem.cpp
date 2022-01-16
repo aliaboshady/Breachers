@@ -45,6 +45,7 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
 		bIsDead = true;
 		Server_KillPlayer();
 		RewardKiller(InstigatedBy, DamageCauser);
+		CharacterPlayer->PushOnDeath(DamageCauser, CharacterPlayer->GetActorLocation() - ShotFromDirection);
 	}
 }
 
