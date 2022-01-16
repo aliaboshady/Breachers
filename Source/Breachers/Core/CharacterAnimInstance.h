@@ -18,10 +18,14 @@ public:
 protected:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-	USoundCue* GetSurfaceSound(FHitResult OutHit);
+	USoundCue* GetSurfaceSoundFootstep(FHitResult OutHit);
+	USoundCue* GetSurfaceSoundLand(FHitResult OutHit);
+
+	UFUNCTION(Server, Reliable)
+	void PlayLandSound();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_PlayFootstepSound(USoundCue* SoundCue);
+	void Multicast_PlayFeetSound(USoundCue* SoundCue);
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangePose();
@@ -57,4 +61,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USoundCue* FootstepSound_Tile;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* LandSound_Rock;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* LandSound_Tile;
 };

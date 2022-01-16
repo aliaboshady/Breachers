@@ -190,6 +190,12 @@ void ACharacterBase::ShowHideBuyMenu()
 	PC->BuyMenu->ShowHideBuyMenu();
 }
 
+void ACharacterBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+	OnLand.Broadcast();
+}
+
 FHitResult ACharacterBase::GetSurfaceType()
 {
 	TArray<AActor*> ActorsToIgnore;

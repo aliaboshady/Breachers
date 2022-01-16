@@ -13,6 +13,7 @@ void UCharacterAnimInstance::NativeBeginPlay()
 	if(APawn* OwnerPawn = TryGetPawnOwner())
 	{
 		OwnerCharacter = Cast<ACharacterBase>(OwnerPawn);
+		if(OwnerCharacter) OwnerCharacter->OnLand.AddDynamic(this, &UCharacterAnimInstance::PlayLandSound);
 	}
 }
 
@@ -53,20 +54,27 @@ void UCharacterAnimInstance::Multicast_ChangePose_Implementation()
 
 void UCharacterAnimInstance::PlayFootstepSound()
 {
+	if(!OwnerCharacter) return;
 	FHitResult OutHit;
 	USoundCue* SoundCue;
-	if(OwnerCharacter)
-	{
-		OutHit = OwnerCharacter->GetSurfaceType();
-		SoundCue = GetSurfaceSound(OutHit);
-		Multicast_PlayFootstepSound(SoundCue);
-	}
+	OutHit = OwnerCharacter->GetSurfaceType();
+	SoundCue = GetSurfaceSoundFootstep(OutHit);
+	Multicast_PlayFeetSound(SoundCue);
 }
 
-void UCharacterAnimInstance::Multicast_PlayFootstepSound_Implementation(USoundCue* SoundCue)
+void UCharacterAnimInstance::PlayLandSound_Implementation()
+{
+	if(!OwnerCharacter) return;
+	FHitResult OutHit;
+	USoundCue* SoundCue;
+	OutHit = OwnerCharacter->GetSurfaceType();
+	SoundCue = GetSurfaceSoundLand(OutHit);
+	Multicast_PlayFeetSound(SoundCue);
+}
+
+void UCharacterAnimInstance::Multicast_PlayFeetSound_Implementation(USoundCue* SoundCue)
 {
 	if(!SoundCue) return;
-	
 	FVector Location;
 	FRotator Rotation;
 	if(OwnerCharacter)
@@ -77,7 +85,7 @@ void UCharacterAnimInstance::Multicast_PlayFootstepSound_Implementation(USoundCu
 	UGameplayStatics::PlaySoundAtLocation(GetWorld(), SoundCue, Location, Rotation);
 }
 
-USoundCue* UCharacterAnimInstance::GetSurfaceSound(FHitResult OutHit)
+USoundCue* UCharacterAnimInstance::GetSurfaceSoundFootstep(FHitResult OutHit)
 {
 	const EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(OutHit.PhysMaterial.Get());
 	
@@ -88,5 +96,19 @@ USoundCue* UCharacterAnimInstance::GetSurfaceSound(FHitResult OutHit)
 		case SURFACE_Tile:
 			return FootstepSound_Tile;
 		default: return nullptr;
+	}
+}
+
+USoundCue* UCharacterAnimInstance::GetSurfaceSoundLand(FHitResult OutHit)
+{
+	const EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(OutHit.PhysMaterial.Get());
+	
+	switch (SurfaceType)
+	{
+	case SURFACE_Rock:
+		return LandSound_Rock;
+	case SURFACE_Tile:
+		return LandSound_Tile;
+	default: return nullptr;
 	}
 }

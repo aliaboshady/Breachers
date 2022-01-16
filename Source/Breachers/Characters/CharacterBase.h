@@ -45,6 +45,8 @@ class UCameraComponent;
 class USpringArmComponent;
 class ABreachersPlayerController;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLand);
+
 UCLASS()
 class BREACHERS_API ACharacterBase : public ACharacter
 {
@@ -61,6 +63,9 @@ public:
 	FORCEINLINE ABreachersPlayerController* GetBreacherPC(){return PC;}
 	void PushOnDeath(AActor* DamageCauser, FVector PushDirection);
 	FHitResult GetSurfaceType();
+
+	UPROPERTY()
+	FOnLand OnLand;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;
@@ -84,6 +89,7 @@ protected:
 	float DeathAnimationRate;
 	void StopRagdollMovement() const;
 	void ShowHideBuyMenu();
+	virtual void Landed(const FHitResult& Hit) override;
 
 	UFUNCTION(Server, Reliable)
 	void Server_OnDie();
