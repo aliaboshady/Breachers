@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 ACharacterBase::ACharacterBase()
@@ -187,4 +188,17 @@ void ACharacterBase::ShowHideBuyMenu()
 {
 	if(!PC) return;
 	PC->BuyMenu->ShowHideBuyMenu();
+}
+
+FHitResult ACharacterBase::GetSurfaceType()
+{
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+	
+	FVector Start = GetMesh()->GetComponentLocation();
+	FVector End = Start;
+	End.Z -= 30;
+	FHitResult OutHit;
+	UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+	return OutHit;
 }

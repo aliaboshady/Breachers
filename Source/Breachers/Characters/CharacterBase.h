@@ -17,6 +17,8 @@
 #define SURFACE_Torso SurfaceType2
 #define SURFACE_Arms  SurfaceType3
 #define SURFACE_Legs  SurfaceType4
+#define SURFACE_Rock  SurfaceType10
+#define SURFACE_Tile  SurfaceType11
 
 #define INPUT_MoveForward	"MoveForward"
 #define INPUT_MoveRight		"MoveRight"
@@ -58,6 +60,7 @@ public:
 	FORCEINLINE void SetCameraFOV(float FOV){CameraComponent->FieldOfView = FOV;}
 	FORCEINLINE ABreachersPlayerController* GetBreacherPC(){return PC;}
 	void PushOnDeath(AActor* DamageCauser, FVector PushDirection);
+	FHitResult GetSurfaceType();
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;

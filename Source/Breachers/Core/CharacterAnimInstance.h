@@ -3,6 +3,7 @@
 #include "Animation/AnimInstance.h"
 #include "CharacterAnimInstance.generated.h"
 
+class USoundCue;
 class ACharacterBase;
 class UAimOffsetBlendSpace1D;
 
@@ -11,10 +12,17 @@ class BREACHERS_API UCharacterAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
+public:
+	void PlayFootstepSound();
+
 protected:
 	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	USoundCue* GetSurfaceSound(FHitResult OutHit);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayFootstepSound(USoundCue* SoundCue);
+	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangePose();
 
@@ -43,4 +51,10 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAimOffsetBlendSpace1D* BlendSpace_ArmsTP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* FootstepSound_Rock;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* FootstepSound_Tile;
 };
