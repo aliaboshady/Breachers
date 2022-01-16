@@ -31,7 +31,13 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_MeleeAnimation(bool bIsPrimary);
 
-	void ChangeAnimation(bool bIsPrimary);
+	void ChangeProperties(bool bIsPrimary);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float PrimaryAttackDamage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SecondaryAttackDamage;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float PrimaryAttackTime;
@@ -56,6 +62,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAnimMontage* SecondaryAttackAnim_ArmsTP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterialInterface* PrimaryAttackHoleDecal;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UMaterialInterface* SecondaryAttackHoleDecal;
 
 	void ResetHasHitSomething();
 	bool bHasHitSomething;

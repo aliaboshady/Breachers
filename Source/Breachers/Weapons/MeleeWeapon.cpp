@@ -6,6 +6,8 @@
 
 AMeleeWeapon::AMeleeWeapon()
 {
+	PrimaryAttackDamage = 25;
+	SecondaryAttackDamage = 75;
 	PrimaryAttackTime = 0.5;
 	SecondaryAttackTime = 1;
 	PrimaryTimeBetweenHits = 1;
@@ -43,7 +45,7 @@ void AMeleeWeapon::OnSecondaryFire()
 
 void AMeleeWeapon::Multicast_MeleeAnimation_Implementation(bool bIsPrimary)
 {
-	ChangeAnimation(bIsPrimary);
+	ChangeProperties(bIsPrimary);
 	
 	if(WeaponInfo.WeaponEffects.MuzzleFireSound)
 	{
@@ -54,21 +56,31 @@ void AMeleeWeapon::Multicast_MeleeAnimation_Implementation(bool bIsPrimary)
 	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.FireAnimationTime);
 }
 
-void AMeleeWeapon::ChangeAnimation(bool bIsPrimary)
+void AMeleeWeapon::ChangeProperties(bool bIsPrimary)
 {
 	if(bIsPrimary)
 	{
+		WeaponInfo.ArmsDamage = PrimaryAttackDamage;
+		WeaponInfo.HeadDamage = PrimaryAttackDamage;
+		WeaponInfo.TorsoDamage = PrimaryAttackDamage;
+		WeaponInfo.LegsDamage = PrimaryAttackDamage;
 		WeaponInfo.FireAnimationTime = PrimaryAttackTime;
 		WeaponInfo.TimeBetweenShots = PrimaryTimeBetweenHits;
 		if(PrimaryAttackAnim_ArmsFP) WeaponInfo.WeaponAnimations.FireAnim_ArmsFP = PrimaryAttackAnim_ArmsFP;
 		if(PrimaryAttackAnim_ArmsTP) WeaponInfo.WeaponAnimations.FireAnim_ArmsTP = PrimaryAttackAnim_ArmsTP;
+		if(PrimaryAttackHoleDecal) WeaponInfo.WeaponEffects.BulletHoleDecal = PrimaryAttackHoleDecal;
 	}
 	else
 	{
+		WeaponInfo.ArmsDamage = SecondaryAttackDamage;
+		WeaponInfo.HeadDamage = SecondaryAttackDamage;
+		WeaponInfo.TorsoDamage = SecondaryAttackDamage;
+		WeaponInfo.LegsDamage = SecondaryAttackDamage;
 		WeaponInfo.FireAnimationTime = SecondaryAttackTime;
 		WeaponInfo.TimeBetweenShots = SecondaryTimeBetweenHits;
 		if(SecondaryAttackAnim_ArmsFP) WeaponInfo.WeaponAnimations.FireAnim_ArmsFP = SecondaryAttackAnim_ArmsFP;
 		if(SecondaryAttackAnim_ArmsTP) WeaponInfo.WeaponAnimations.FireAnim_ArmsTP = SecondaryAttackAnim_ArmsTP;
+		if(SecondaryAttackHoleDecal) WeaponInfo.WeaponEffects.BulletHoleDecal = SecondaryAttackHoleDecal;
 	}
 }
 
