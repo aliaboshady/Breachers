@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "BulletTracer.h"
 #include "Animation/AimOffsetBlendSpace1D.h"
 #include "Engine/DataTable.h"
 #include "WeaponInfo.generated.h"
@@ -75,6 +76,9 @@ USTRUCT(BlueprintType)
 struct FWeaponEffect
 {
 	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<ABulletTracer> BulletTracer;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UParticleSystem* MuzzleFlashEffect;

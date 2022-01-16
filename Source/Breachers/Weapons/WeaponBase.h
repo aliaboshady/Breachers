@@ -7,6 +7,7 @@
 #define COLLISION_Weapon "Weapon"
 #define COLLISION_WeaponOverlapSphere "WeaponOverlapSphere"
 
+class ABulletTracer;
 class ACharacterBase;
 class USphereComponent;
 
@@ -48,6 +49,9 @@ protected:
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
 	void OnDropEnableOverlap();
+
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnBulletTracer(FHitResult OutHit);
 	
 	int32 GetSurfaceDamage(FHitResult OutHit) const;
 	
@@ -86,6 +90,14 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnCancelEquipAnimations();
+
+	void SpawnBulletTracer(FHitResult OutHit, FVector Start, bool bIsClient);
+	
+	UFUNCTION(Client, Reliable)
+	void Client_SpawnBulletTracer(FHitResult OutHit);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SpawnBulletTracer(FHitResult OutHit);
 	
 	void FireSpread();
 	void ResetCanFire();

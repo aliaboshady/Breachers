@@ -189,6 +189,7 @@ void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 			Multicast_SpawnBulletHoleDecal(OutHit);
 		}
 	}
+	Server_SpawnBulletTracer(OutHit);
 	Server_OnFireEffects(OutHit);
 }
 
@@ -286,6 +287,43 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.FireAnimationTime);
 }
 
+void AWeaponBase::SpawnBulletTracer(FHitResult OutHit, FVector Start, bool bIsClient)
+{
+	FVector End = OutHit.TraceEnd;
+	if(OutHit.bBlockingHit) End = OutHit.ImpactPoint;
+	FVector Direction = (End - Start).GetSafeNormal();
+	
+	TSubclassOf<ABulletTracer> TracerClass = WeaponInfo.WeaponEffects.BulletTracer;
+	if(TracerClass)
+	{
+		ABulletTracer* BulletTracer = GetWorld()->SpawnActor<ABulletTracer>(TracerClass, Start, Direction.Rotation(), FActorSpawnParameters());
+		float TravelDistance = FVector::Distance(Start, End);
+		float BulletLifetime = TravelDistance / BulletTracer->GetBulletSpeed();
+		BulletTracer->SetLifeSpan(BulletLifetime);
+
+		if(CharacterPlayer)
+		{
+			if(!bIsClient) BulletTracer->SetOwner(CharacterPlayer);
+			BulletTracer->TracerParticle->SetWorldLocation(Start);
+		}
+	}
+}
+
+void AWeaponBase::Server_SpawnBulletTracer_Implementation(FHitResult OutHit)
+{
+	Client_SpawnBulletTracer(OutHit);
+	Multicast_SpawnBulletTracer(OutHit);
+}
+
+void AWeaponBase::Client_SpawnBulletTracer_Implementation(FHitResult OutHit)
+{
+	SpawnBulletTracer(OutHit, Mesh_FP->GetSocketLocation(SOCKET_Muzzle), true);
+}
+
+void AWeaponBase::Multicast_SpawnBulletTracer_Implementation(FHitResult OutHit)
+{
+	SpawnBulletTracer(OutHit, Mesh_TP->GetSocketLocation(SOCKET_Muzzle), false);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
