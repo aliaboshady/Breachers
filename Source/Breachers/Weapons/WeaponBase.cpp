@@ -374,7 +374,6 @@ void AWeaponBase::Client_OnReloadAnimations_Implementation()
 
 void AWeaponBase::Multicast_OnReloadAnimations_Implementation()
 {
-	if(!CharacterPlayer || CharacterPlayer->IsLocallyControlled()) return;
 	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponTP, Mesh_TP, WeaponInfo.ReloadTime);
 	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadTime);
 }
@@ -454,7 +453,6 @@ void AWeaponBase::Client_OnEquipAnimations_Implementation()
 
 void AWeaponBase::Multicast_OnEquipAnimations_Implementation()
 {
-	if(!CharacterPlayer || CharacterPlayer->IsLocallyControlled()) return;
 	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_TP, WeaponInfo.EquipTime);
 	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.EquipTime);
 }
