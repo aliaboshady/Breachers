@@ -399,6 +399,11 @@ void AWeaponBase::OnTaken()
 		Mesh_TP->SetSimulatePhysics(false);
 		Mesh_TP->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+	Multicast_OnTaken();
+}
+
+void AWeaponBase::Multicast_OnTaken_Implementation()
+{
 	if(SphereComponent) SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -420,10 +425,10 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	Mesh_TP->AddImpulse(Force);
 	
 	FTimerHandle OverlapHandle;
-	GetWorldTimerManager().SetTimer(OverlapHandle, this, &AWeaponBase::OnDropEnableOverlap, 1, false, TIME_PickWeaponAfterDrop);
+	GetWorldTimerManager().SetTimer(OverlapHandle, this, &AWeaponBase::Multicast_OnDropEnableOverlap, 1, false, TIME_PickWeaponAfterDrop);
 }
 
-void AWeaponBase::OnDropEnableOverlap()
+void AWeaponBase::Multicast_OnDropEnableOverlap_Implementation()
 {
 	PreviousOwner = nullptr;
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);

@@ -126,8 +126,6 @@ void ACharacterBase::Multicast_OnDie_Ragdoll_Implementation()
 
 	FTimerHandle PhysicsTimer;
 	GetWorldTimerManager().SetTimer(PhysicsTimer, this, &ACharacterBase::StopRagdollMovement, 1, false, StopRagdollMovementAfterTime);
-
-	
 }
 
 FVector ACharacterBase::GetCameraLocation() const

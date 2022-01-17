@@ -47,6 +47,12 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void Server_TakeWeapon(AWeaponBase* Weapon);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_PickWeapon();
+
+	UFUNCTION(Client, Reliable)
+	void Client_PickWeapon();
 
 	UFUNCTION(Server, Reliable)
 	void Server_DropWeapon();

@@ -6,6 +6,7 @@
 
 #define COLLISION_Weapon "Weapon"
 #define COLLISION_WeaponOverlapSphere "WeaponOverlapSphere"
+#define TRACE_WeaponPick ECC_GameTraceChannel1
 
 class ABulletTracer;
 class ACharacterBase;
@@ -48,7 +49,12 @@ protected:
 	void SetupWeaponInfo();
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
-	void OnDropEnableOverlap();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnDropEnableOverlap();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnTaken();
 
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnBulletTracer(FHitResult OutHit);

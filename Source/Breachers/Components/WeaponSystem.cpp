@@ -1,8 +1,8 @@
 #include "WeaponSystem.h"
-
 #include "MovementSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Weapons/WeaponBase.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 UWeaponSystem::UWeaponSystem()
@@ -50,6 +50,7 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &UWeaponSystem::Server_DropWeapon);
 
 		PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &UWeaponSystem::Server_Reload);
+		PlayerInputComponent->BindAction("PickWeapon", IE_Pressed, this, &UWeaponSystem::Client_PickWeapon);
 	}
 }
 
@@ -91,6 +92,25 @@ void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> W
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////// Equip/Take Weapons ///////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void UWeaponSystem::Client_PickWeapon_Implementation()
+{
+	const FVector Start = CharacterPlayer->GetCameraLocation();
+	FVector End = CharacterPlayer->GetCameraDirection() * 300 + Start;
+	
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(CharacterPlayer);
+	
+	FHitResult OutHit;
+	UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(TRACE_WeaponPick), false, ActorsToIgnore, EDrawDebugTrace::ForDuration, OutHit, true);
+
+	if(OutHit.bBlockingHit) UE_LOG(LogTemp, Warning, TEXT("%s - %f"), *OutHit.Actor->GetName(), OutHit.Distance);
+	//Server_ProcessMeleeHit(OutHit);
+}
+
+void UWeaponSystem::Server_PickWeapon_Implementation()
+{
+}
 
 void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 {
