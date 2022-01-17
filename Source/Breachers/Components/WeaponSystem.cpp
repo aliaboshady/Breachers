@@ -145,6 +145,21 @@ void UWeaponSystem::DropWeapon()
 	Server_DropWeapon();
 }
 
+void UWeaponSystem::DropAllWeapons()
+{
+	if(PrimaryWeapon)
+	{
+		Server_EquipPrimary();
+		DropWeapon();
+	}
+	if(SecondaryWeapon)
+	{
+		Server_EquipSecondary();
+		DropWeapon();
+	}
+	if(MeleeWeapon) UnequipWeapon(MeleeWeapon);
+}
+
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 {
 	Server_CancelReload();

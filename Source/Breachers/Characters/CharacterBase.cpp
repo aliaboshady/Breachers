@@ -106,6 +106,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACharacterBase::Server_OnDie_Implementation()
 {
+	WeaponSystem->DropAllWeapons();
 	Client_OnDie_Visuals();
 	Multicast_OnDie_Ragdoll();
 }

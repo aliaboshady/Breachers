@@ -21,6 +21,7 @@ public:
 	void EnableShooting(bool bEnableShooting);
 	AWeaponBase* GetCurrentWeapon();
 	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
+	void DropAllWeapons();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
