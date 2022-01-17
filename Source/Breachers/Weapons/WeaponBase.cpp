@@ -2,6 +2,7 @@
 #include "DrawDebugHelpers.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Breachers/Core/BreachersPlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -410,7 +411,12 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	Mesh_TP->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
-	const FVector Force = DropperCharacter->GetActorForwardVector() * DropperCharacter->WeaponSystem->WeaponThrowForce;
+	ABreachersPlayerController* DropperCharacterPC = DropperCharacter->GetBreacherPC();
+	FVector ThrowDirection;
+	if(DropperCharacterPC) ThrowDirection = DropperCharacterPC->GetControlRotation().Vector();
+	else ThrowDirection = DropperCharacter->GetCameraDirection();
+	
+	const FVector Force = ThrowDirection * DropperCharacter->WeaponSystem->WeaponThrowForce;
 	Mesh_TP->AddImpulse(Force);
 	
 	FTimerHandle OverlapHandle;
