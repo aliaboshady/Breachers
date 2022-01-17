@@ -173,7 +173,7 @@ void AWeaponBase::Client_OnFire_Implementation()
 void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 {
 	if(CurrentAmmoInClip <= 0) return;
-	CurrentAmmoInClip = FMath::Clamp(--CurrentAmmoInClip, 0, WeaponInfo.MaxAmmoInClip);
+	CurrentAmmoInClip = FMath::Clamp(--CurrentAmmoInClip, 0, WeaponInfo.MaxTotalAmmo);
 	FTimerHandle ResetTimer;
 	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AWeaponBase::ResetCanFire, 1, false, WeaponInfo.TimeBetweenShots);
 	

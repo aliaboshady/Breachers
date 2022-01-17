@@ -99,7 +99,7 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SpawnBulletTracer(FHitResult OutHit);
 	
-	void FireSpread();
+	virtual void FireSpread();
 	void ResetCanFire();
 	void ResetIsFiring();
 

@@ -7,5 +7,7 @@ UCLASS()
 class BREACHERS_API AShotgunWeapon : public AWeaponBase
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void FireSpread() override;
 };
