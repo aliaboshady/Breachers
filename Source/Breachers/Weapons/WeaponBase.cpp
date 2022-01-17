@@ -17,6 +17,7 @@ AWeaponBase::AWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bReplicates = true;
+	Tags.Add(TAG_Weapon);
 
 	Mesh_TP = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh_TP"));
 	RootComponent = Mesh_TP;
@@ -63,6 +64,10 @@ void AWeaponBase::BeginPlay()
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapped);
 	CurrentTotalAmmo = WeaponInfo.MaxTotalAmmo - WeaponInfo.MaxAmmoInClip;
 	CurrentAmmoInClip = WeaponInfo.MaxAmmoInClip;
+
+	if(WeaponInfo.WeaponType == Primary) Tags.Add(TAG_Primary);
+	else if(WeaponInfo.WeaponType == Secondary) Tags.Add(TAG_Secondary);
+	else Tags.Add(TAG_Melee);
 }
 
 void AWeaponBase::SetupWeaponInfo()

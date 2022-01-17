@@ -10,6 +10,7 @@ UWeaponSystem::UWeaponSystem()
 	PrimaryComponentTick.bCanEverTick = false;
 	SetIsReplicated(true);
 	WeaponThrowForce = 40000;
+	WeaponPickupDistance = 200;
 	bShootingEnabled = true;
 }
 
@@ -96,20 +97,27 @@ void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> W
 void UWeaponSystem::Client_PickWeapon_Implementation()
 {
 	const FVector Start = CharacterPlayer->GetCameraLocation();
-	FVector End = CharacterPlayer->GetCameraDirection() * 300 + Start;
+	FVector End = CharacterPlayer->GetCameraDirection() * WeaponPickupDistance + Start;
 	
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(CharacterPlayer);
 	
 	FHitResult OutHit;
-	UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(TRACE_WeaponPick), false, ActorsToIgnore, EDrawDebugTrace::ForDuration, OutHit, true);
+	UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(TRACE_WeaponPick), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 
-	if(OutHit.bBlockingHit) UE_LOG(LogTemp, Warning, TEXT("%s - %f"), *OutHit.Actor->GetName(), OutHit.Distance);
-	//Server_ProcessMeleeHit(OutHit);
+	if(OutHit.bBlockingHit && OutHit.Actor->ActorHasTag(TAG_Weapon))
+	{
+		if(AWeaponBase* Weapon = Cast<AWeaponBase>(OutHit.Actor))
+		{
+			if(CanTakeWeapon(Weapon)) Server_PickWeapon(Weapon);
+		}
+	}
 }
 
-void UWeaponSystem::Server_PickWeapon_Implementation()
+void UWeaponSystem::Server_PickWeapon_Implementation(AWeaponBase* Weapon)
 {
+	TakeWeapon(Weapon);
+	Weapon->OnTaken();
 }
 
 void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
@@ -126,6 +134,7 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 	{
 		MeleeWeapon = Weapon;
 	}
+	else return;
 
 	LastTakenWeapon = Weapon;
 	Multicast_HideWeapon(Weapon, true);

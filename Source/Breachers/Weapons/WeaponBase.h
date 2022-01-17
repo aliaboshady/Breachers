@@ -7,6 +7,10 @@
 #define COLLISION_Weapon "Weapon"
 #define COLLISION_WeaponOverlapSphere "WeaponOverlapSphere"
 #define TRACE_WeaponPick ECC_GameTraceChannel1
+#define TAG_Weapon "Weapon"
+#define TAG_Primary "Primary"
+#define TAG_Secondary "Primary"
+#define TAG_Melee "Melee"
 
 class ABulletTracer;
 class ACharacterBase;

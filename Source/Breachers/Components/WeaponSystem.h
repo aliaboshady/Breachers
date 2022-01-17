@@ -49,7 +49,7 @@ protected:
 	void Server_TakeWeapon(AWeaponBase* Weapon);
 	
 	UFUNCTION(Server, Reliable)
-	void Server_PickWeapon();
+	void Server_PickWeapon(AWeaponBase* Weapon);
 
 	UFUNCTION(Client, Reliable)
 	void Client_PickWeapon();
@@ -110,6 +110,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	AWeaponBase* MeleeWeapon;
+
+	UPROPERTY(EditAnywhere)
+	float WeaponPickupDistance;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
