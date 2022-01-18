@@ -167,7 +167,7 @@ void AWeaponBase::Client_OnFire_Implementation()
 	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilInfo.RecoilFactor);
 	const FVector Start = CharacterPlayer->GetCameraLocation();
 	FVector End = CharacterPlayer->GetCameraDirection() * WeaponInfo.ShotInfo.TraceLength + Start;
-	End += RecoilVector;
+	End += RecoilVector * WeaponInfo.RecoilInfo.RecoilFactor;
 	
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(CharacterPlayer);
@@ -175,7 +175,7 @@ void AWeaponBase::Client_OnFire_Implementation()
 	FHitResult OutHit;
 	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, WeaponInfo.ShotInfo.BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 
-	Client_Recoil();
+	Client_Recoil(RecoilVector);
 	Server_ProcessShot(OutHit);
 }
 
@@ -233,15 +233,6 @@ int32 AWeaponBase::GetSurfaceDamage(FHitResult OutHit) const
 		
 	default: return 0;
 	}
-}
-
-FVector AWeaponBase::RecoilShot(float Spread) const
-{
-	FVector NewLocation = FVector(0);
-	NewLocation.X += FMath::RandRange(-Spread, Spread);
-	NewLocation.Y += FMath::RandRange(-Spread, Spread);
-	NewLocation.Z += FMath::RandRange(-Spread, Spread);
-	return NewLocation;
 }
 
 void AWeaponBase::Server_OnFireEffects_Implementation(FHitResult OutHit)
@@ -507,9 +498,8 @@ void AWeaponBase::CancelAllAnimations() const
 	if(AnimIn_CharacterMesh_TP) AnimIn_CharacterMesh_TP->StopAllMontages(0);
 }
 
-void AWeaponBase::Client_Recoil_Implementation()
+FVector AWeaponBase::RecoilShot(float Spread)
 {
-	if(!CharacterPlayer) return;
 	RecoilTimePerShot += WeaponInfo.RecoilInfo.TimeBetweenShots;
 	UCurveVector* RecoilPattern = WeaponInfo.RecoilInfo.RecoilPattern;
 	FVector RecoilVector;
@@ -519,9 +509,16 @@ void AWeaponBase::Client_Recoil_Implementation()
 		RecoilVector = RecoilPattern->GetVectorValue(RecoilTimePerShot);
 	}
 	
+	FVector NewLocation = FVector(RecoilVector.Z, 0, RecoilVector.Y);
+	return NewLocation;
+}
+
+void AWeaponBase::Client_Recoil_Implementation(FVector CalculatedRecoil)
+{
+	if(!CharacterPlayer) return;
 	FRotator NewRotation = CharacterPlayer->GetControlRotation();
-	NewRotation.Pitch += RecoilVector.Y;
-	NewRotation.Yaw += RecoilVector.Z;
+	NewRotation.Pitch += CalculatedRecoil.Z;
+	NewRotation.Yaw += CalculatedRecoil.Y;
 	CharacterPlayer->GetBreacherPC()->SetControlRotation(NewRotation);
 }
 

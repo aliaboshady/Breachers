@@ -49,13 +49,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	FVector RecoilShot(float Spread) const;
+	virtual FVector RecoilShot(float Spread);
 	void SetupWeaponInfo();
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
 
 	UFUNCTION(Client, Reliable)
-	void Client_Recoil();
+	virtual void Client_Recoil(FVector CalculatedRecoil);
 
 	UFUNCTION(Client, Reliable)
 	void Client_ResetRecoil();
