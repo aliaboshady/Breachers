@@ -164,6 +164,8 @@ void AWeaponBase::Client_OnFire_Implementation()
 {
 	if(CurrentAmmoInClip <= 0) return;
 	
+	GetWorld()->GetTimerManager().ClearTimer(RecoilTimeWaitHandle);
+	GetWorld()->GetTimerManager().ClearTimer(RecoilTimeHandle);
 	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilInfo.RecoilFactor);
 	const FVector Start = CharacterPlayer->GetCameraLocation();
 	FVector End = CharacterPlayer->GetCameraDirection() * WeaponInfo.ShotInfo.TraceLength + Start;
@@ -524,5 +526,16 @@ void AWeaponBase::Client_Recoil_Implementation(FVector CalculatedRecoil)
 
 void AWeaponBase::Client_ResetRecoil_Implementation()
 {
-	RecoilTimePerShot = 0;
+	GetWorld()->GetTimerManager().SetTimer(RecoilTimeWaitHandle, this, &AWeaponBase::WaitRecoilTimePerShot, 1, false, WeaponInfo.RecoilInfo.RecoilRecoveryDelay);
+}
+
+void AWeaponBase::DecreaseRecoilTimePerShot()
+{
+	RecoilTimePerShot -= WeaponInfo.RecoilInfo.RecoilRecoverySpeed;
+	if(RecoilTimePerShot <= 0) GetWorld()->GetTimerManager().ClearTimer(RecoilTimeHandle);
+}
+
+void AWeaponBase::WaitRecoilTimePerShot()
+{
+	GetWorld()->GetTimerManager().SetTimer(RecoilTimeHandle, this, &AWeaponBase::DecreaseRecoilTimePerShot, 0.05, true);
 }

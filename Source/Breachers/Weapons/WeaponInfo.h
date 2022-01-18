@@ -133,7 +133,7 @@ struct FRecoilInfo
 	float RecoilFactor;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float RecoilRecoveryTime;
+	float RecoilRecoverySpeed;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RecoilRecoveryDelay;

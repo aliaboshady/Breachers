@@ -54,6 +54,9 @@ protected:
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
 
+	void DecreaseRecoilTimePerShot();
+	void WaitRecoilTimePerShot();
+	
 	UFUNCTION(Client, Reliable)
 	virtual void Client_Recoil(FVector CalculatedRecoil);
 
@@ -146,6 +149,8 @@ protected:
 	FTimerHandle StartFireTimer;
 	FTimerHandle ReloadTimer;
 	FTimerHandle EquipTimer;
+	FTimerHandle RecoilTimeHandle;
+	FTimerHandle RecoilTimeWaitHandle;
 	bool bCanFire;
 	bool bIsFiring;
 	bool bIsReloading;
