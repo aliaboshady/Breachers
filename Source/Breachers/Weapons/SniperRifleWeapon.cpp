@@ -178,3 +178,22 @@ void ASniperRifleWeapon::Client_ShowScopeWidget_Implementation(bool bShowScope)
 	Mesh_FP->SetHiddenInGame(bShowScope);
 	CharacterPlayer->GetArmsMeshFP()->SetHiddenInGame(bShowScope);
 }
+
+void ASniperRifleWeapon::Client_Recoil(FVector MovieSceneBlends){}
+
+FVector ASniperRifleWeapon::RecoilShot(float Spread)
+{
+	FVector RecoilVector = FVector(0);
+	float PlayerSpeed = CharacterPlayer->GetVelocity().Size();
+	float Range = 0;
+	
+	if(PlayerSpeed > WeaponInfo.RecoilInfo.MaxAccurateSpeed)
+	{
+		Range += WeaponInfo.RecoilInfo.RecoilFactor;
+	}
+	
+	RecoilVector.X += FMath::RandRange(-Range, Range);
+	RecoilVector.Y += FMath::RandRange(-Range, Range);
+	RecoilVector.Z += FMath::RandRange(-Range, Range);
+	return RecoilVector;
+}

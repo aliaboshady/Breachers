@@ -21,6 +21,8 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnTaken() override;
 	virtual void OnDrop(ACharacterBase* DropperCharacter) override;
+	virtual void Client_Recoil(FVector CalculatedRecoil) override;
+	virtual FVector RecoilShot(float Spread);
 	void ResetCanScope();
 
 	UFUNCTION(Server, Reliable)
@@ -57,6 +59,9 @@ protected:
 	float ScopingCooldown;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float AddedRecoilUnscoped;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FTransform ArmsFP_Transform_Scoped;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -83,7 +88,7 @@ protected:
 	FTimerHandle ScopeTimer;
 	bool bCanScope;
 	bool bWantsToScope;
-	bool bIsInScope;
 	float ScopeTimeAlpha;
 	float DefaultScopingZoom;
+	bool bIsInScope;
 };
