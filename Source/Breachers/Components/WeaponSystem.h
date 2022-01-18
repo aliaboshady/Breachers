@@ -32,6 +32,7 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipStartUpWeapons();
 	void UnequipWeapon(AWeaponBase* Weapon);
+	void EquipeLastTakenWeapon();
 
 	UFUNCTION(Server, Reliable)
 	void Server_EquipPreviousWeapon();

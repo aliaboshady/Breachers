@@ -109,7 +109,7 @@ void UWeaponSystem::Client_PickWeapon_Implementation()
 	{
 		if(AWeaponBase* Weapon = Cast<AWeaponBase>(OutHit.Actor))
 		{
-			if(CanTakeWeapon(Weapon)) Server_PickWeapon(Weapon);
+			Server_PickWeapon(Weapon);
 		}
 	}
 }
@@ -118,16 +118,29 @@ void UWeaponSystem::Server_PickWeapon_Implementation(AWeaponBase* Weapon)
 {
 	TakeWeapon(Weapon);
 	Weapon->OnTaken();
+	
+	FTimerHandle PickupHandle;
+	GetWorld()->GetTimerManager().SetTimer(PickupHandle, this, &UWeaponSystem::EquipeLastTakenWeapon, 1, false, 0.05);
 }
 
 void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 {
-	if(Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr)
+	if(Weapon->WeaponInfo.WeaponType == Primary)
 	{
+		if(PrimaryWeapon)
+		{
+			Server_EquipPrimary();
+			DropWeapon();
+		}
 		PrimaryWeapon = Weapon;
 	}
-	else if(Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr)
+	else if(Weapon->WeaponInfo.WeaponType == Secondary)
 	{
+		if(SecondaryWeapon)
+		{
+			Server_EquipSecondary();
+			DropWeapon();
+		}
 		SecondaryWeapon = Weapon;
 	}
 	else if(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr)
@@ -256,6 +269,10 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 	EquipWeapon(MeleeWeapon);
 }
 
+void UWeaponSystem::EquipeLastTakenWeapon()
+{
+	if(LastTakenWeapon) EquipWeapon(LastTakenWeapon);
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
