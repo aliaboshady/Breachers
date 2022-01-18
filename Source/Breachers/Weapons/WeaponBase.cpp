@@ -43,6 +43,7 @@ AWeaponBase::AWeaponBase()
 	bIsFiring = false;
 	bIsReloading = false;
 	bIsEquipping = false;
+	RecoilTimePerShot = 0;
 }
 
 void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -130,6 +131,7 @@ void AWeaponBase::OnPrimaryFire()
 void AWeaponBase::OnStopFire()
 {
 	GetWorld()->GetTimerManager().ClearTimer(StartFireTimer);
+	Client_ResetRecoil();
 }
 
 void AWeaponBase::OnSecondaryFire()
@@ -508,8 +510,22 @@ void AWeaponBase::CancelAllAnimations() const
 void AWeaponBase::Client_Recoil_Implementation()
 {
 	if(!CharacterPlayer) return;
+	RecoilTimePerShot += WeaponInfo.RecoilInfo.TimeBetweenShots;
+	UCurveVector* RecoilPattern = WeaponInfo.RecoilInfo.RecoilPattern;
+	FVector RecoilVector;
+	
+	if(RecoilPattern)
+	{
+		RecoilVector = RecoilPattern->GetVectorValue(RecoilTimePerShot);
+	}
+	
 	FRotator NewRotation = CharacterPlayer->GetControlRotation();
-	NewRotation.Pitch += 1;
-	NewRotation.Yaw += 1;
+	NewRotation.Pitch += RecoilVector.Y;
+	NewRotation.Yaw += RecoilVector.Z;
 	CharacterPlayer->GetBreacherPC()->SetControlRotation(NewRotation);
+}
+
+void AWeaponBase::Client_ResetRecoil_Implementation()
+{
+	RecoilTimePerShot = 0;
 }

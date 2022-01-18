@@ -57,6 +57,9 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_Recoil();
 
+	UFUNCTION(Client, Reliable)
+	void Client_ResetRecoil();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnDropEnableOverlap();
 	
@@ -147,4 +150,6 @@ protected:
 	bool bIsFiring;
 	bool bIsReloading;
 	bool bIsEquipping;
+
+	float RecoilTimePerShot;
 };
