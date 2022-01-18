@@ -178,8 +178,8 @@ void ACharacterBase::Multicast_PushOnDeath_Implementation(AActor* DamageCauser, 
 {
 	if(AWeaponBase* KillerWeapon = Cast<AWeaponBase>(DamageCauser))
 	{
-		GetMesh()->AddImpulse(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.KillPushForce * 3, NAME_None, true);
-		LaunchCharacter(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.KillPushForce, true, true);
+		GetMesh()->AddImpulse(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.DamageInfo.KillPushForce * 3, NAME_None, true);
+		LaunchCharacter(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.DamageInfo.KillPushForce, true, true);
 	}
 }
 

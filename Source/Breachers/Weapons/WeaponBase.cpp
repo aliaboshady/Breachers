@@ -62,8 +62,8 @@ void AWeaponBase::BeginPlay()
 	SetupWeaponInfo();
 	
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapped);
-	CurrentTotalAmmo = WeaponInfo.MaxTotalAmmo - WeaponInfo.MaxAmmoInClip;
-	CurrentAmmoInClip = WeaponInfo.MaxAmmoInClip;
+	CurrentTotalAmmo = WeaponInfo.ReloadInfo.MaxTotalAmmo - WeaponInfo.ReloadInfo.MaxAmmoInClip;
+	CurrentAmmoInClip = WeaponInfo.ReloadInfo.MaxAmmoInClip;
 
 	if(WeaponInfo.WeaponType == Primary) Tags.Add(TAG_Primary);
 	else if(WeaponInfo.WeaponType == Secondary) Tags.Add(TAG_Secondary);
@@ -111,11 +111,11 @@ void AWeaponBase::OnPrimaryFire()
 	bCanFire = false;
 	bIsFiring = true;
 	FTimerHandle IsFiringTimer;
-	GetWorld()->GetTimerManager().SetTimer(IsFiringTimer, this, &AWeaponBase::ResetIsFiring, 1, false, WeaponInfo.FireAnimationTime);
+	GetWorld()->GetTimerManager().SetTimer(IsFiringTimer, this, &AWeaponBase::ResetIsFiring, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
 
 	if(WeaponInfo.WeaponFireMode == Auto)
 	{
-		GetWorld()->GetTimerManager().SetTimer(StartFireTimer, this, &AWeaponBase::Client_OnFire, WeaponInfo.TimeBetweenShots + 0.01, true, 0);
+		GetWorld()->GetTimerManager().SetTimer(StartFireTimer, this, &AWeaponBase::Client_OnFire, WeaponInfo.RecoilInfo.TimeBetweenShots + 0.01, true, 0);
 	}
 	else if(WeaponInfo.WeaponFireMode == Spread)
 	{
@@ -139,13 +139,13 @@ void AWeaponBase::OnSecondaryFire()
 
 void AWeaponBase::FireSpread()
 {
-	for (int32 i = 0; i < WeaponInfo.BulletsPerSpread; i++)
+	for (int32 i = 0; i < WeaponInfo.ShotInfo.BulletsPerSpread; i++)
 	{
 		Client_OnFire();
 	}
 	bCanFire = false;
 	FTimerHandle ResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AWeaponBase::ResetCanFire, 1, false, WeaponInfo.TimeBetweenShots);
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AWeaponBase::ResetCanFire, 1, false, WeaponInfo.RecoilInfo.TimeBetweenShots);
 }
 
 void AWeaponBase::ResetCanFire()
@@ -162,26 +162,27 @@ void AWeaponBase::Client_OnFire_Implementation()
 {
 	if(CurrentAmmoInClip <= 0) return;
 	
-	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilFactor);
+	const FVector RecoilVector = RecoilShot(WeaponInfo.RecoilInfo.RecoilFactor);
 	const FVector Start = CharacterPlayer->GetCameraLocation();
-	FVector End = CharacterPlayer->GetCameraDirection() * WeaponInfo.TraceLength + Start;
+	FVector End = CharacterPlayer->GetCameraDirection() * WeaponInfo.ShotInfo.TraceLength + Start;
 	End += RecoilVector;
 	
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(CharacterPlayer);
 	
 	FHitResult OutHit;
-	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, WeaponInfo.BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, WeaponInfo.ShotInfo.BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 
+	Client_Recoil();
 	Server_ProcessShot(OutHit);
 }
 
 void AWeaponBase::Server_ProcessShot_Implementation(FHitResult OutHit)
 {
 	if(CurrentAmmoInClip <= 0) return;
-	CurrentAmmoInClip = FMath::Clamp(--CurrentAmmoInClip, 0, WeaponInfo.MaxTotalAmmo);
+	CurrentAmmoInClip = FMath::Clamp(--CurrentAmmoInClip, 0, WeaponInfo.ReloadInfo.MaxTotalAmmo);
 	FTimerHandle ResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AWeaponBase::ResetCanFire, 1, false, WeaponInfo.TimeBetweenShots);
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AWeaponBase::ResetCanFire, 1, false, WeaponInfo.RecoilInfo.TimeBetweenShots);
 	
 	if(OutHit.bBlockingHit)
 	{
@@ -217,16 +218,16 @@ int32 AWeaponBase::GetSurfaceDamage(FHitResult OutHit) const
 	switch (SurfaceType)
 	{
 	case SURFACE_Head:
-		return WeaponInfo.HeadDamage;
+		return WeaponInfo.DamageInfo.HeadDamage;
 		
 	case SURFACE_Torso:
-		return WeaponInfo.TorsoDamage;
+		return WeaponInfo.DamageInfo.TorsoDamage;
 		
 	case SURFACE_Arms:
-		return WeaponInfo.ArmsDamage;
+		return WeaponInfo.DamageInfo.ArmsDamage;
 		
 	case SURFACE_Legs:
-		return WeaponInfo.LegsDamage;
+		return WeaponInfo.DamageInfo.LegsDamage;
 		
 	default: return 0;
 	}
@@ -259,8 +260,8 @@ void AWeaponBase::Client_OnFireEffects_Implementation()
 		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.WeaponEffects.MuzzleFireSound);
 	}
 
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_FP, WeaponInfo.FireAnimationTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_FP, WeaponInfo.ShotInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
 void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
@@ -289,8 +290,8 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.ImpactSound, OutHit.ImpactPoint);
 	}
 
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_TP, WeaponInfo.FireAnimationTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_TP, WeaponInfo.ShotInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
 void AWeaponBase::SpawnBulletTracer(FHitResult OutHit, FVector Start, bool bIsClient)
@@ -338,10 +339,10 @@ void AWeaponBase::Multicast_SpawnBulletTracer_Implementation(FHitResult OutHit)
 
 void AWeaponBase::OnReload()
 {
-	if(CurrentTotalAmmo <= 0 || CurrentAmmoInClip >= WeaponInfo.MaxAmmoInClip || bIsEquipping || bIsReloading || bIsFiring) return;
+	if(CurrentTotalAmmo <= 0 || CurrentAmmoInClip >= WeaponInfo.ReloadInfo.MaxAmmoInClip || bIsEquipping || bIsReloading || bIsFiring) return;
 	OnStopFire();
 	
-	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &AWeaponBase::OnFinishReload, 1, false, WeaponInfo.ReloadTime);
+	GetWorld()->GetTimerManager().SetTimer(ReloadTimer, this, &AWeaponBase::OnFinishReload, 1, false, WeaponInfo.ReloadInfo.ReloadTime);
 	bIsReloading = true;
 	
 	Client_OnReloadAnimations();
@@ -351,11 +352,11 @@ void AWeaponBase::OnReload()
 void AWeaponBase::OnFinishReload()
 {
 	bIsReloading = false;
-	const int32 NeededAmmo = WeaponInfo.MaxAmmoInClip - CurrentAmmoInClip;
+	const int32 NeededAmmo = WeaponInfo.ReloadInfo.MaxAmmoInClip - CurrentAmmoInClip;
 
 	if(CurrentTotalAmmo - NeededAmmo >= 0)
 	{
-		CurrentTotalAmmo = FMath::Clamp(CurrentTotalAmmo - NeededAmmo, 0, WeaponInfo.MaxTotalAmmo);
+		CurrentTotalAmmo = FMath::Clamp(CurrentTotalAmmo - NeededAmmo, 0, WeaponInfo.ReloadInfo.MaxTotalAmmo);
 		CurrentAmmoInClip += NeededAmmo;
 	}
 	else
@@ -374,14 +375,14 @@ void AWeaponBase::OnCancelReload()
 
 void AWeaponBase::Client_OnReloadAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponFP, Mesh_FP, WeaponInfo.ReloadTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponFP, Mesh_FP, WeaponInfo.ReloadInfo.ReloadTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadInfo.ReloadTime);
 }
 
 void AWeaponBase::Multicast_OnReloadAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponTP, Mesh_TP, WeaponInfo.ReloadTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponTP, Mesh_TP, WeaponInfo.ReloadInfo.ReloadTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadInfo.ReloadTime);
 }
 
 void AWeaponBase::Multicast_OnCancelReloadAnimations_Implementation()
@@ -443,7 +444,7 @@ void AWeaponBase::Multicast_OnDropEnableOverlap_Implementation()
 void AWeaponBase::OnEquip()
 {
 	bIsEquipping = true;
-	GetWorld()->GetTimerManager().SetTimer(EquipTimer, this, &AWeaponBase::OnCancelEquip, 1, false, WeaponInfo.EquipTime);
+	GetWorld()->GetTimerManager().SetTimer(EquipTimer, this, &AWeaponBase::OnCancelEquip, 1, false, WeaponInfo.ReloadInfo.EquipTime);
 	Client_OnEquipAnimations();
 	Multicast_OnEquipAnimations();
 }
@@ -463,14 +464,14 @@ void AWeaponBase::OnCancelEquip()
 
 void AWeaponBase::Client_OnEquipAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_FP, WeaponInfo.EquipTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.EquipTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_FP, WeaponInfo.ReloadInfo.EquipTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadInfo.EquipTime);
 }
 
 void AWeaponBase::Multicast_OnEquipAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_TP, WeaponInfo.EquipTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.EquipTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_TP, WeaponInfo.ReloadInfo.EquipTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadInfo.EquipTime);
 }
 
 void AWeaponBase::Multicast_OnCancelEquipAnimations_Implementation()
@@ -502,4 +503,13 @@ void AWeaponBase::CancelAllAnimations() const
 	if(AnimIn_Mesh_TP) AnimIn_Mesh_TP->StopAllMontages(0);
 	if(AnimIn_CharacterMesh_FP) AnimIn_CharacterMesh_FP->StopAllMontages(0);
 	if(AnimIn_CharacterMesh_TP) AnimIn_CharacterMesh_TP->StopAllMontages(0);
+}
+
+void AWeaponBase::Client_Recoil_Implementation()
+{
+	if(!CharacterPlayer) return;
+	FRotator NewRotation = CharacterPlayer->GetControlRotation();
+	NewRotation.Pitch += 1;
+	NewRotation.Yaw += 1;
+	CharacterPlayer->GetBreacherPC()->SetControlRotation(NewRotation);
 }

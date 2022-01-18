@@ -2,6 +2,6 @@
 
 void AShotgunWeapon::FireSpread()
 {
-	CurrentAmmoInClip += WeaponInfo.BulletsPerSpread - 1;
+	CurrentAmmoInClip += WeaponInfo.ShotInfo.BulletsPerSpread - 1;
 	Super::FireSpread();
 }

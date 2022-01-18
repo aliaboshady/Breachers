@@ -23,10 +23,10 @@ void AMeleeWeapon::OnPrimaryFire()
 	
 	bCanFire = false;
 	FTimerHandle ResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AMeleeWeapon::ResetCanFire, 1, false, WeaponInfo.TimeBetweenShots);
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AMeleeWeapon::ResetCanFire, 1, false, WeaponInfo.RecoilInfo.TimeBetweenShots);
 
 	FTimerHandle HitSomethingTimer;
-	GetWorld()->GetTimerManager().SetTimer(HitSomethingTimer, this, &AMeleeWeapon::ResetHasHitSomething, 1, false, WeaponInfo.FireAnimationTime);
+	GetWorld()->GetTimerManager().SetTimer(HitSomethingTimer, this, &AMeleeWeapon::ResetHasHitSomething, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
 void AMeleeWeapon::OnSecondaryFire()
@@ -37,10 +37,10 @@ void AMeleeWeapon::OnSecondaryFire()
 	
 	bCanFire = false;
 	FTimerHandle ResetTimer;
-	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AMeleeWeapon::ResetCanFire, 1, false, WeaponInfo.TimeBetweenShots);
+	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AMeleeWeapon::ResetCanFire, 1, false, WeaponInfo.RecoilInfo.TimeBetweenShots);
 
 	FTimerHandle HitSomethingTimer;
-	GetWorld()->GetTimerManager().SetTimer(HitSomethingTimer, this, &AMeleeWeapon::ResetHasHitSomething, 1, false, WeaponInfo.FireAnimationTime);
+	GetWorld()->GetTimerManager().SetTimer(HitSomethingTimer, this, &AMeleeWeapon::ResetHasHitSomething, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
 void AMeleeWeapon::Multicast_MeleeAnimation_Implementation(bool bIsPrimary)
@@ -52,32 +52,32 @@ void AMeleeWeapon::Multicast_MeleeAnimation_Implementation(bool bIsPrimary)
 		UGameplayStatics::SpawnSoundAttached(WeaponInfo.WeaponEffects.MuzzleFireSound, Mesh_TP, SOCKET_Muzzle);
 	}
 
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.FireAnimationTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ShotInfo.FireAnimationTime);
+	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
 void AMeleeWeapon::ChangeProperties(bool bIsPrimary)
 {
 	if(bIsPrimary)
 	{
-		WeaponInfo.ArmsDamage = PrimaryAttackDamage;
-		WeaponInfo.HeadDamage = PrimaryAttackDamage;
-		WeaponInfo.TorsoDamage = PrimaryAttackDamage;
-		WeaponInfo.LegsDamage = PrimaryAttackDamage;
-		WeaponInfo.FireAnimationTime = PrimaryAttackTime;
-		WeaponInfo.TimeBetweenShots = PrimaryTimeBetweenHits;
+		WeaponInfo.DamageInfo.ArmsDamage = PrimaryAttackDamage;
+		WeaponInfo.DamageInfo.HeadDamage = PrimaryAttackDamage;
+		WeaponInfo.DamageInfo.TorsoDamage = PrimaryAttackDamage;
+		WeaponInfo.DamageInfo.LegsDamage = PrimaryAttackDamage;
+		WeaponInfo.ShotInfo.FireAnimationTime = PrimaryAttackTime;
+		WeaponInfo.RecoilInfo.TimeBetweenShots = PrimaryTimeBetweenHits;
 		if(PrimaryAttackAnim_ArmsFP) WeaponInfo.WeaponAnimations.FireAnim_ArmsFP = PrimaryAttackAnim_ArmsFP;
 		if(PrimaryAttackAnim_ArmsTP) WeaponInfo.WeaponAnimations.FireAnim_ArmsTP = PrimaryAttackAnim_ArmsTP;
 		if(PrimaryAttackHoleDecal) WeaponInfo.WeaponEffects.BulletHoleDecal = PrimaryAttackHoleDecal;
 	}
 	else
 	{
-		WeaponInfo.ArmsDamage = SecondaryAttackDamage;
-		WeaponInfo.HeadDamage = SecondaryAttackDamage;
-		WeaponInfo.TorsoDamage = SecondaryAttackDamage;
-		WeaponInfo.LegsDamage = SecondaryAttackDamage;
-		WeaponInfo.FireAnimationTime = SecondaryAttackTime;
-		WeaponInfo.TimeBetweenShots = SecondaryTimeBetweenHits;
+		WeaponInfo.DamageInfo.ArmsDamage = SecondaryAttackDamage;
+		WeaponInfo.DamageInfo.HeadDamage = SecondaryAttackDamage;
+		WeaponInfo.DamageInfo.TorsoDamage = SecondaryAttackDamage;
+		WeaponInfo.DamageInfo.LegsDamage = SecondaryAttackDamage;
+		WeaponInfo.ShotInfo.FireAnimationTime = SecondaryAttackTime;
+		WeaponInfo.RecoilInfo.TimeBetweenShots = SecondaryTimeBetweenHits;
 		if(SecondaryAttackAnim_ArmsFP) WeaponInfo.WeaponAnimations.FireAnim_ArmsFP = SecondaryAttackAnim_ArmsFP;
 		if(SecondaryAttackAnim_ArmsTP) WeaponInfo.WeaponAnimations.FireAnim_ArmsTP = SecondaryAttackAnim_ArmsTP;
 		if(SecondaryAttackHoleDecal) WeaponInfo.WeaponEffects.BulletHoleDecal = SecondaryAttackHoleDecal;
@@ -99,13 +99,13 @@ void AMeleeWeapon::Server_OnMeleeHit_Implementation()
 void AMeleeWeapon::Client_OnMeleeHit_Implementation()
 {
 	const FVector Start = CharacterPlayer->GetCameraLocation();
-	FVector End = CharacterPlayer->GetCameraDirection() * WeaponInfo.TraceLength + Start;
+	FVector End = CharacterPlayer->GetCameraDirection() * WeaponInfo.ShotInfo.TraceLength + Start;
 	
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(CharacterPlayer);
 	
 	FHitResult OutHit;
-	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, WeaponInfo.BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+	UKismetSystemLibrary::SphereTraceSingle(GetWorld(), Start, End, WeaponInfo.ShotInfo.BulletRadius, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 
 	Server_ProcessMeleeHit(OutHit);
 }

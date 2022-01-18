@@ -54,6 +54,9 @@ protected:
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
 
+	UFUNCTION(Client, Reliable)
+	void Client_Recoil();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnDropEnableOverlap();
 	

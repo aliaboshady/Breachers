@@ -202,9 +202,9 @@ void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 	CurrentWeapon = Weapon;
 	CurrentWeapon->OnEquip();
 
-	float RunSpeed = CurrentWeapon->WeaponInfo.CarryWeaponRunSpeed;
-	float WalkSpeed = CurrentWeapon->WeaponInfo.CarryWeaponWalkSpeed;
-	float CrouchSpeed = CurrentWeapon->WeaponInfo.CarryWeaponCrouchSpeed;
+	float RunSpeed = CurrentWeapon->WeaponInfo.CarrySpeeds.CarryWeaponRunSpeed;
+	float WalkSpeed = CurrentWeapon->WeaponInfo.CarrySpeeds.CarryWeaponWalkSpeed;
+	float CrouchSpeed = CurrentWeapon->WeaponInfo.CarrySpeeds.CarryWeaponCrouchSpeed;
 	CharacterPlayer->MovementSystem->SetSpeedsOfWeapon(RunSpeed, WalkSpeed, CrouchSpeed);
 	
 	Server_StopPrimaryFire();

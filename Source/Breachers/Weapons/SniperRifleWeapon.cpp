@@ -21,7 +21,7 @@ void ASniperRifleWeapon::BeginPlay()
 	NewTransform = ArmsFP_Transform_Scoped;
 	UnscopedIdlePose_ArmsTP = WeaponInfo.WeaponAnimations.IdlePose_ArmsTP;
 	UnscopedBlendSpace_ArmsTP = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
-	DefaultScopingZoom = WeaponInfo.DefaultFOV;
+	DefaultScopingZoom = WeaponInfo.ShotInfo.DefaultFOV;
 }
 
 void ASniperRifleWeapon::Tick(float DeltaSeconds)

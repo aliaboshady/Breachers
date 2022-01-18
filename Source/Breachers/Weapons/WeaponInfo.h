@@ -2,6 +2,7 @@
 #include "CoreMinimal.h"
 #include "BulletTracer.h"
 #include "Animation/AimOffsetBlendSpace1D.h"
+#include "Curves/CurveVector.h"
 #include "Engine/DataTable.h"
 #include "WeaponInfo.generated.h"
 
@@ -100,42 +101,9 @@ struct FWeaponEffect
 };
 
 USTRUCT(BlueprintType)
-struct FWeaponInfo : public FTableRowBase
+struct FDamageInfo
 {
 	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString WeaponName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	UTexture2D* WeaponIcon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 WeaponPrice;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 KillRewardMoney;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TEnumAsByte<EWeaponType> WeaponType;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TEnumAsByte<EFireMode> WeaponFireMode;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FTransform ArmsTransformFP;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	bool bIsDroppable;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float CarryWeaponRunSpeed;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float CarryWeaponWalkSpeed;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float CarryWeaponCrouchSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float KillPushForce;
@@ -151,12 +119,48 @@ struct FWeaponInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 LegsDamage;
+};
+
+USTRUCT(BlueprintType)
+struct FRecoilInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float TimeBetweenShots;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RecoilFactor;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RecoilRecoveryTime;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RecoilRecoveryDelay;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UCurveVector* RecoilPattern;
+};
+
+USTRUCT(BlueprintType)
+struct FCarrySpeed
+{
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float BulletsPerSpread;
+	float CarryWeaponRunSpeed;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CarryWeaponWalkSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float CarryWeaponCrouchSpeed;
+};
+
+USTRUCT(BlueprintType)
+struct FReloadInfo
+{
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 MaxTotalAmmo;
@@ -165,16 +169,23 @@ struct FWeaponInfo : public FTableRowBase
 	int32 MaxAmmoInClip;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float TimeBetweenShots;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float FireAnimationTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ReloadTime;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float EquipTime;
+
+};
+
+USTRUCT(BlueprintType)
+struct FShotInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float BulletsPerSpread;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float FireAnimationTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float TraceLength;
@@ -184,6 +195,51 @@ struct FWeaponInfo : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float DefaultFOV;
+};
+
+USTRUCT(BlueprintType)
+struct FWeaponInfo : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString WeaponName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UTexture2D* WeaponIcon;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<EWeaponType> WeaponType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TEnumAsByte<EFireMode> WeaponFireMode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsDroppable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 WeaponPrice;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 KillRewardMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FDamageInfo DamageInfo;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FRecoilInfo RecoilInfo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FTransform ArmsTransformFP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FCarrySpeed CarrySpeeds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FReloadInfo ReloadInfo;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FShotInfo ShotInfo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FWeaponAnimation WeaponAnimations;
