@@ -25,6 +25,9 @@ protected:
 	virtual FVector RecoilShot(float Spread);
 	void ResetCanScope();
 
+	UFUNCTION(Client, Reliable)
+	void Client_ChangeAddedRecoil(float AddedRecoil);
+
 	UFUNCTION(Server, Reliable)
 	void Server_HandleTickDisabling(float Alpha);
 
@@ -90,5 +93,6 @@ protected:
 	bool bWantsToScope;
 	float ScopeTimeAlpha;
 	float DefaultScopingZoom;
+	float CurrentAddedRecoil;
 	bool bIsInScope;
 };

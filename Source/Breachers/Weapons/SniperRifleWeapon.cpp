@@ -12,6 +12,7 @@ ASniperRifleWeapon::ASniperRifleWeapon()
 	bCanScope = true;
 	bIsInScope = false;
 	ScopeZoomMultiplier = 1.5;
+	CurrentAddedRecoil = 0;
 }
 
 void ASniperRifleWeapon::BeginPlay()
@@ -35,7 +36,12 @@ void ASniperRifleWeapon::Tick(float DeltaSeconds)
 
 void ASniperRifleWeapon::OnPrimaryFire()
 {
-	if(bCanFire && CurrentAmmoInClip > 0) Server_ForceUnscope();
+	if(bCanFire && CurrentAmmoInClip > 0)
+	{
+		if(bIsInScope) Client_ChangeAddedRecoil(0);
+		else Client_ChangeAddedRecoil(AddedRecoilUnscoped);
+		Server_ForceUnscope();
+	}
 	Super::OnPrimaryFire();
 }
 
@@ -185,7 +191,7 @@ FVector ASniperRifleWeapon::RecoilShot(float Spread)
 {
 	FVector RecoilVector = FVector(0);
 	float PlayerSpeed = CharacterPlayer->GetVelocity().Size();
-	float Range = 0;
+	float Range = CurrentAddedRecoil;
 	
 	if(PlayerSpeed > WeaponInfo.RecoilInfo.MaxAccurateSpeed)
 	{
@@ -196,4 +202,9 @@ FVector ASniperRifleWeapon::RecoilShot(float Spread)
 	RecoilVector.Y += FMath::RandRange(-Range, Range);
 	RecoilVector.Z += FMath::RandRange(-Range, Range);
 	return RecoilVector;
+}
+
+void ASniperRifleWeapon::Client_ChangeAddedRecoil_Implementation(float AddedRecoil)
+{
+	CurrentAddedRecoil = AddedRecoil;
 }
