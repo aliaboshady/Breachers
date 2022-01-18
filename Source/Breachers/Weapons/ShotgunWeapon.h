@@ -10,4 +10,6 @@ class BREACHERS_API AShotgunWeapon : public AWeaponBase
 
 protected:
 	virtual void FireSpread() override;
+	virtual FVector RecoilShot(float Spread) override;
+	virtual void Client_Recoil(FVector CalculatedRecoil) override;
 };
