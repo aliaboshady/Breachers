@@ -510,6 +510,14 @@ FVector AWeaponBase::RecoilShot(float Spread)
 	{
 		RecoilVector = RecoilPattern->GetVectorValue(RecoilTimePerShot);
 	}
+
+	float PlayerSpeed = CharacterPlayer->GetVelocity().Size();
+	if(PlayerSpeed > WeaponInfo.RecoilInfo.MaxAccurateSpeed)
+	{
+		float Range = PlayerSpeed / WeaponInfo.RecoilInfo.RecoilFactor;
+		RecoilVector.Z += FMath::RandRange(-Range, Range);
+		RecoilVector.Y += FMath::RandRange(-Range, Range);
+	}
 	
 	FVector NewLocation = FVector(RecoilVector.Z, 0, RecoilVector.Y);
 	return NewLocation;

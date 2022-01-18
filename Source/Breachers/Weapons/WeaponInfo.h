@@ -137,6 +137,9 @@ struct FRecoilInfo
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RecoilRecoveryDelay;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxAccurateSpeed;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UCurveVector* RecoilPattern;
