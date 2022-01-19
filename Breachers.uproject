@@ -22,5 +22,8 @@
 			"Name": "AdvancedSteamSessions",
 			"Enabled": true
 		}
+	],
+	"TargetPlatforms": [
+		"WindowsNoEditor"
 	]
 }
