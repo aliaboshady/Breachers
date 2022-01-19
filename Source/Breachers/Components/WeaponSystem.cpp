@@ -239,7 +239,7 @@ void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::EquipStartUpWeapons()
 {
-	if(MeleeWeapon)TakeWeapon(MeleeWeapon);
+	if(MeleeWeapon)EquipWeapon(MeleeWeapon);
 	if(SecondaryWeapon) EquipWeapon(SecondaryWeapon);
 }
 
