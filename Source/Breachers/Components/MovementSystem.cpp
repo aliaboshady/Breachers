@@ -6,7 +6,6 @@
 UMovementSystem::UMovementSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	SetIsReplicated(true);
 	CrouchSpeed = 200;
 	WalkSpeed = 300;
 	RunSpeed = 600;
@@ -17,6 +16,7 @@ UMovementSystem::UMovementSystem()
 void UMovementSystem::BeginPlay()
 {
 	Super::BeginPlay();
+	SetIsReplicated(true);
 	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
 	if(CharacterPlayer && CharacterPlayer->HealthSystem)
 	{

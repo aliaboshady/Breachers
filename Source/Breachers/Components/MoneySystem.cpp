@@ -4,7 +4,6 @@
 UMoneySystem::UMoneySystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	SetIsReplicated(true);
 
 	StartUpMoney = 800;
 	MaxMoney = 9000;
@@ -13,6 +12,7 @@ UMoneySystem::UMoneySystem()
 void UMoneySystem::BeginPlay()
 {
 	Super::BeginPlay();
+	SetIsReplicated(true);
 	CurrentMoney = StartUpMoney;
 }
 

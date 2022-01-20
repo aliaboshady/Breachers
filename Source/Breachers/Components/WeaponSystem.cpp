@@ -8,7 +8,6 @@
 UWeaponSystem::UWeaponSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	SetIsReplicated(true);
 	WeaponThrowForce = 40000;
 	WeaponPickupDistance = 200;
 	bShootingEnabled = true;
@@ -30,6 +29,7 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 void UWeaponSystem::BeginPlay()
 {
 	Super::BeginPlay();
+	SetIsReplicated(true);
 	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
 
 	if(CharacterPlayer->HasAuthority()) Server_SpawnStartWeapons();

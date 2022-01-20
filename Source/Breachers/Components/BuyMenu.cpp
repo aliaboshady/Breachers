@@ -11,7 +11,6 @@ UBuyMenu::UBuyMenu()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	bCanBuy = false;
-	SetIsReplicated(true);
 }
 
 void UBuyMenu::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -24,7 +23,7 @@ void UBuyMenu::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetime
 void UBuyMenu::BeginPlay()
 {
 	Super::BeginPlay();
-
+	SetIsReplicated(true);
 	FTimerHandle BuyMenuHandle;
 	GetWorld()->GetTimerManager().SetTimer(BuyMenuHandle, this, &UBuyMenu::GetPC, 1, false, 0.2);
 }

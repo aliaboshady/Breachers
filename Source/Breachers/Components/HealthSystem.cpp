@@ -11,7 +11,6 @@
 UHealthSystem::UHealthSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	SetIsReplicated(true);
 	MaxHealth = 100;
 	bIsDead = false;
 }
@@ -19,6 +18,7 @@ UHealthSystem::UHealthSystem()
 void UHealthSystem::BeginPlay()
 {
 	Super::BeginPlay();
+	SetIsReplicated(true);
 	CharacterPlayer = Cast<ACharacterBase>(GetOwner());
 	if(CharacterPlayer && CharacterPlayer->HasAuthority())
 	{
