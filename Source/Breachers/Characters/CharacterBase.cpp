@@ -104,6 +104,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if(MovementSystem) MovementSystem->SetPlayerInputComponent(PlayerInputComponent);
 	if(WeaponSystem) WeaponSystem->SetPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction(INPUT_OpenBuyMenu, IE_Pressed, this, &ACharacterBase::ShowHideBuyMenu);
+	PlayerInputComponent->BindAction(INPUT_Pause, IE_Pressed, this, &ACharacterBase::ShowHidePauseMenu);
 }
 
 void ACharacterBase::OnDie()
@@ -198,6 +199,12 @@ void ACharacterBase::ShowHideBuyMenu()
 {
 	if(!PC) return;
 	PC->BuyMenu->ShowHideBuyMenu();
+}
+
+void ACharacterBase::ShowHidePauseMenu()
+{
+	if(!PC) return;
+	PC->ShowHidePauseMenu();
 }
 
 void ACharacterBase::Landed(const FHitResult& Hit)

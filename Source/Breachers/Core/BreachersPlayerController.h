@@ -17,6 +17,9 @@ public:
 	ABreachersPlayerController();
 	void ShowTeamSelectionMenu();
 	void EnableShooting(bool bEnableShooting);
+
+	UFUNCTION(BlueprintCallable)
+	void ShowHidePauseMenu();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UMoneySystem* MoneySystem;
@@ -59,6 +62,9 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_ShowPlayerUI();
 
+	UFUNCTION(Client, Reliable)
+	void Client_CreatePauseMenuWidget();
+
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
 	
@@ -68,6 +74,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> PlayerUIWidgetClass;
 	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
+	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;
+
+	UPROPERTY()
+	UUserWidget* PauseMenuWidget;
+
+	bool bPauseMenuOpen;
 };

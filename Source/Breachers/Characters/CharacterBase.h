@@ -27,6 +27,7 @@
 #define INPUT_Jump			"Jump"
 #define INPUT_Crouch		"Crouch"
 #define INPUT_Walk			"Walk"
+#define INPUT_Pause			"PauseMenu"
 
 UENUM(BlueprintType)
 enum ETeam
@@ -89,6 +90,7 @@ protected:
 	float DeathAnimationRate;
 	void StopRagdollMovement() const;
 	void ShowHideBuyMenu();
+	void ShowHidePauseMenu();
 	virtual void Landed(const FHitResult& Hit) override;
 
 	void OnDie();

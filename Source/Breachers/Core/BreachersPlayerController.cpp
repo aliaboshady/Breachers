@@ -21,12 +21,18 @@ void ABreachersPlayerController::BeginPlay()
 	Super::BeginPlay();
 	PossessStartCamera();
 	BreachersGameModeBase = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());
+	Client_CreatePauseMenuWidget();
 }
 
 void ABreachersPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABreachersPlayerController, CharacterPlayer);
+}
+
+void ABreachersPlayerController::Client_CreatePauseMenuWidget_Implementation()
+{
+	if(PauseMenuWidgetClass) PauseMenuWidget = CreateWidget(this, PauseMenuWidgetClass);
 }
 
 void ABreachersPlayerController::PossessStartCamera()
@@ -127,4 +133,22 @@ void ABreachersPlayerController::EnableShooting(bool bEnableShooting)
 void ABreachersPlayerController::Server_EnableShooting_Implementation(bool bEnableShooting)
 {
 	CharacterPlayer->WeaponSystem->EnableShooting(bEnableShooting);
+}
+
+void ABreachersPlayerController::ShowHidePauseMenu()
+{
+	if(!PauseMenuWidget || !CharacterPlayer) return;
+	if(bPauseMenuOpen)
+	{
+		PauseMenuWidget->RemoveFromViewport();
+		CharacterPlayer->EnableInput(this);
+		SetInputUI(false);
+	}
+	else
+	{
+		PauseMenuWidget->AddToViewport();
+		CharacterPlayer->DisableInput(this);
+		SetInputUI(true);
+	}
+	bPauseMenuOpen = !bPauseMenuOpen;
 }
