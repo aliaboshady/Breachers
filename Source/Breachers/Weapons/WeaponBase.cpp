@@ -55,6 +55,8 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AWeaponBase, CurrentAmmoInClip);
 }
 
+void AWeaponBase::OnDie(){}
+
 void AWeaponBase::BeginPlay()
 {
 	Super::BeginPlay();
@@ -411,6 +413,8 @@ void AWeaponBase::Multicast_OnTaken_Implementation()
 void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 {
 	PreviousOwner = DropperCharacter;
+	SetOwner(nullptr);
+	SetInstigator(nullptr);
 	
 	Mesh_TP->SetEnableGravity(true);
 	Mesh_TP->SetSimulatePhysics(true);

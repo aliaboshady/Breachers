@@ -56,6 +56,9 @@ protected:
 
 	void DecreaseRecoilTimePerShot();
 	void WaitRecoilTimePerShot();
+
+	UFUNCTION()
+	virtual void OnDie();
 	
 	UFUNCTION(Client, Reliable)
 	virtual void Client_Recoil(FVector CalculatedRecoil);

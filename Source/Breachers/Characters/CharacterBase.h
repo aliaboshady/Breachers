@@ -91,6 +91,8 @@ protected:
 	void ShowHideBuyMenu();
 	virtual void Landed(const FHitResult& Hit) override;
 
+	void OnDie();
+	
 	UFUNCTION(Server, Reliable)
 	void Server_OnDie();
 	
@@ -101,7 +103,7 @@ protected:
 	void Multicast_OnDie_Ragdoll();
 	
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_PushOnDeath(AActor* DamageCauser, FVector ShotFromDirection);
+	void Multicast_PushOnDeath();
 
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComponent;
@@ -117,6 +119,12 @@ protected:
 
 	UPROPERTY(Replicated)
 	ABreachersPlayerController* PC;
+
+	UPROPERTY(Replicated)
+	AActor* KillerWeapon;
+	
+	UPROPERTY(Replicated)
+	FVector KillForceDirection;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float DeathAnimationSpeed;

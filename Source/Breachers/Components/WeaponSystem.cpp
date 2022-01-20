@@ -174,8 +174,6 @@ void UWeaponSystem::Server_DropWeapon_Implementation()
 
 	Multicast_DropWeaponVisualsTP(CurrentWeapon);
 	CurrentWeapon->OnDrop(CharacterPlayer);
-	CurrentWeapon->SetOwner(nullptr);
-	CurrentWeapon->SetInstigator(nullptr);
 	CurrentWeapon = nullptr;
 
 	if(PreviousWeapon) EquipWeapon(PreviousWeapon);

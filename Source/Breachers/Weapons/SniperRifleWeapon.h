@@ -12,6 +12,7 @@ public:
 	ASniperRifleWeapon();
 
 protected:
+	virtual void OnDie() override;
 	virtual void OnPrimaryFire() override;
 	virtual void OnSecondaryFire() override;
 	virtual void OnReload() override;

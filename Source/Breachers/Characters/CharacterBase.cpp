@@ -67,6 +67,8 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ACharacterBase, PC);
+	DOREPLIFETIME(ACharacterBase, KillerWeapon);
+	DOREPLIFETIME(ACharacterBase, KillForceDirection);
 	//DOREPLIFETIME(ACharacterBase, bIsDead);
 }
 
@@ -104,11 +106,18 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(INPUT_OpenBuyMenu, IE_Pressed, this, &ACharacterBase::ShowHideBuyMenu);
 }
 
-void ACharacterBase::Server_OnDie_Implementation()
+void ACharacterBase::OnDie()
 {
 	WeaponSystem->DropAllWeapons();
 	Client_OnDie_Visuals();
 	Multicast_OnDie_Ragdoll();
+	Multicast_PushOnDeath();
+}
+
+void ACharacterBase::Server_OnDie_Implementation()
+{
+	FTimerHandle OnDieTimer;
+	GetWorldTimerManager().SetTimer(OnDieTimer, this, &ACharacterBase::OnDie, 1, false, 0.01);
 }
 
 void ACharacterBase::Client_OnDie_Visuals_Implementation()
@@ -171,15 +180,17 @@ void ACharacterBase::StopRagdollMovement() const
 
 void ACharacterBase::PushOnDeath(AActor* DamageCauser, FVector ShotFromDirection)
 {
-	Multicast_PushOnDeath(DamageCauser, ShotFromDirection);
+	KillerWeapon = DamageCauser;
+	KillForceDirection = ShotFromDirection;
 }
 
-void ACharacterBase::Multicast_PushOnDeath_Implementation(AActor* DamageCauser, FVector PushDirection)
+void ACharacterBase::Multicast_PushOnDeath_Implementation()
 {
-	if(AWeaponBase* KillerWeapon = Cast<AWeaponBase>(DamageCauser))
+	if(!KillerWeapon) return;
+	if(AWeaponBase* DamageCauser = Cast<AWeaponBase>(KillerWeapon))
 	{
-		GetMesh()->AddImpulse(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.DamageInfo.KillPushForce * 3, NAME_None, true);
-		LaunchCharacter(PushDirection.GetSafeNormal() * KillerWeapon->WeaponInfo.DamageInfo.KillPushForce, true, true);
+		GetMesh()->AddImpulse(KillForceDirection.GetSafeNormal() * DamageCauser->WeaponInfo.DamageInfo.KillPushForce * 3, NAME_None, true);
+		LaunchCharacter(KillForceDirection.GetSafeNormal() * DamageCauser->WeaponInfo.DamageInfo.KillPushForce, true, true);
 	}
 }
 
