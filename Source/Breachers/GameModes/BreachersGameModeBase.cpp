@@ -1,8 +1,8 @@
 #include "BreachersGameModeBase.h"
-#include "BreachersPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/BuyMenu.h"
+#include "Breachers/PlayerControllers/BreachersPlayerController.h"
 
 ABreachersGameModeBase::ABreachersGameModeBase()
 {

@@ -2,7 +2,7 @@
 #include "Breachers/Characters/CharacterBase.h"
 #include "Blueprint/UserWidget.h"
 #include "Breachers/Components/HealthSystem.h"
-#include "Breachers/Core/BreachersPlayerController.h"
+#include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 
 ASniperRifleWeapon::ASniperRifleWeapon()

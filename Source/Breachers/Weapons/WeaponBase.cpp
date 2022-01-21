@@ -2,7 +2,7 @@
 #include "DrawDebugHelpers.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/WeaponSystem.h"
-#include "Breachers/Core/BreachersPlayerController.h"
+#include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"

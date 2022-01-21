@@ -1,5 +1,5 @@
 #include "FootstepsAnimNotify.h"
-#include "Breachers/Core/CharacterAnimInstance.h"
+#include "Breachers/AnimInstances/CharacterAnimInstance.h"
 
 void UFootstepsAnimNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {

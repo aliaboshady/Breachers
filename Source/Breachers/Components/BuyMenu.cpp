@@ -4,7 +4,7 @@
 #include "WeaponSystem.h"
 #include "Blueprint/UserWidget.h"
 #include "Breachers/Characters/CharacterBase.h"
-#include "Breachers/Core/BreachersPlayerController.h"
+#include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
 UBuyMenu::UBuyMenu()
