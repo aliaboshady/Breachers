@@ -6,7 +6,6 @@
 
 ABreachersGameModeBase::ABreachersGameModeBase()
 {
-	RespawnTime = 2;
 	bFriendlyFireOn = false;
 	bUnlimitedMoney = false;
 }
@@ -67,18 +66,5 @@ void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> Characte
 
 void ABreachersGameModeBase::OnPlayerDied(ABreachersPlayerController* Controller)
 {
-	FTimerHandle RespawnHandle;
-	FTimerDelegate RespawnDelegate;
 	
-	switch (Controller->CharacterPlayer->Team)
-	{
-		case Attacker:
-			RespawnDelegate.BindUFunction(this, FName(TEXT("RequestAttackerSpawn")), Controller);
-			break;
-		case Defender:
-			RespawnDelegate.BindUFunction(this, FName(TEXT("RequestDefenderSpawn")), Controller);
-			break;
-		default:;
-	}
-	GetWorldTimerManager().SetTimer(RespawnHandle, RespawnDelegate, 1, false, RespawnTime);
 }

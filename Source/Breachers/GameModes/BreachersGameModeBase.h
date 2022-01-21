@@ -24,7 +24,7 @@ public:
 	UFUNCTION()
 	void RequestDefenderSpawn(AController* Controller);
 	
-	void OnPlayerDied(ABreachersPlayerController* Controller);
+	virtual void OnPlayerDied(ABreachersPlayerController* Controller);
 
 	FORCEINLINE bool IsFirendlyFireOn(){return bFriendlyFireOn;}
 
@@ -33,9 +33,6 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void GetPlayersStarts();
 	void SpawnCharacter(TSubclassOf<ACharacterBase> CharacterClass, FTransform SpawnTransform, AController* Controller, FString Tag) const;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float RespawnTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bFriendlyFireOn;

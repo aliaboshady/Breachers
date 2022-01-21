@@ -7,4 +7,12 @@ UCLASS()
 class BREACHERS_API ADeathMatchGameMode : public ABreachersGameModeBase
 {
 	GENERATED_BODY()
+
+public:
+	ADeathMatchGameMode();
+	virtual void OnPlayerDied(ABreachersPlayerController* Controller) override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RespawnTime;
 };
