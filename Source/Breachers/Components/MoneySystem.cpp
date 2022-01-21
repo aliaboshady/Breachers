@@ -1,5 +1,6 @@
 #include "MoneySystem.h"
 #include "Net/UnrealNetwork.h"
+#include "Breachers/GameModes/BreachersGameModeBase.h"
 
 UMoneySystem::UMoneySystem()
 {
@@ -13,7 +14,7 @@ void UMoneySystem::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-	CurrentMoney = StartUpMoney;
+	Server_SetMoney();
 }
 
 void UMoneySystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -29,5 +30,28 @@ void UMoneySystem::Server_AddToCurrentMoney_Implementation(int32 AddedMoney)
 
 void UMoneySystem::AddToCurrentMoney(int32 AddedMoney)
 {
+	if(bUnlimitedMoney) return;
 	Server_AddToCurrentMoney(AddedMoney);
+}
+
+void UMoneySystem::SetMoney()
+{
+	ABreachersGameModeBase* BreachersGM = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());
+	if(!BreachersGM) return;
+	
+	bUnlimitedMoney = BreachersGM->GetIsUnlimitedMoney();
+	StartUpMoney = BreachersGM->GetStartUpMoney();
+	MaxMoney = BreachersGM->GetMaxMoney();
+	CurrentMoney = StartUpMoney;
+}
+
+void UMoneySystem::Server_SetMoney_Implementation()
+{
+	SetMoney();
+	Client_SetMoney();
+}
+
+void UMoneySystem::Client_SetMoney_Implementation()
+{
+	SetMoney();
 }

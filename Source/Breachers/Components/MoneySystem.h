@@ -24,12 +24,18 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void Server_AddToCurrentMoney(int32 AddedMoney);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 StartUpMoney;
+	void SetMoney();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 MaxMoney;
+	UFUNCTION(Server, Reliable)
+	void Server_SetMoney();
 
+	UFUNCTION(Client, Reliable)
+	void Client_SetMoney();
+
+	bool bUnlimitedMoney;
+	int32 StartUpMoney;
+	int32 MaxMoney;
+	
 	UPROPERTY(Replicated)
 	int32 CurrentMoney;
 };

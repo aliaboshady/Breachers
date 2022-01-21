@@ -14,6 +14,9 @@ class BREACHERS_API ABreachersGameModeBase : public AGameModeBase
 
 public:
 	ABreachersGameModeBase();
+	FORCEINLINE int32 GetStartUpMoney(){return StartUpMoney;}
+	FORCEINLINE int32 GetMaxMoney(){return MaxMoney;}
+	FORCEINLINE bool GetIsUnlimitedMoney(){return bUnlimitedMoney;}
 
 	UFUNCTION()
 	void RequestAttackerSpawn(AController* Controller);
@@ -36,6 +39,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bFriendlyFireOn;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bUnlimitedMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 StartUpMoney;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 MaxMoney;
 
 	UPROPERTY()
 	TArray<AActor*> AttackerSpawns;

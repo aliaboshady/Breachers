@@ -8,6 +8,7 @@ ABreachersGameModeBase::ABreachersGameModeBase()
 {
 	RespawnTime = 2;
 	bFriendlyFireOn = false;
+	bUnlimitedMoney = false;
 }
 
 void ABreachersGameModeBase::BeginPlay()
