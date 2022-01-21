@@ -22,6 +22,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void RewardKiller(AController* InstigatedBy, AActor* DamageCauser);
+	void GetOwnerTag();
 	
 	UFUNCTION()
 	void OnTakePointDamage(AActor* DamagedActor, float Damage, class AController* InstigatedBy, FVector HitLocation, class UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection, const class UDamageType* DamageType, AActor* DamageCauser);
@@ -49,4 +50,7 @@ protected:
 
 	UPROPERTY(ReplicatedUsing=OnRep_IsDead)
 	bool bIsDead;
+
+	bool bFriendlyFireOn;
+	FName OwnerTeamTag;
 };

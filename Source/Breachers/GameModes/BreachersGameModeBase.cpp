@@ -7,6 +7,7 @@
 ABreachersGameModeBase::ABreachersGameModeBase()
 {
 	RespawnTime = 2;
+	bFriendlyFireOn = false;
 }
 
 void ABreachersGameModeBase::BeginPlay()
@@ -31,9 +32,8 @@ void ABreachersGameModeBase::RequestAttackerSpawn(AController* Controller)
 	{
 		const int32 RandInd = FMath::RandRange(0, AttackerSpawns.Num() - 1);
 		const FTransform SpawnTransform = AttackerSpawns[RandInd]->GetActorTransform();
-		if(AttackerClass) SpawnCharacter(AttackerClass, SpawnTransform, Controller);
+		if(AttackerClass) SpawnCharacter(AttackerClass, SpawnTransform, Controller, TAG_Attacker);
 	}
-	
 }
 
 void ABreachersGameModeBase::RequestDefenderSpawn(AController* Controller)
@@ -42,7 +42,7 @@ void ABreachersGameModeBase::RequestDefenderSpawn(AController* Controller)
 	{
 		const int32 RandInd = FMath::RandRange(0, DefenderSpawns.Num() - 1);
 		const FTransform SpawnTransform = DefenderSpawns[RandInd]->GetActorTransform();
-		if(DefenderClass) SpawnCharacter(DefenderClass, SpawnTransform, Controller);
+		if(DefenderClass) SpawnCharacter(DefenderClass, SpawnTransform, Controller, TAG_Defender);
 	}
 }
 
@@ -52,13 +52,14 @@ void ABreachersGameModeBase::GetPlayersStarts()
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), "DefenderSpawn", DefenderSpawns);
 }
 
-void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> CharacterClass, FTransform SpawnTransform, AController* Controller) const
+void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> CharacterClass, FTransform SpawnTransform, AController* Controller, FString Tag) const
 {
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	if(ACharacterBase* Character = GetWorld()->SpawnActor<ACharacterBase>(CharacterClass, SpawnTransform, SpawnParameters))
 	{
 		Controller->Possess(Character);
+		Character->Tags.Add(FName(Tag));
 		if(ABreachersPlayerController* PC = Cast<ABreachersPlayerController>(Controller)) PC->BuyMenu->EnableBuying(true);
 	}
 }

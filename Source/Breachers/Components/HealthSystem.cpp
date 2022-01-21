@@ -1,6 +1,7 @@
 #include "HealthSystem.h"
 #include "MoneySystem.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
@@ -25,6 +26,14 @@ void UHealthSystem::BeginPlay()
 	}
 
 	CurrentHealth = MaxHealth;
+
+	FTimerHandle TagHandle;
+	GetWorld()->GetTimerManager().SetTimer(TagHandle, this, &UHealthSystem::GetOwnerTag, 1, false, 0.1);
+
+	if(ABreachersGameModeBase* BreachersGM = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		bFriendlyFireOn = BreachersGM->IsFirendlyFireOn();
+	}
 }
 
 void UHealthSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -39,6 +48,8 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
                                       FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
                                       const UDamageType* DamageType, AActor* DamageCauser)
 {
+	if(!bFriendlyFireOn && InstigatedBy->GetCharacter()->ActorHasTag(OwnerTeamTag)) return;
+	
 	int32 DamageDealt = static_cast<int32>(Damage);
 	if(DamageDealt > 0) Multicast_ShowBlood(HitLocation);
 	CurrentHealth = FMath::Clamp(CurrentHealth - DamageDealt, 0, MaxHealth);
@@ -75,4 +86,9 @@ void UHealthSystem::RewardKiller(AController* InstigatedBy, AActor* DamageCauser
 	{
 		KillerCharacter->GetBreacherPC()->MoneySystem->AddToCurrentMoney(KillerWeapon->WeaponInfo.KillRewardMoney);
 	}
+}
+
+void UHealthSystem::GetOwnerTag()
+{
+	OwnerTeamTag = GetOwner()->ActorHasTag(FName(TAG_Attacker)) ? TAG_Attacker : TAG_Defender;
 }
