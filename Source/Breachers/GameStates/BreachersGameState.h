@@ -16,11 +16,11 @@ protected:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnCountDownChange OnCountDownChange;
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void Multicast_DecrementCountdownTime();
 	
-	UFUNCTION()
-	virtual void OnRep_CountDownTimeSpan();
-	
-	UPROPERTY(ReplicatedUsing=OnRep_CountDownTimeSpan)
+	UPROPERTY(Replicated)
 	FTimespan CountDownTimeSpan;
 	FTimespan OneSecondTimespan;
 	FTimerHandle CountDownTimerHandle;

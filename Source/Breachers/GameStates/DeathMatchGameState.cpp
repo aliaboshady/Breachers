@@ -10,8 +10,8 @@ void ADeathMatchGameState::BeginPlay()
 	}
 }
 
-void ADeathMatchGameState::OnRep_CountDownTimeSpan()
+void ADeathMatchGameState::Multicast_DecrementCountdownTime()
 {
 	if(bUnlimitedTime) return;
-	Super::OnRep_CountDownTimeSpan();
+	Super::Multicast_DecrementCountdownTime();
 }
