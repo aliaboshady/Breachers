@@ -27,9 +27,9 @@ bool ABreachersGameState::IsRoundTimeIsFinished()
 
 void ABreachersGameState::OnRep_CountDownTimeSpan()
 {
-	if(HasAuthority()) UE_LOG(LogTemp, Warning, TEXT("%d : %d : %d"), CountDownTimeSpan.GetHours(), CountDownTimeSpan.GetMinutes(), CountDownTimeSpan.GetSeconds());
 	if(!IsRoundTimeIsFinished())
 	{
+		OnCountDownChange.Broadcast(CountDownTimeSpan);
 		CountDownTimeSpan -= OneSecondTimespan;
 	}
 	else

@@ -76,6 +76,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> CountDownTimerWidgetClass;
 	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;

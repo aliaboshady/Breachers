@@ -3,6 +3,7 @@
 #include "GameFramework/GameStateBase.h"
 #include "BreachersGameState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCountDownChange, FTimespan , CountDownTimeSpan);
 UCLASS()
 class BREACHERS_API ABreachersGameState : public AGameStateBase
 {
@@ -12,6 +13,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	bool IsRoundTimeIsFinished();
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnCountDownChange OnCountDownChange;
 	
 	UFUNCTION()
 	virtual void OnRep_CountDownTimeSpan();

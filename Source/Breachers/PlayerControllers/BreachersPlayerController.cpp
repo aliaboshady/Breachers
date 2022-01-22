@@ -22,6 +22,14 @@ void ABreachersPlayerController::BeginPlay()
 	PossessStartCamera();
 	BreachersGameModeBase = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());
 	Client_CreatePauseMenuWidget();
+
+	if(CountDownTimerWidgetClass && IsLocalPlayerController())
+	{
+		if(UUserWidget* CountDownTimerWidget = CreateWidget(this, CountDownTimerWidgetClass))
+		{
+			CountDownTimerWidget->AddToViewport();
+		}
+	}
 }
 
 void ABreachersPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
