@@ -4,6 +4,8 @@
 
 ADeathMatchGameMode::ADeathMatchGameMode()
 {
+	bUnlimitedTime = false;
+	MatchTimeInMinutes = 10;
 	RespawnTime = 2;
 }
 

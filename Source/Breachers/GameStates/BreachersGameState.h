@@ -7,4 +7,7 @@ UCLASS()
 class BREACHERS_API ABreachersGameState : public AGameStateBase
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
