@@ -14,7 +14,7 @@ protected:
 	bool IsRoundTimeIsFinished();
 	
 	UFUNCTION()
-	void OnRep_CountDownTimeSpan();
+	virtual void OnRep_CountDownTimeSpan();
 	
 	UPROPERTY(ReplicatedUsing=OnRep_CountDownTimeSpan)
 	FTimespan CountDownTimeSpan;
