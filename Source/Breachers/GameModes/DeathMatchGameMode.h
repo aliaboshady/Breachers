@@ -12,14 +12,10 @@ public:
 	ADeathMatchGameMode();
 	virtual void OnPlayerDied(ABreachersPlayerController* Controller) override;
 	FORCEINLINE bool GetIsUnlimitedTime(){return bUnlimitedTime;}
-	FORCEINLINE int32 GetMatchTimeInMinutes(){return MatchTimeInMinutes;}
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bUnlimitedTime;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 MatchTimeInMinutes;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RespawnTime;

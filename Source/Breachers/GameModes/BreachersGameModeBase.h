@@ -17,6 +17,7 @@ public:
 	FORCEINLINE int32 GetStartUpMoney(){return StartUpMoney;}
 	FORCEINLINE int32 GetMaxMoney(){return MaxMoney;}
 	FORCEINLINE bool GetIsUnlimitedMoney(){return bUnlimitedMoney;}
+	FORCEINLINE int32 GetRoundTimeInMinutes(){return RoundTimeInMinutes;}
 
 	UFUNCTION()
 	void RequestAttackerSpawn(AController* Controller);
@@ -45,6 +46,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 MaxMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 RoundTimeInMinutes;
 
 	UPROPERTY()
 	TArray<AActor*> AttackerSpawns;

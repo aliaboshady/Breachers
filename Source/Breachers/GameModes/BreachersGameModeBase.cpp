@@ -8,6 +8,7 @@ ABreachersGameModeBase::ABreachersGameModeBase()
 {
 	bFriendlyFireOn = false;
 	bUnlimitedMoney = false;
+	RoundTimeInMinutes = 10;
 }
 
 void ABreachersGameModeBase::BeginPlay()
