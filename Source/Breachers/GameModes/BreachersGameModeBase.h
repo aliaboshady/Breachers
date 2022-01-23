@@ -34,6 +34,10 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void GetPlayersStarts();
 	void SpawnCharacter(TSubclassOf<ACharacterBase> CharacterClass, FTransform SpawnTransform, AController* Controller, FString Tag) const;
+	void EndOfMatch();
+	void EndServer();
+	void SlowDownTime();
+	void SetNormalTimeSpeed();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bFriendlyFireOn;
@@ -49,6 +53,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 RoundTimeInMinutes;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SlowDilationFactor;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float SlowDilationTime;
 
 	UPROPERTY()
 	TArray<AActor*> AttackerSpawns;

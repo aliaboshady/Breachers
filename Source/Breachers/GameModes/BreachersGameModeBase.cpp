@@ -9,6 +9,8 @@ ABreachersGameModeBase::ABreachersGameModeBase()
 	bFriendlyFireOn = false;
 	bUnlimitedMoney = false;
 	RoundTimeInMinutes = 10;
+	SlowDilationFactor = 0.1;
+	SlowDilationTime = 10;
 }
 
 void ABreachersGameModeBase::BeginPlay()
@@ -63,6 +65,29 @@ void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> Characte
 		Character->Tags.Add(FName(Tag));
 		if(ABreachersPlayerController* PC = Cast<ABreachersPlayerController>(Controller)) PC->BuyMenu->EnableBuying(true);
 	}
+}
+
+void ABreachersGameModeBase::EndOfMatch()
+{
+	SlowDownTime();
+	
+	FTimerHandle EndServerTime;
+	GetWorldTimerManager().SetTimer(EndServerTime, this, &ABreachersGameModeBase::EndServer, 1, false, SlowDilationTime * SlowDilationFactor);
+}
+
+void ABreachersGameModeBase::EndServer()
+{
+	SetNormalTimeSpeed();
+}
+
+void ABreachersGameModeBase::SlowDownTime()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), SlowDilationFactor);
+}
+
+void ABreachersGameModeBase::SetNormalTimeSpeed()
+{
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
 }
 
 void ABreachersGameModeBase::OnPlayerDied(ABreachersPlayerController* Controller)
