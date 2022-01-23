@@ -12,6 +12,10 @@ void ADeathMatchGameState::BeginPlay()
 
 void ADeathMatchGameState::Multicast_DecrementCountdownTime()
 {
-	if(bUnlimitedTime) return;
+	if(bUnlimitedTime)
+	{
+		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
+		return;
+	}
 	Super::Multicast_DecrementCountdownTime();
 }
