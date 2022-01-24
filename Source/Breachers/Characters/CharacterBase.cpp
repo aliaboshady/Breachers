@@ -105,6 +105,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if(WeaponSystem) WeaponSystem->SetPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction(INPUT_OpenBuyMenu, IE_Pressed, this, &ACharacterBase::ShowHideBuyMenu);
 	PlayerInputComponent->BindAction(INPUT_Pause, IE_Pressed, this, &ACharacterBase::ShowHidePauseMenu);
+	PlayerInputComponent->BindAction(INPUT_ScoreBoard, IE_Pressed, this, &ACharacterBase::OpenScoreBoard);
+	PlayerInputComponent->BindAction(INPUT_ScoreBoard, IE_Released, this, &ACharacterBase::CloseScoreBoard);
 }
 
 void ACharacterBase::OnDie()
@@ -224,4 +226,14 @@ FHitResult ACharacterBase::GetSurfaceType()
 	FHitResult OutHit;
 	UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
 	return OutHit;
+}
+
+void ACharacterBase::OpenScoreBoard()
+{
+	PC->OpenScoreBoard();
+}
+
+void ACharacterBase::CloseScoreBoard()
+{
+	PC->CloseScoreBoard();
 }

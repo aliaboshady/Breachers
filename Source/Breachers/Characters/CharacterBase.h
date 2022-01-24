@@ -28,6 +28,7 @@
 #define INPUT_Crouch		"Crouch"
 #define INPUT_Walk			"Walk"
 #define INPUT_Pause			"PauseMenu"
+#define INPUT_ScoreBoard	"ScoreBoard"
 
 UENUM(BlueprintType)
 enum ETeam
@@ -92,6 +93,8 @@ protected:
 	void ShowHideBuyMenu();
 	void ShowHidePauseMenu();
 	virtual void Landed(const FHitResult& Hit) override;
+	void OpenScoreBoard();
+	void CloseScoreBoard();
 
 	void OnDie();
 	

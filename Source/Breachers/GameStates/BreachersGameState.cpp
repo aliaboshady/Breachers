@@ -22,6 +22,7 @@ void ABreachersGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 
 void ABreachersGameState::EndOfRound()
 {
+	
 }
 
 void ABreachersGameState::EndOfMatch()

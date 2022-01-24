@@ -6,6 +6,7 @@
 class UBuyMenu;
 class UMoneySystem;
 class ACharacterBase;
+class ABreachersPlayerState;
 class ABreachersGameModeBase;
 
 UCLASS()
@@ -17,6 +18,8 @@ public:
 	ABreachersPlayerController();
 	void ShowTeamSelectionMenu();
 	void EnableShooting(bool bEnableShooting);
+	void OpenScoreBoard();
+	void CloseScoreBoard();
 
 	UFUNCTION(BlueprintCallable)
 	void ShowHidePauseMenu();
@@ -65,8 +68,14 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_CreatePauseMenuWidget();
 
+	UFUNCTION(Client, Reliable)
+	void Client_CreateScoreBoardWidget();
+
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
+	
+	UPROPERTY()
+	ABreachersPlayerState* BreachersPlayerState;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> TeamSelectWidgetClass;
@@ -79,12 +88,19 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> CountDownTimerWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> ScoreBoardWidgetClass;
 	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;
 
 	UPROPERTY()
 	UUserWidget* PauseMenuWidget;
+	
+	UPROPERTY()
+	UUserWidget* ScoreBoardWidget;
 
 	bool bPauseMenuOpen;
+	bool bCanOpenCloseScoreBoard;
 };

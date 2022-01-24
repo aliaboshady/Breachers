@@ -6,6 +6,7 @@
 #include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
+#include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -14,6 +15,7 @@ ABreachersPlayerController::ABreachersPlayerController()
 {
 	MoneySystem = CreateDefaultSubobject<UMoneySystem>(TEXT("Money System"));
 	BuyMenu = CreateDefaultSubobject<UBuyMenu>(TEXT("Buy Menu"));
+	bCanOpenCloseScoreBoard = true;
 }
 
 void ABreachersPlayerController::BeginPlay()
@@ -21,7 +23,10 @@ void ABreachersPlayerController::BeginPlay()
 	Super::BeginPlay();
 	PossessStartCamera();
 	BreachersGameModeBase = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());
+	BreachersPlayerState = Cast<ABreachersPlayerState>(PlayerState);
+
 	Client_CreatePauseMenuWidget();
+	Client_CreateScoreBoardWidget();
 
 	if(CountDownTimerWidgetClass && IsLocalPlayerController())
 	{
@@ -41,6 +46,10 @@ void ABreachersPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 void ABreachersPlayerController::Client_CreatePauseMenuWidget_Implementation()
 {
 	if(PauseMenuWidgetClass) PauseMenuWidget = CreateWidget(this, PauseMenuWidgetClass);
+}
+void ABreachersPlayerController::Client_CreateScoreBoardWidget_Implementation()
+{
+	if(ScoreBoardWidgetClass) ScoreBoardWidget = CreateWidget(this, ScoreBoardWidgetClass);
 }
 
 void ABreachersPlayerController::PossessStartCamera()
@@ -121,6 +130,7 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 void ABreachersPlayerController::OnDie()
 {
 	if(BreachersGameModeBase) BreachersGameModeBase->OnPlayerDied(this);
+	//if(BreachersPlayerState)
 }
 
 void ABreachersPlayerController::OnPossess(APawn* InPawn)
@@ -159,4 +169,16 @@ void ABreachersPlayerController::ShowHidePauseMenu()
 		SetInputUI(true);
 	}
 	bPauseMenuOpen = !bPauseMenuOpen;
+}
+
+void ABreachersPlayerController::OpenScoreBoard()
+{
+	if(!bCanOpenCloseScoreBoard) return;
+	if(ScoreBoardWidget) ScoreBoardWidget->AddToViewport();
+}
+
+void ABreachersPlayerController::CloseScoreBoard()
+{
+	if(!bCanOpenCloseScoreBoard) return;
+	if(ScoreBoardWidget) ScoreBoardWidget->RemoveFromViewport();
 }
