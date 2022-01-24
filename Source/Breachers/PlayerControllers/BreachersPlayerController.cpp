@@ -30,6 +30,7 @@ void ABreachersPlayerController::BeginPlay()
 
 	Client_CreatePauseMenuWidget();
 	Client_CreateScoreBoardWidget();
+	Client_CreateKillfeedWidget();
 
 	if(CountDownTimerWidgetClass && IsLocalPlayerController())
 	{
@@ -53,6 +54,14 @@ void ABreachersPlayerController::Client_CreatePauseMenuWidget_Implementation()
 void ABreachersPlayerController::Client_CreateScoreBoardWidget_Implementation()
 {
 	if(ScoreBoardWidgetClass) ScoreBoardWidget = CreateWidget<UUScoreBoard>(this, ScoreBoardWidgetClass);
+}
+void ABreachersPlayerController::Client_CreateKillfeedWidget_Implementation()
+{
+	if(KillfeedWidgetClass)
+	{
+		KillfeedWidget = CreateWidget(this, KillfeedWidgetClass);
+		KillfeedWidget->AddToViewport();
+	}
 }
 
 void ABreachersPlayerController::PossessStartCamera()

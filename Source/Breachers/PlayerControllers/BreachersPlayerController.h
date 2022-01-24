@@ -80,6 +80,9 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_CreateScoreBoardWidget();
 
+	UFUNCTION(Client, Reliable)
+	void Client_CreateKillfeedWidget();
+
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
 	
@@ -103,6 +106,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUScoreBoard> ScoreBoardWidgetClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> KillfeedWidgetClass;
 	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;
@@ -112,6 +118,9 @@ protected:
 	
 	UPROPERTY()
 	UUScoreBoard* ScoreBoardWidget;
+
+	UPROPERTY()
+	UUserWidget* KillfeedWidget;
 
 	bool bPauseMenuOpen;
 	bool bCanOpenCloseScoreBoard;
