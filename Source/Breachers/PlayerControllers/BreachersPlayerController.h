@@ -9,6 +9,7 @@ class UMoneySystem;
 class ACharacterBase;
 class ABreachersPlayerState;
 class ABreachersGameModeBase;
+class ABreachersGameState;
 
 UCLASS()
 class BREACHERS_API ABreachersPlayerController : public APlayerController
@@ -75,6 +76,9 @@ protected:
 
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
+	
+	UPROPERTY()
+	ABreachersGameState* BreachersGameState;
 	
 	UPROPERTY()
 	ABreachersPlayerState* BreachersPlayerState;

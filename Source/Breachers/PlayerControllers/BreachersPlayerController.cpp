@@ -6,6 +6,7 @@
 #include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
+#include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "Breachers/Widgets/UScoreBoard.h"
 #include "Camera/CameraActor.h"
@@ -24,6 +25,7 @@ void ABreachersPlayerController::BeginPlay()
 	Super::BeginPlay();
 	PossessStartCamera();
 	BreachersGameModeBase = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());
+	BreachersGameState = Cast<ABreachersGameState>(GetWorld()->GetGameState());
 	BreachersPlayerState = Cast<ABreachersPlayerState>(PlayerState);
 
 	Client_CreatePauseMenuWidget();
@@ -179,8 +181,9 @@ void ABreachersPlayerController::ShowHidePauseMenu()
 
 void ABreachersPlayerController::OpenScoreBoard()
 {
-	if(!bCanOpenCloseScoreBoard) return;
-	if(ScoreBoardWidget) ScoreBoardWidget->AddToViewport();
+	if(!bCanOpenCloseScoreBoard || !ScoreBoardWidget) return;
+	ScoreBoardWidget->AddToViewport();
+	ScoreBoardWidget->OnAddToScreen(BreachersGameState);
 }
 
 void ABreachersPlayerController::CloseScoreBoard()
