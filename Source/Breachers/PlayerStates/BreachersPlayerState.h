@@ -13,6 +13,12 @@ public:
 	void OnDie();
 	void OnKill();
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE int32 GetKillsCount(){return Kills;}
+	
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE int32 GetDeathsCount(){return Deaths;}
+
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
