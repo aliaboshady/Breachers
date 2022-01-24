@@ -4,6 +4,7 @@
 #include "UScoreBoard.generated.h"
 
 class ABreachersGameState;
+class ABreachersPlayerState;
 
 UCLASS()
 class BREACHERS_API UUScoreBoard : public UUserWidget
