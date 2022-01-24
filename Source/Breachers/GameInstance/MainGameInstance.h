@@ -7,4 +7,8 @@ UCLASS()
 class BREACHERS_API UMainGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
+
+public:
+	UFUNCTION(BlueprintImplementableEvent)
+	void DestroyGameSession();
 };

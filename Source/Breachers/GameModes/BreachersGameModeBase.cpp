@@ -2,6 +2,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/BuyMenu.h"
+#include "Breachers/GameInstance/MainGameInstance.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 
 ABreachersGameModeBase::ABreachersGameModeBase()
@@ -78,6 +79,10 @@ void ABreachersGameModeBase::EndOfMatch()
 void ABreachersGameModeBase::EndServer()
 {
 	SetNormalTimeSpeed();
+	if(UMainGameInstance* GI = Cast<UMainGameInstance>(GetGameInstance()))
+	{
+		GI->DestroyGameSession();
+	}
 }
 
 void ABreachersGameModeBase::SlowDownTime()
