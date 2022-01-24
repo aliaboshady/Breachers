@@ -7,6 +7,7 @@
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
+#include "Breachers/Widgets/UScoreBoard.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -49,7 +50,7 @@ void ABreachersPlayerController::Client_CreatePauseMenuWidget_Implementation()
 }
 void ABreachersPlayerController::Client_CreateScoreBoardWidget_Implementation()
 {
-	if(ScoreBoardWidgetClass) ScoreBoardWidget = CreateWidget(this, ScoreBoardWidgetClass);
+	if(ScoreBoardWidgetClass) ScoreBoardWidget = CreateWidget<UUScoreBoard>(this, ScoreBoardWidgetClass);
 }
 
 void ABreachersPlayerController::PossessStartCamera()
@@ -130,7 +131,12 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 void ABreachersPlayerController::OnDie()
 {
 	if(BreachersGameModeBase) BreachersGameModeBase->OnPlayerDied(this);
-	//if(BreachersPlayerState)
+	if(BreachersPlayerState) BreachersPlayerState->OnDie();
+}
+
+void ABreachersPlayerController::OnKill()
+{
+	if(BreachersPlayerState) BreachersPlayerState->OnKill();
 }
 
 void ABreachersPlayerController::OnPossess(APawn* InPawn)

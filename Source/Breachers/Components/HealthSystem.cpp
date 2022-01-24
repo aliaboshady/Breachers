@@ -85,6 +85,7 @@ void UHealthSystem::RewardKiller(AController* InstigatedBy, AActor* DamageCauser
 	if(KillerCharacter && KillerWeapon)
 	{
 		KillerCharacter->GetBreacherPC()->MoneySystem->AddToCurrentMoney(KillerWeapon->WeaponInfo.KillRewardMoney);
+		KillerCharacter->GetBreacherPC()->OnKill();
 	}
 }
 

@@ -4,6 +4,7 @@
 #include "BreachersPlayerController.generated.h"
 
 class UBuyMenu;
+class UUScoreBoard;
 class UMoneySystem;
 class ACharacterBase;
 class ABreachersPlayerState;
@@ -20,6 +21,7 @@ public:
 	void EnableShooting(bool bEnableShooting);
 	void OpenScoreBoard();
 	void CloseScoreBoard();
+	void OnKill();
 
 	UFUNCTION(BlueprintCallable)
 	void ShowHidePauseMenu();
@@ -90,7 +92,7 @@ protected:
 	TSubclassOf<UUserWidget> CountDownTimerWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> ScoreBoardWidgetClass;
+	TSubclassOf<UUScoreBoard> ScoreBoardWidgetClass;
 	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;
@@ -99,7 +101,7 @@ protected:
 	UUserWidget* PauseMenuWidget;
 	
 	UPROPERTY()
-	UUserWidget* ScoreBoardWidget;
+	UUScoreBoard* ScoreBoardWidget;
 
 	bool bPauseMenuOpen;
 	bool bCanOpenCloseScoreBoard;
