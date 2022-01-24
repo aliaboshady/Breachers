@@ -24,6 +24,12 @@ public:
 	void CloseScoreBoard();
 	void OnKill();
 
+	UFUNCTION(Client, Reliable)
+	void Client_DisableScoreBoard();
+	
+	UFUNCTION(Client, Reliable)
+	void Client_OpenScoreBoard();
+
 	UFUNCTION(BlueprintCallable)
 	void ShowHidePauseMenu();
 	

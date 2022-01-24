@@ -5,6 +5,7 @@
 
 class APlayerStart;
 class ACharacterBase;
+class ABreachersGameState;
 class ABreachersPlayerController;
 
 UCLASS()
@@ -38,6 +39,7 @@ protected:
 	void EndServer();
 	void SlowDownTime();
 	void SetNormalTimeSpeed();
+	void OpenEndMatchScoreBoard();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bFriendlyFireOn;
@@ -71,4 +73,7 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ACharacterBase> DefenderClass;
+
+	UPROPERTY()
+	ABreachersGameState* BreachersGameState;
 };

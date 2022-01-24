@@ -191,3 +191,13 @@ void ABreachersPlayerController::CloseScoreBoard()
 	if(!bCanOpenCloseScoreBoard) return;
 	if(ScoreBoardWidget) ScoreBoardWidget->RemoveFromViewport();
 }
+
+void ABreachersPlayerController::Client_OpenScoreBoard_Implementation()
+{
+	OpenScoreBoard();
+}
+
+void ABreachersPlayerController::Client_DisableScoreBoard_Implementation()
+{
+	bCanOpenCloseScoreBoard = false;
+}

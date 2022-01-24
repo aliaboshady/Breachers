@@ -3,7 +3,9 @@
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/GameInstance/MainGameInstance.h"
+#include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
+#include "GameFramework/PlayerState.h"
 
 ABreachersGameModeBase::ABreachersGameModeBase()
 {
@@ -18,6 +20,7 @@ void ABreachersGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	GetPlayersStarts();
+	BreachersGameState = GetGameState<ABreachersGameState>();
 }
 
 void ABreachersGameModeBase::PostLogin(APlayerController* NewPlayer)
@@ -70,6 +73,7 @@ void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> Characte
 
 void ABreachersGameModeBase::EndOfMatch()
 {
+	OpenEndMatchScoreBoard();
 	SlowDownTime();
 	
 	FTimerHandle EndServerTime;
@@ -98,4 +102,16 @@ void ABreachersGameModeBase::SetNormalTimeSpeed()
 void ABreachersGameModeBase::OnPlayerDied(ABreachersPlayerController* Controller)
 {
 	
+}
+
+void ABreachersGameModeBase::OpenEndMatchScoreBoard()
+{
+	for (auto PlayerState : BreachersGameState->PlayerArray)
+	{
+		if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(PlayerState->GetOwner()))
+		{
+			BPC->Client_OpenScoreBoard();
+			BPC->Client_DisableScoreBoard();
+		}
+	}
 }

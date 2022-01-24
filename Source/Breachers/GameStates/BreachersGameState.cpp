@@ -1,5 +1,7 @@
 #include "BreachersGameState.h"
 #include "Breachers/GameModes/DeathMatchGameMode.h"
+#include "Breachers/PlayerControllers/BreachersPlayerController.h"
+#include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "Net/UnrealNetwork.h"
 
 void ABreachersGameState::BeginPlay()
