@@ -19,3 +19,8 @@ void ADeathMatchGameState::Multicast_DecrementCountdownTime()
 	}
 	Super::Multicast_DecrementCountdownTime();
 }
+
+void ADeathMatchGameState::EndOfRound()
+{
+	EndOfMatch();
+}

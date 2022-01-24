@@ -12,6 +12,8 @@ class BREACHERS_API ABreachersGameState : public AGameStateBase
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void EndOfRound();
+	virtual void EndOfMatch();
 	bool IsRoundTimeIsFinished();
 	
 	UPROPERTY(BlueprintAssignable)

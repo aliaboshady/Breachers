@@ -18,6 +18,7 @@ public:
 	FORCEINLINE int32 GetMaxMoney(){return MaxMoney;}
 	FORCEINLINE bool GetIsUnlimitedMoney(){return bUnlimitedMoney;}
 	FORCEINLINE int32 GetRoundTimeInMinutes(){return RoundTimeInMinutes;}
+	void EndOfMatch();
 
 	UFUNCTION()
 	void RequestAttackerSpawn(AController* Controller);
@@ -34,7 +35,6 @@ protected:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	void GetPlayersStarts();
 	void SpawnCharacter(TSubclassOf<ACharacterBase> CharacterClass, FTransform SpawnTransform, AController* Controller, FString Tag) const;
-	void EndOfMatch();
 	void EndServer();
 	void SlowDownTime();
 	void SetNormalTimeSpeed();

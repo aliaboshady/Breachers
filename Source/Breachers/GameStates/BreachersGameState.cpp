@@ -20,6 +20,18 @@ void ABreachersGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& 
 	DOREPLIFETIME(ABreachersGameState, CountDownTimeSpan);
 }
 
+void ABreachersGameState::EndOfRound()
+{
+}
+
+void ABreachersGameState::EndOfMatch()
+{
+	if(ABreachersGameModeBase* GM = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		GM->EndOfMatch();
+	}
+}
+
 bool ABreachersGameState::IsRoundTimeIsFinished()
 {
 	return CountDownTimeSpan.GetHours() <= 0 && CountDownTimeSpan.GetMinutes() <= 0 && CountDownTimeSpan.GetSeconds() <= 0;
@@ -35,7 +47,7 @@ void ABreachersGameState::Multicast_DecrementCountdownTime_Implementation()
 	
 	if(IsRoundTimeIsFinished())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Time is finished"));
 		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
+		EndOfRound();
 	}
 }

@@ -11,6 +11,7 @@ class BREACHERS_API ADeathMatchGameState : public ABreachersGameState
 protected:
 	virtual void BeginPlay() override;
 	virtual void Multicast_DecrementCountdownTime() override;
+	virtual void EndOfRound() override;
 	
 	bool bUnlimitedTime;
 };
