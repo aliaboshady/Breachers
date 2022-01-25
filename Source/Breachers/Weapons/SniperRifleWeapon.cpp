@@ -35,7 +35,7 @@ void ASniperRifleWeapon::Tick(float DeltaSeconds)
 	Server_HandleTickDisabling(ScopeTimeAlpha);
 }
 
-void ASniperRifleWeapon::OnDie()
+void ASniperRifleWeapon::OnDie(AController* InstigatedBy, AActor* DamageCauser)
 {
 	Server_ForceUnscope();
 }

@@ -2,6 +2,7 @@
 #include "Breachers/GameModes/DeathMatchGameMode.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
+#include "Breachers/Weapons/WeaponBase.h"
 #include "Net/UnrealNetwork.h"
 
 void ABreachersGameState::BeginPlay()
@@ -52,5 +53,40 @@ void ABreachersGameState::Multicast_DecrementCountdownTime_Implementation()
 	{
 		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
 		EndOfRound();
+	}
+}
+
+void ABreachersGameState::PlayerOnDied(AController* Killer, AActor* DamageCauser, ABreachersPlayerState* KilledPlayerState)
+{
+	FName KillerName;
+	UTexture2D* WeaponIcon = nullptr;
+	FName KilledName;
+	
+	if(ABreachersPlayerState* KillerBPS = Killer->GetPlayerState<ABreachersPlayerState>())
+	{
+		KillerName = FName(KillerBPS->GetPlayerName());
+	}
+	
+	if(AWeaponBase* Weapon = Cast<AWeaponBase>(DamageCauser))
+    {
+		WeaponIcon = Weapon->WeaponInfo.WeaponIcon;
+    }
+
+	if(KilledPlayerState)
+	{
+		KilledName = FName(KilledPlayerState->GetPlayerName());
+	}
+
+	AddToAllPlayersKillfeed(KillerName, WeaponIcon, KilledName);
+}
+
+void ABreachersGameState::AddToAllPlayersKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName)
+{
+	for (auto PlayerState : PlayerArray)
+	{
+		if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(PlayerState->GetOwner()))
+		{
+			BPC->UpdateKillfeed(KillerName, WeaponIcon, KilledName);
+		}
 	}
 }

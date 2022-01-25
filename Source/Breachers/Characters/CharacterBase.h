@@ -99,7 +99,7 @@ protected:
 	void OnDie();
 	
 	UFUNCTION(Server, Reliable)
-	void Server_OnDie();
+	void Server_OnDie(AController* InstigatedBy, AActor* DamageCauser);
 	
 	UFUNCTION(Client, Reliable)
 	void Client_OnDie_Visuals();

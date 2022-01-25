@@ -56,7 +56,7 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
 	if(CurrentHealth <= 0 && !bIsDead)
 	{
 		bIsDead = true;
-		Server_KillPlayer();
+		Server_KillPlayer(InstigatedBy, DamageCauser);
 		RewardKiller(InstigatedBy, DamageCauser);
 		CharacterPlayer->PushOnDeath(DamageCauser, CharacterPlayer->GetActorLocation() - ShotFromDirection);
 	}
@@ -67,15 +67,15 @@ void UHealthSystem::Multicast_ShowBlood_Implementation(FVector HitLocation)
 	if(BloodEffect) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BloodEffect, HitLocation);
 }
 
-void UHealthSystem::OnRep_IsDead() const
+void UHealthSystem::OnRep_IsDead()
 {
-	if(!CharacterPlayer) return;
-	OnDie.Broadcast();
+	bIsDead = true;
 }
 
-void UHealthSystem::Server_KillPlayer_Implementation()
+void UHealthSystem::Server_KillPlayer_Implementation(AController* InstigatedBy, AActor* DamageCauser)
 {
 	OnRep_IsDead();
+	OnDie.Broadcast(InstigatedBy, DamageCauser);
 }
 
 void UHealthSystem::RewardKiller(AController* InstigatedBy, AActor* DamageCauser)

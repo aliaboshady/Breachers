@@ -58,7 +58,7 @@ protected:
 	void WaitRecoilTimePerShot();
 
 	UFUNCTION()
-	virtual void OnDie();
+	virtual void OnDie(AController* InstigatedBy, AActor* DamageCauser);
 	
 	UFUNCTION(Client, Reliable)
 	virtual void Client_Recoil(FVector CalculatedRecoil);

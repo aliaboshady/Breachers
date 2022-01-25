@@ -117,7 +117,7 @@ void ACharacterBase::OnDie()
 	Multicast_PushOnDeath();
 }
 
-void ACharacterBase::Server_OnDie_Implementation()
+void ACharacterBase::Server_OnDie_Implementation(AController* InstigatedBy, AActor* DamageCauser)
 {
 	FTimerHandle OnDieTimer;
 	GetWorldTimerManager().SetTimer(OnDieTimer, this, &ACharacterBase::OnDie, 1, false, 0.01);

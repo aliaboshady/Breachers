@@ -1,13 +1,13 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "UScoreBoard.generated.h"
+#include "ScoreBoard.generated.h"
 
 class ABreachersGameState;
 class ABreachersPlayerState;
 
 UCLASS()
-class BREACHERS_API UUScoreBoard : public UUserWidget
+class BREACHERS_API UScoreBoard : public UUserWidget
 {
 	GENERATED_BODY()
 

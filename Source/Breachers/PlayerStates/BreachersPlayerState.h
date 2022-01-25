@@ -3,6 +3,8 @@
 #include "GameFramework/PlayerState.h"
 #include "BreachersPlayerState.generated.h"
 
+class ABreachersGameState;
+
 UCLASS()
 class BREACHERS_API ABreachersPlayerState : public APlayerState
 {
@@ -10,7 +12,7 @@ class BREACHERS_API ABreachersPlayerState : public APlayerState
 
 public:
 	ABreachersPlayerState();
-	void OnDie();
+	void OnDie(AController* InstigatedBy, AActor* DamageCauser);
 	void OnKill();
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
@@ -20,6 +22,7 @@ public:
 	FORCEINLINE int32 GetDeathsCount(){return Deaths;}
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(Replicated)
@@ -27,4 +30,7 @@ protected:
 
 	UPROPERTY(Replicated)
 	int32 Kills;
+
+	UPROPERTY()
+	ABreachersGameState* BreachersGameState;
 };

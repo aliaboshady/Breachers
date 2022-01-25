@@ -4,7 +4,8 @@
 #include "BreachersPlayerController.generated.h"
 
 class UBuyMenu;
-class UUScoreBoard;
+class UKillfeed;
+class UScoreBoard;
 class UMoneySystem;
 class ACharacterBase;
 class ABreachersPlayerState;
@@ -23,6 +24,7 @@ public:
 	void OpenScoreBoard();
 	void CloseScoreBoard();
 	void OnKill();
+	void UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
 
 	UFUNCTION(Client, Reliable)
 	void Client_DisableScoreBoard();
@@ -53,7 +55,7 @@ protected:
 	void Server_EnableShooting(bool bEnableShooting);
 
 	UFUNCTION()
-	void OnDie();
+	void OnDie(AController* InstigatedBy, AActor* DamageCauser);
 
 	UFUNCTION(BlueprintCallable)
 	void SelectAttacker();
@@ -83,6 +85,9 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_CreateKillfeedWidget();
 
+	UFUNCTION(Client, Reliable)
+	void Client_UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
+
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
 	
@@ -105,10 +110,10 @@ protected:
 	TSubclassOf<UUserWidget> CountDownTimerWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUScoreBoard> ScoreBoardWidgetClass;
+	TSubclassOf<UScoreBoard> ScoreBoardWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> KillfeedWidgetClass;
+	TSubclassOf<UKillfeed> KillfeedWidgetClass;
 	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;
@@ -117,10 +122,10 @@ protected:
 	UUserWidget* PauseMenuWidget;
 	
 	UPROPERTY()
-	UUScoreBoard* ScoreBoardWidget;
+	UScoreBoard* ScoreBoardWidget;
 
 	UPROPERTY()
-	UUserWidget* KillfeedWidget;
+	UKillfeed* KillfeedWidget;
 
 	bool bPauseMenuOpen;
 	bool bCanOpenCloseScoreBoard;

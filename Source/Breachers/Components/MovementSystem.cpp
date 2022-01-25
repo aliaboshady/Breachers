@@ -156,7 +156,7 @@ void UMovementSystem::StopWalk()
 	bIsWalking = false;
 }
 
-void UMovementSystem::Client_OnDie_Implementation()
+void UMovementSystem::Client_OnDie_Implementation(AController* InstigatedBy, AActor* DamageCauser)
 {
 	bCanTakeInput = false;
 }

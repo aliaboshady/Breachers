@@ -61,7 +61,7 @@ protected:
 	void StopWalk();
 
 	UFUNCTION(Client, Reliable)
-	void Client_OnDie();
+	void Client_OnDie(AController* InstigatedBy, AActor* DamageCauser);
 
 	UPROPERTY()
 	ACharacterBase* CharacterPlayer;

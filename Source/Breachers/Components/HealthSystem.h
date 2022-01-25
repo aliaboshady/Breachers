@@ -5,7 +5,7 @@
 
 class ACharacterBase;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDie);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDie, AController* , InstigatedBy, AActor* , DamageCauser);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BREACHERS_API UHealthSystem : public UActorComponent
@@ -31,10 +31,10 @@ protected:
 	void Multicast_ShowBlood(FVector HitLocation);
 	
 	UFUNCTION(Server, Reliable)
-	void Server_KillPlayer();
+	void Server_KillPlayer(AController* InstigatedBy, AActor* DamageCauser);
 
 	UFUNCTION()
-	void OnRep_IsDead() const;
+	void OnRep_IsDead();
 	
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;

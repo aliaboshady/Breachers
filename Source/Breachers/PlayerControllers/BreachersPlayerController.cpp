@@ -8,7 +8,8 @@
 #include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
-#include "Breachers/Widgets/UScoreBoard.h"
+#include "Breachers/Widgets/ScoreBoard.h"
+#include "Breachers/Widgets/Killfeed.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -53,14 +54,14 @@ void ABreachersPlayerController::Client_CreatePauseMenuWidget_Implementation()
 }
 void ABreachersPlayerController::Client_CreateScoreBoardWidget_Implementation()
 {
-	if(ScoreBoardWidgetClass) ScoreBoardWidget = CreateWidget<UUScoreBoard>(this, ScoreBoardWidgetClass);
+	if(ScoreBoardWidgetClass) ScoreBoardWidget = CreateWidget<UScoreBoard>(this, ScoreBoardWidgetClass);
 }
 void ABreachersPlayerController::Client_CreateKillfeedWidget_Implementation()
 {
 	if(KillfeedWidgetClass)
 	{
-		KillfeedWidget = CreateWidget(this, KillfeedWidgetClass);
-		KillfeedWidget->AddToViewport();
+		KillfeedWidget = CreateWidget<UKillfeed>(this, KillfeedWidgetClass);
+		if(KillfeedWidget) KillfeedWidget->AddToViewport();
 	}
 }
 
@@ -139,10 +140,10 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 	}
 }
 
-void ABreachersPlayerController::OnDie()
+void ABreachersPlayerController::OnDie(AController* InstigatedBy, AActor* DamageCauser)
 {
 	if(BreachersGameModeBase) BreachersGameModeBase->OnPlayerDied(this);
-	if(BreachersPlayerState) BreachersPlayerState->OnDie();
+	if(BreachersPlayerState) BreachersPlayerState->OnDie(InstigatedBy, DamageCauser);
 }
 
 void ABreachersPlayerController::OnKill()
@@ -209,4 +210,14 @@ void ABreachersPlayerController::Client_OpenScoreBoard_Implementation()
 void ABreachersPlayerController::Client_DisableScoreBoard_Implementation()
 {
 	bCanOpenCloseScoreBoard = false;
+}
+
+void ABreachersPlayerController::UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName)
+{
+	Client_UpdateKillfeed(KillerName, WeaponIcon, KilledName);
+}
+
+void ABreachersPlayerController::Client_UpdateKillfeed_Implementation(FName KillerName, UTexture2D* WeaponIcon, FName KilledName)
+{
+	if(KillfeedWidget) KillfeedWidget->AddKillfeedRow(KillerName, WeaponIcon, KilledName);
 }

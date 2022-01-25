@@ -55,7 +55,7 @@ void AWeaponBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	DOREPLIFETIME(AWeaponBase, CurrentAmmoInClip);
 }
 
-void AWeaponBase::OnDie(){}
+void AWeaponBase::OnDie(AController* InstigatedBy, AActor* DamageCauser){}
 
 void AWeaponBase::BeginPlay()
 {
