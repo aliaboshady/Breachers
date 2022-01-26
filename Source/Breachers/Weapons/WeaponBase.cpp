@@ -3,6 +3,7 @@
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
+#include "Breachers/GameModes/DeathMatchGameMode.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
@@ -415,6 +416,8 @@ void AWeaponBase::Multicast_OnTaken_Implementation()
 
 void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 {
+	if(ADeathMatchGameMode* DGM = Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode())) Destroy();
+	
 	PreviousOwner = DropperCharacter;
 	SetOwner(nullptr);
 	SetInstigator(nullptr);
