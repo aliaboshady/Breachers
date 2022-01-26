@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/GameModeBase.h"
 #include "BreachersGameModeBase.generated.h"
 
@@ -29,7 +30,7 @@ public:
 	UFUNCTION()
 	virtual void RequestDefenderSpawn(AController* Controller);
 	
-	virtual void OnPlayerDied(ABreachersPlayerController* Controller);
+	virtual void OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn);
 
 	FORCEINLINE bool IsFirendlyFireOn(){return bFriendlyFireOn;}
 

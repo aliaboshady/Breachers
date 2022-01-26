@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/PlayerController.h"
 #include "BreachersPlayerController.generated.h"
 
@@ -23,6 +24,7 @@ public:
 	void EnableShooting(bool bEnableShooting);
 	void OpenScoreBoard();
 	void CloseScoreBoard();
+	void ToggleChangeTeamMenu();
 	void OnKill();
 	void UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
 
@@ -50,6 +52,7 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void SetInputUI(bool bIsUI = true);
+	void KillPlayer();
 
 	UFUNCTION(Server, Reliable)
 	void Server_EnableShooting(bool bEnableShooting);
@@ -63,6 +66,9 @@ protected:
 	void SelectDefender();
 
 	void OnSelectCharacter();
+
+	UFUNCTION(Server, Reliable)
+	void Server_ChangeTeam(ETeam NewTeam);
 
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnAttacker();
@@ -129,4 +135,5 @@ protected:
 
 	bool bPauseMenuOpen;
 	bool bCanOpenCloseScoreBoard;
+	TEnumAsByte<ETeam> NextTeamRespawn;
 };

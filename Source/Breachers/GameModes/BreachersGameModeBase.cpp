@@ -101,7 +101,7 @@ void ABreachersGameModeBase::SetNormalTimeSpeed()
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
 }
 
-void ABreachersGameModeBase::OnPlayerDied(ABreachersPlayerController* Controller)
+void ABreachersGameModeBase::OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn)
 {
 	
 }

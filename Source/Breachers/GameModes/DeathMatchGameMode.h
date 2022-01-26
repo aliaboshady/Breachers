@@ -10,7 +10,7 @@ class BREACHERS_API ADeathMatchGameMode : public ABreachersGameModeBase
 
 public:
 	ADeathMatchGameMode();
-	virtual void OnPlayerDied(ABreachersPlayerController* Controller) override;
+	virtual void OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn) override;
 	FORCEINLINE bool GetIsUnlimitedTime(){return bUnlimitedTime;}
 
 protected:

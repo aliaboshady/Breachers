@@ -10,12 +10,12 @@ ADeathMatchGameMode::ADeathMatchGameMode()
 	bInfiniteAmmo = true;
 }
 
-void ADeathMatchGameMode::OnPlayerDied(ABreachersPlayerController* Controller)
+void ADeathMatchGameMode::OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn)
 {
 	FTimerHandle RespawnHandle;
 	FTimerDelegate RespawnDelegate;
 	
-	switch (Controller->CharacterPlayer->Team)
+	switch (NextTeamRespawn)
 	{
 	case Attacker:
 		RespawnDelegate.BindUFunction(this, FName(TEXT("RequestAttackerSpawn")), Controller);

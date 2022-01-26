@@ -15,6 +15,9 @@ class BREACHERS_API UHealthSystem : public UActorComponent
 public:	
 	UHealthSystem();
 
+	UFUNCTION(Server, Reliable)
+	void Server_KillPlayer(AController* InstigatedBy, AActor* DamageCauser);
+
 	UPROPERTY()
 	FOnDie OnDie;
 
@@ -29,9 +32,6 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ShowBlood(FVector HitLocation);
-	
-	UFUNCTION(Server, Reliable)
-	void Server_KillPlayer(AController* InstigatedBy, AActor* DamageCauser);
 
 	UFUNCTION()
 	void OnRep_IsDead();

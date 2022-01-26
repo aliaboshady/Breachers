@@ -108,6 +108,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	PlayerInputComponent->BindAction(INPUT_Pause, IE_Pressed, this, &ACharacterBase::ShowHidePauseMenu);
 	PlayerInputComponent->BindAction(INPUT_ScoreBoard, IE_Pressed, this, &ACharacterBase::OpenScoreBoard);
 	PlayerInputComponent->BindAction(INPUT_ScoreBoard, IE_Released, this, &ACharacterBase::CloseScoreBoard);
+	PlayerInputComponent->BindAction(INPUT_ChangeTeamMenu, IE_Released, this, &ACharacterBase::ChangeTeam);
 }
 
 void ACharacterBase::OnDie()
@@ -242,4 +243,9 @@ void ACharacterBase::OpenScoreBoard()
 void ACharacterBase::CloseScoreBoard()
 {
 	PC->CloseScoreBoard();
+}
+
+void ACharacterBase::ChangeTeam()
+{
+	PC->ToggleChangeTeamMenu();
 }

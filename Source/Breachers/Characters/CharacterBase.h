@@ -20,15 +20,16 @@
 #define SURFACE_Rock  SurfaceType10
 #define SURFACE_Tile  SurfaceType11
 
-#define INPUT_MoveForward	"MoveForward"
-#define INPUT_MoveRight		"MoveRight"
-#define INPUT_LookUp		"LookUp"
-#define INPUT_Turn			"Turn"
-#define INPUT_Jump			"Jump"
-#define INPUT_Crouch		"Crouch"
-#define INPUT_Walk			"Walk"
-#define INPUT_Pause			"PauseMenu"
-#define INPUT_ScoreBoard	"ScoreBoard"
+#define INPUT_MoveForward		"MoveForward"
+#define INPUT_MoveRight			"MoveRight"
+#define INPUT_LookUp			"LookUp"
+#define INPUT_Turn				"Turn"
+#define INPUT_Jump				"Jump"
+#define INPUT_Crouch			"Crouch"
+#define INPUT_Walk				"Walk"
+#define INPUT_Pause				"PauseMenu"
+#define INPUT_ScoreBoard		"ScoreBoard"
+#define INPUT_ChangeTeamMenu	"ChangeTeam"
 
 UENUM(BlueprintType)
 enum ETeam
@@ -95,6 +96,7 @@ protected:
 	virtual void Landed(const FHitResult& Hit) override;
 	void OpenScoreBoard();
 	void CloseScoreBoard();
+	void ChangeTeam();
 
 	void OnDie();
 	

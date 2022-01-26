@@ -85,6 +85,14 @@ void ABreachersPlayerController::SetInputUI(bool bIsUI)
 	}
 }
 
+void ABreachersPlayerController::KillPlayer()
+{
+	if(ACharacterBase* PlayerCharacter = Cast<ACharacterBase>(GetPawn()))
+	{
+		PlayerCharacter->HealthSystem->Server_KillPlayer(this, nullptr);
+	}
+}
+
 void ABreachersPlayerController::ShowTeamSelectionMenu()
 {
 	Client_ShowTeamSelectionMenu();
@@ -100,14 +108,32 @@ void ABreachersPlayerController::Client_ShowTeamSelectionMenu_Implementation()
 
 void ABreachersPlayerController::SelectAttacker()
 {
-	Server_SpawnAttacker();
+	Server_ChangeTeam(Attacker);
 	OnSelectCharacter();
+	
+	if(GetPawn())
+	{
+		KillPlayer();
+	}
+	else
+	{
+		Server_SpawnAttacker();
+	}
 }
 
 void ABreachersPlayerController::SelectDefender()
 {
-	Server_SpawnDefender();
+	Server_ChangeTeam(Defender);
 	OnSelectCharacter();
+	
+	if(GetPawn())
+	{
+		KillPlayer();
+	}
+	else
+	{
+		Server_SpawnDefender();
+	}
 }
 
 void ABreachersPlayerController::OnSelectCharacter()
@@ -142,7 +168,7 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 
 void ABreachersPlayerController::OnDie(AController* InstigatedBy, AActor* DamageCauser)
 {
-	if(BreachersGameModeBase) BreachersGameModeBase->OnPlayerDied(this);
+	if(BreachersGameModeBase) BreachersGameModeBase->OnPlayerDied(this, NextTeamRespawn);
 	if(BreachersPlayerState) BreachersPlayerState->OnDie(InstigatedBy, DamageCauser);
 }
 
@@ -202,6 +228,23 @@ void ABreachersPlayerController::CloseScoreBoard()
 	if(ScoreBoardWidget) ScoreBoardWidget->RemoveFromViewport();
 }
 
+void ABreachersPlayerController::ToggleChangeTeamMenu()
+{
+	if(!TeamSelectWidget) return;
+	if(!TeamSelectWidget->IsVisible())
+	{
+		TeamSelectWidget->AddToViewport();
+		SetInputMode(FInputModeGameAndUI());
+		bShowMouseCursor = true;
+	}
+	else
+	{
+		TeamSelectWidget->RemoveFromViewport();
+		SetInputMode(FInputModeGameOnly());
+		bShowMouseCursor = false;
+	}
+}
+
 void ABreachersPlayerController::Client_OpenScoreBoard_Implementation()
 {
 	OpenScoreBoard();
@@ -220,4 +263,9 @@ void ABreachersPlayerController::UpdateKillfeed(FName KillerName, UTexture2D* We
 void ABreachersPlayerController::Client_UpdateKillfeed_Implementation(FName KillerName, UTexture2D* WeaponIcon, FName KilledName)
 {
 	if(KillfeedWidget) KillfeedWidget->AddKillfeedRow(KillerName, WeaponIcon, KilledName);
+}
+
+void ABreachersPlayerController::Server_ChangeTeam_Implementation(ETeam NewTeam)
+{
+	NextTeamRespawn = NewTeam;
 }
