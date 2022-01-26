@@ -19,6 +19,8 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Multicast_DecrementCountdownTime() override;
 	virtual void EndOfRound() override;
-	
+	void GetUnlimitedTimeFromGameMode();
+
+	UPROPERTY(BlueprintReadWrite)
 	bool bUnlimitedTime;
 };

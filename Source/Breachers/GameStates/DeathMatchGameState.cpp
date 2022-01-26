@@ -5,6 +5,14 @@
 void ADeathMatchGameState::BeginPlay()
 {
 	Super::BeginPlay();
+	bUnlimitedTime = true;
+
+	FTimerHandle UnlimitedTimeHandle;
+	GetWorldTimerManager().SetTimer(UnlimitedTimeHandle, this, &ADeathMatchGameState::GetUnlimitedTimeFromGameMode, 1, false, 2);
+}
+
+void ADeathMatchGameState::GetUnlimitedTimeFromGameMode()
+{
 	if(ADeathMatchGameMode* DeathMatchGM = Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		bUnlimitedTime = DeathMatchGM->GetIsUnlimitedTime();
@@ -13,6 +21,7 @@ void ADeathMatchGameState::BeginPlay()
 
 void ADeathMatchGameState::Multicast_DecrementCountdownTime()
 {
+	UE_LOG(LogTemp, Warning, TEXT("%d"), bUnlimitedTime);
 	if(bUnlimitedTime)
 	{
 		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);

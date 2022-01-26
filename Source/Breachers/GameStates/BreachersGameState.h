@@ -29,7 +29,7 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_DecrementCountdownTime();
 	
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadWrite)
 	FTimespan CountDownTimeSpan;
 	FTimespan OneSecondTimespan;
 	FTimerHandle CountDownTimerHandle;
