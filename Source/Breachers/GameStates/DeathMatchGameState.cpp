@@ -21,7 +21,6 @@ void ADeathMatchGameState::GetUnlimitedTimeFromGameMode()
 
 void ADeathMatchGameState::Multicast_DecrementCountdownTime()
 {
-	UE_LOG(LogTemp, Warning, TEXT("%d"), bUnlimitedTime);
 	if(bUnlimitedTime)
 	{
 		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);

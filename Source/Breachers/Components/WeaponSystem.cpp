@@ -1,6 +1,7 @@
 #include "WeaponSystem.h"
 #include "MovementSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/GameModes/DeathMatchGameMode.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -49,7 +50,7 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 		PlayerInputComponent->BindAction("SecondaryFire", IE_Pressed, this, &UWeaponSystem::Server_SecondaryFire);
 		PlayerInputComponent->BindAction("PreviousWeapon", IE_Pressed, this, &UWeaponSystem::Server_EquipPreviousWeapon);
-		PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &UWeaponSystem::Server_DropWeapon);
+		PlayerInputComponent->BindAction("DropWeapon", IE_Pressed, this, &UWeaponSystem::Server_PlayerDropWeapon);
 
 		PlayerInputComponent->BindAction("Reload", IE_Pressed, this, &UWeaponSystem::Server_Reload);
 		PlayerInputComponent->BindAction("PickWeapon", IE_Pressed, this, &UWeaponSystem::Client_PickWeapon);
@@ -185,6 +186,12 @@ void UWeaponSystem::Server_DropWeapon_Implementation()
 }
 void UWeaponSystem::DropWeapon()
 {
+	Server_DropWeapon();
+}
+
+void UWeaponSystem::Server_PlayerDropWeapon_Implementation()
+{
+	if(ADeathMatchGameMode* DGM = Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode())) return;
 	Server_DropWeapon();
 }
 

@@ -37,6 +37,9 @@ protected:
 	void EquipeLastTakenWeapon();
 
 	UFUNCTION(Server, Reliable)
+	void Server_PlayerDropWeapon();
+
+	UFUNCTION(Server, Reliable)
 	void Server_EquipPreviousWeapon();
 
 	UFUNCTION(Server, Reliable)
