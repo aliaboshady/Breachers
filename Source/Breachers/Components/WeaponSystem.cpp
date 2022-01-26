@@ -16,6 +16,7 @@ UWeaponSystem::UWeaponSystem()
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UWeaponSystem, LastBoughtWeapon);
 	DOREPLIFETIME(UWeaponSystem, LastTakenWeapon);
 	DOREPLIFETIME(UWeaponSystem, PreviousWeapon);
 	DOREPLIFETIME(UWeaponSystem, CurrentWeapon);
@@ -64,29 +65,31 @@ void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
 	GetWorld()->GetTimerManager().SetTimer(SpawnedWeaponHandle, this, &UWeaponSystem::EquipStartUpWeapons, 1, false, 0.05);
 }
 
-void UWeaponSystem::SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass)
+void UWeaponSystem::SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType)
 {
-	Server_SpawnWeapon(WeaponClass);
+	Server_SpawnWeapon(WeaponClass, WeaponType);
 }
 
-void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass)
+void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType)
 {
 	if(WeaponClass)
 	{
+		if(WeaponType == Primary && PrimaryWeapon)
+		{
+			Server_EquipPrimary();
+			DropWeapon();
+		}
+		if(WeaponType == Secondary &&SecondaryWeapon)
+		{
+			Server_EquipSecondary();
+			DropWeapon();
+		}
+		
 		AWeaponBase* SpawnedWeapon = GetWorld()->SpawnActor<AWeaponBase>(WeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
-		FTimerHandle SpawnedWeaponHandle;
-
-		if(!LastTakenWeapon || !PrimaryWeapon || !SecondaryWeapon) return;
-
-		EWeaponType WeaponType = SpawnedWeapon->WeaponInfo.WeaponType;
-		if(WeaponType == Primary && LastTakenWeapon == PrimaryWeapon)
-		{
-			GetWorld()->GetTimerManager().SetTimer(SpawnedWeaponHandle, this, &UWeaponSystem::Server_EquipPrimary, 1, false, 0.05);
-		}
-		else if(WeaponType == Secondary && LastTakenWeapon == SecondaryWeapon)
-		{
-			GetWorld()->GetTimerManager().SetTimer(SpawnedWeaponHandle, this, &UWeaponSystem::Server_EquipSecondary, 1, false, 0.05);
-		}
+		LastBoughtWeapon = SpawnedWeapon;
+		
+		FTimerHandle SpawnWeaponHandle;
+		GetWorld()->GetTimerManager().SetTimer(SpawnWeaponHandle, this, &UWeaponSystem::Server_EquipLastBoughtWeapon, 1, false, 0.1);
 	}
 }
 
@@ -219,7 +222,7 @@ void UWeaponSystem::DestroyAllWeapons()
 	}
 }
 
-void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
+void UWeaponSystem::Server_EquipWeapon_Implementation(AWeaponBase* Weapon)
 {
 	Server_CancelReload();
 	if(CurrentWeapon)
@@ -241,6 +244,10 @@ void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 
 	Multicast_EquipWeaponVisualsTP(Weapon);
 	Client_EquipWeaponVisualsFP(Weapon);
+}
+void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
+{
+	Server_EquipWeapon(Weapon);
 }
 
 void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
@@ -289,6 +296,16 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 void UWeaponSystem::EquipeLastTakenWeapon()
 {
 	if(LastTakenWeapon) EquipWeapon(LastTakenWeapon);
+}
+
+void UWeaponSystem::Server_TakeLastBoughtWeapon_Implementation()
+{
+	if(LastBoughtWeapon) TakeWeapon(LastBoughtWeapon);
+}
+
+void UWeaponSystem::Server_EquipLastBoughtWeapon_Implementation()
+{
+	if(LastBoughtWeapon) EquipWeapon(LastBoughtWeapon);
 }
 
 

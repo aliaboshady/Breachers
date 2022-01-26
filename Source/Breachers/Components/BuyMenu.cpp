@@ -72,16 +72,16 @@ void UBuyMenu::EnableBuying(bool bEnableBuying)
 	bCanBuy = bEnableBuying;
 }
 
-void UBuyMenu::BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass)
+void UBuyMenu::BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType)
 {
-	Server_BuyWeapon(Price, WeaponClass);
+	Server_BuyWeapon(Price, WeaponClass, WeaponType);
 }
 
-void UBuyMenu::Server_BuyWeapon_Implementation(int32 Price, TSubclassOf<AWeaponBase> WeaponClass)
+void UBuyMenu::Server_BuyWeapon_Implementation(int32 Price, TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType)
 {
 	if(WeaponClass && PC)
 	{
 		PC->MoneySystem->AddToCurrentMoney(-Price);
-		PC->CharacterPlayer->WeaponSystem->SpawnWeapon(WeaponClass);
+		PC->CharacterPlayer->WeaponSystem->SpawnWeapon(WeaponClass, WeaponType);
 	}
 }

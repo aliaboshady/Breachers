@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Breachers/Weapons/WeaponInfo.h"
 #include "Components/ActorComponent.h"
 #include "BuyMenu.generated.h"
 
@@ -20,7 +21,7 @@ public:
 	void EnableBuying(bool bEnableBuying);
 
 	UFUNCTION(BlueprintCallable)
-	void BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass);
+	void BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType);
 
 	void ShowHideBuyMenu();
 	
@@ -31,7 +32,7 @@ protected:
 	void GetPC();
 
 	UFUNCTION(Server, Reliable)
-	void Server_BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass);
+	void Server_BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType);
 
 	UFUNCTION(Client, Reliable)
 	void Client_CreateBuyMenu();

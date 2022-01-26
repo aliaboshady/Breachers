@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Breachers/Weapons/WeaponInfo.h"
 #include "Components/ActorComponent.h"
 #include "WeaponSystem.generated.h"
 
@@ -20,7 +21,7 @@ public:
 	void DropWeapon();
 	void EnableShooting(bool bEnableShooting);
 	AWeaponBase* GetCurrentWeapon();
-	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
+	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType = Melee);
 	void DropAllWeapons();
 	void DestroyAllWeapons();
 
@@ -39,6 +40,9 @@ protected:
 	void Server_EquipPreviousWeapon();
 
 	UFUNCTION(Server, Reliable)
+	void Server_EquipWeapon(AWeaponBase* Weapon);
+	
+	UFUNCTION(Server, Reliable)
 	void Server_EquipPrimary();
 
 	UFUNCTION(Server, Reliable)
@@ -46,6 +50,12 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void Server_EquipMelee();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EquipLastBoughtWeapon();
+
+	UFUNCTION(Server, Reliable)
+	void Server_TakeLastBoughtWeapon();
 
 	UFUNCTION(Server, Reliable)
 	void Server_TakeWeapon(AWeaponBase* Weapon);
@@ -72,7 +82,7 @@ protected:
 	void Server_SpawnStartWeapons();
 
 	UFUNCTION(Server, Reliable)
-	void Server_SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
+	void Server_SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType = Melee);
 
 	UFUNCTION(Client, Reliable)
 	void Client_EquipWeaponVisualsFP(AWeaponBase* Weapon);
@@ -94,6 +104,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	AWeaponBase* LastBoughtWeapon;
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	AWeaponBase* LastTakenWeapon;
