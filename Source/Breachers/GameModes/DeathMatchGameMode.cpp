@@ -7,6 +7,7 @@ ADeathMatchGameMode::ADeathMatchGameMode()
 	bUnlimitedTime = false;
 	RespawnTime = 2;
 	bDestroyWeaponsOnDie = true;
+	bInfiniteAmmo = true;
 }
 
 void ADeathMatchGameMode::OnPlayerDied(ABreachersPlayerController* Controller)

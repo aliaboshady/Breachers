@@ -19,6 +19,7 @@ public:
 	FORCEINLINE int32 GetMaxMoney(){return MaxMoney;}
 	FORCEINLINE bool GetIsUnlimitedMoney(){return bUnlimitedMoney;}
 	FORCEINLINE bool GetIsDestroyWeaponsOnDie(){return bDestroyWeaponsOnDie;}
+	FORCEINLINE bool GetIsInfiniteAmmo(){return bInfiniteAmmo;}
 	FORCEINLINE int32 GetRoundTimeInMinutes(){return RoundTimeInMinutes;}
 	void EndOfMatch();
 
@@ -50,6 +51,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bDestroyWeaponsOnDie;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bInfiniteAmmo;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 StartUpMoney;

@@ -15,6 +15,7 @@ ABreachersGameModeBase::ABreachersGameModeBase()
 	SlowDilationFactor = 0.1;
 	SlowDilationTime = 10;
 	bDestroyWeaponsOnDie = false;
+	bInfiniteAmmo = false;
 }
 
 void ABreachersGameModeBase::BeginPlay()

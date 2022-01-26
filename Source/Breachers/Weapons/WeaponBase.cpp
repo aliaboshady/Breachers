@@ -2,6 +2,7 @@
 #include "DrawDebugHelpers.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
@@ -348,18 +349,20 @@ void AWeaponBase::OnReload()
 
 void AWeaponBase::OnFinishReload()
 {
+	ABreachersGameModeBase* GM = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());
+	
 	bIsReloading = false;
 	const int32 NeededAmmo = WeaponInfo.ReloadInfo.MaxAmmoInClip - CurrentAmmoInClip;
 
 	if(CurrentTotalAmmo - NeededAmmo >= 0)
 	{
-		CurrentTotalAmmo = FMath::Clamp(CurrentTotalAmmo - NeededAmmo, 0, WeaponInfo.ReloadInfo.MaxTotalAmmo);
+		if(!GM->GetIsInfiniteAmmo()) CurrentTotalAmmo = FMath::Clamp(CurrentTotalAmmo - NeededAmmo, 0, WeaponInfo.ReloadInfo.MaxTotalAmmo);
 		CurrentAmmoInClip += NeededAmmo;
 	}
 	else
 	{
 		CurrentAmmoInClip += CurrentTotalAmmo;
-		CurrentTotalAmmo = 0;
+		if(!GM->GetIsInfiniteAmmo()) CurrentTotalAmmo = 0;
 	}
 }
 
