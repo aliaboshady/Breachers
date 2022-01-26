@@ -14,6 +14,10 @@ public:
 	FORCEINLINE bool GetIsUnlimitedTime(){return bUnlimitedTime;}
 
 protected:
+	virtual void RequestAttackerSpawn(AController* Controller) override;
+	virtual void RequestDefenderSpawn(AController* Controller) override;
+	void DestroyCorpseAndWeapons(AController* Controller);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bUnlimitedTime;
 	

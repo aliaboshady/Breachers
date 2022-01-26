@@ -3,6 +3,7 @@
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Camera/CameraComponent.h"
@@ -111,7 +112,12 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void ACharacterBase::OnDie()
 {
-	WeaponSystem->DropAllWeapons();
+	if(ABreachersGameModeBase* GM = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		if(GM->GetIsDestroyWeaponsOnDie()) WeaponSystem->DestroyAllWeapons();
+		else WeaponSystem->DropAllWeapons();
+	}
+	
 	Client_OnDie_Visuals();
 	Multicast_OnDie_Ragdoll();
 	Multicast_PushOnDeath();

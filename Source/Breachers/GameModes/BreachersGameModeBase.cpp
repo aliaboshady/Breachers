@@ -14,6 +14,7 @@ ABreachersGameModeBase::ABreachersGameModeBase()
 	RoundTimeInMinutes = 10;
 	SlowDilationFactor = 0.1;
 	SlowDilationTime = 10;
+	bDestroyWeaponsOnDie = false;
 }
 
 void ABreachersGameModeBase::BeginPlay()

@@ -18,14 +18,15 @@ public:
 	FORCEINLINE int32 GetStartUpMoney(){return StartUpMoney;}
 	FORCEINLINE int32 GetMaxMoney(){return MaxMoney;}
 	FORCEINLINE bool GetIsUnlimitedMoney(){return bUnlimitedMoney;}
+	FORCEINLINE bool GetIsDestroyWeaponsOnDie(){return bDestroyWeaponsOnDie;}
 	FORCEINLINE int32 GetRoundTimeInMinutes(){return RoundTimeInMinutes;}
 	void EndOfMatch();
 
 	UFUNCTION()
-	void RequestAttackerSpawn(AController* Controller);
+	virtual void RequestAttackerSpawn(AController* Controller);
 	
 	UFUNCTION()
-	void RequestDefenderSpawn(AController* Controller);
+	virtual void RequestDefenderSpawn(AController* Controller);
 	
 	virtual void OnPlayerDied(ABreachersPlayerController* Controller);
 
@@ -46,6 +47,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bUnlimitedMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDestroyWeaponsOnDie;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 StartUpMoney;

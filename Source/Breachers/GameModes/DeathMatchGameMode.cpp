@@ -6,6 +6,7 @@ ADeathMatchGameMode::ADeathMatchGameMode()
 {
 	bUnlimitedTime = false;
 	RespawnTime = 2;
+	bDestroyWeaponsOnDie = true;
 }
 
 void ADeathMatchGameMode::OnPlayerDied(ABreachersPlayerController* Controller)
@@ -24,4 +25,26 @@ void ADeathMatchGameMode::OnPlayerDied(ABreachersPlayerController* Controller)
 	default:;
 	}
 	GetWorldTimerManager().SetTimer(RespawnHandle, RespawnDelegate, 1, false, RespawnTime);
+}
+
+void ADeathMatchGameMode::RequestAttackerSpawn(AController* Controller)
+{
+	DestroyCorpseAndWeapons(Controller);
+	Super::RequestAttackerSpawn(Controller);
+}
+
+void ADeathMatchGameMode::RequestDefenderSpawn(AController* Controller)
+{
+	DestroyCorpseAndWeapons(Controller);
+	Super::RequestDefenderSpawn(Controller);
+}
+
+void ADeathMatchGameMode::DestroyCorpseAndWeapons(AController* Controller)
+{
+	if(!Controller) return;
+
+	if(ACharacterBase* Character = Cast<ACharacterBase>(Controller->GetPawn()))
+	{
+		Character->Destroy();
+	}
 }

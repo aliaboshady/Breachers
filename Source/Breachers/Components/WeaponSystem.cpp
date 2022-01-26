@@ -200,6 +200,25 @@ void UWeaponSystem::DropAllWeapons()
 	if(MeleeWeapon) UnequipWeapon(MeleeWeapon);
 }
 
+void UWeaponSystem::DestroyAllWeapons()
+{
+	if(PrimaryWeapon)
+	{
+		PrimaryWeapon->Destroy();
+		PrimaryWeapon = nullptr;
+	}
+	if(SecondaryWeapon)
+	{
+		SecondaryWeapon->Destroy();
+		SecondaryWeapon = nullptr;
+	}
+	if(MeleeWeapon)
+	{
+		MeleeWeapon->Destroy();
+		MeleeWeapon = nullptr;
+	}
+}
+
 void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 {
 	Server_CancelReload();

@@ -22,6 +22,7 @@ public:
 	AWeaponBase* GetCurrentWeapon();
 	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass);
 	void DropAllWeapons();
+	void DestroyAllWeapons();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
