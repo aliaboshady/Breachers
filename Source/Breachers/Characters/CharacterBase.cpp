@@ -247,5 +247,6 @@ void ACharacterBase::CloseScoreBoard()
 
 void ACharacterBase::ChangeTeam()
 {
+	if(HealthSystem->GetIsDead()) return;
 	PC->ToggleChangeTeamMenu();
 }
