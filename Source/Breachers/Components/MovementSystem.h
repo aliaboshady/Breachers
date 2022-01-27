@@ -25,6 +25,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RunSpeed;
 
+	void SetMouseSensitivityFactor(float NewFactor);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -68,4 +70,5 @@ protected:
 
 	bool bCanTakeInput;
 	bool bIsWalking;
+	float MouseSensitivityFactor;
 };

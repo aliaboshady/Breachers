@@ -99,6 +99,11 @@ protected:
 	void ChangeTeam();
 
 	void OnDie();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMouseSensitivityFactor(float NewFactor);
+	UFUNCTION(Client, Reliable)
+	void Client_SetMouseSensitivityFactor(float NewFactor);
 	
 	UFUNCTION(Server, Reliable)
 	void Server_OnDie(AController* InstigatedBy, AActor* DamageCauser);

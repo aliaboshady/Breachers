@@ -11,6 +11,7 @@ UMovementSystem::UMovementSystem()
 	RunSpeed = 600;
 	bCanTakeInput = true;
 	bIsWalking = false;
+	MouseSensitivityFactor = 1;
 }
 
 void UMovementSystem::BeginPlay()
@@ -87,13 +88,13 @@ void UMovementSystem::MoveRight(float Value)
 void UMovementSystem::LookUp(float Value)
 {
 	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
-	CharacterPlayer->AddControllerPitchInput(Value);
+	CharacterPlayer->AddControllerPitchInput(Value * MouseSensitivityFactor);
 }
 
 void UMovementSystem::Turn(float Value)
 {
 	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
-	CharacterPlayer->AddControllerYawInput(Value);
+	CharacterPlayer->AddControllerYawInput(Value * MouseSensitivityFactor);
 }
 
 void UMovementSystem::Jump()
@@ -159,4 +160,9 @@ void UMovementSystem::StopWalk()
 void UMovementSystem::Client_OnDie_Implementation(AController* InstigatedBy, AActor* DamageCauser)
 {
 	bCanTakeInput = false;
+}
+
+void UMovementSystem::SetMouseSensitivityFactor(float NewFactor)
+{
+	MouseSensitivityFactor = NewFactor;
 }

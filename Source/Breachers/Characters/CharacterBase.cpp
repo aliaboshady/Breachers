@@ -250,3 +250,13 @@ void ACharacterBase::ChangeTeam()
 	if(HealthSystem->GetIsDead()) return;
 	PC->ToggleChangeTeamMenu();
 }
+
+void ACharacterBase::SetMouseSensitivityFactor(float NewFactor)
+{
+	Client_SetMouseSensitivityFactor(NewFactor);
+}
+
+void ACharacterBase::Client_SetMouseSensitivityFactor_Implementation(float NewFactor)
+{
+	MovementSystem->SetMouseSensitivityFactor(NewFactor);
+}
