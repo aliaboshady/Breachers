@@ -27,6 +27,7 @@ ACharacterBase::ACharacterBase()
 	GetCharacterMovement()->MaxWalkSpeed = MovementSystem->RunSpeed;
 	GetCharacterMovement()->MaxWalkSpeedCrouched = MovementSystem->CrouchSpeed;
 	GetCharacterMovement()->bCanWalkOffLedgesWhenCrouching = true;
+	GetCharacterMovement()->AirControl = 1;
 
 	GetMesh()->SetRelativeLocation(FVector(0, 0, -88));
 	GetMesh()->SetRelativeRotation(FRotator(0, -90, 0));

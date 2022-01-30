@@ -82,7 +82,12 @@ void UMovementSystem::MoveForward(float Value)
 void UMovementSystem::MoveRight(float Value)
 {
 	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
-	CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
+	if(CharacterPlayer->GetCharacterMovement()->IsFalling())
+	{
+		MoveForward(Value * MouseTurnValue);
+		if(MouseTurnValue > 0.5 || MouseTurnValue < -0.5) CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
+	}
+	else CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
 }
 
 void UMovementSystem::LookUp(float Value)
@@ -94,6 +99,7 @@ void UMovementSystem::LookUp(float Value)
 void UMovementSystem::Turn(float Value)
 {
 	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
+	MouseTurnValue = Value;
 	CharacterPlayer->AddControllerYawInput(Value * MouseSensitivityFactor);
 }
 

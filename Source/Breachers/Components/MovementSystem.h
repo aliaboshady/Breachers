@@ -70,5 +70,6 @@ protected:
 
 	bool bCanTakeInput;
 	bool bIsWalking;
+	float MouseTurnValue;
 	float MouseSensitivityFactor;
 };
