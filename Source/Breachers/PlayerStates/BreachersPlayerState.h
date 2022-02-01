@@ -21,15 +21,22 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE int32 GetDeathsCount(){return Deaths;}
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool GetIsDead(){return bIsDead;}
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	void OnSpawn();
 
 	UPROPERTY(Replicated)
 	int32 Deaths;
 
 	UPROPERTY(Replicated)
 	int32 Kills;
+
+	UPROPERTY(Replicated)
+	bool bIsDead;
 
 	UPROPERTY()
 	ABreachersGameState* BreachersGameState;

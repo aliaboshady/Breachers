@@ -13,6 +13,8 @@ class ABreachersPlayerState;
 class ABreachersGameModeBase;
 class ABreachersGameState;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSpawn);
+
 UCLASS()
 class BREACHERS_API ABreachersPlayerController : public APlayerController
 {
@@ -26,7 +28,10 @@ public:
 	void CloseScoreBoard();
 	void ToggleChangeTeamMenu();
 	void OnKill();
+	void OnPlayerSpawn();
 	void UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
+
+	FORCEINLINE TEnumAsByte<ETeam> GetPlayerTeam(){return NextTeamRespawn;}
 
 	UFUNCTION(Client, Reliable)
 	void Client_ClearAllWidgets();
@@ -48,6 +53,9 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	ACharacterBase* CharacterPlayer;
+
+	UPROPERTY()
+	FOnSpawn OnSpawn;
 	
 protected:
 	virtual void BeginPlay() override;

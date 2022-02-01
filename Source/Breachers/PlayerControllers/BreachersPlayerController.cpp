@@ -184,6 +184,11 @@ void ABreachersPlayerController::OnKill()
 	if(BreachersPlayerState) BreachersPlayerState->OnKill();
 }
 
+void ABreachersPlayerController::OnPlayerSpawn()
+{
+	OnSpawn.Broadcast();
+}
+
 void ABreachersPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);

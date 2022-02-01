@@ -8,7 +8,12 @@ class BREACHERS_API APlantAndDefuseGameMode : public ABreachersGameModeBase
 {
 	GENERATED_BODY()
 
+public:
+	virtual void OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn) override;
+	void EndOfRound();
+
 protected:
+	
 	UFUNCTION(BlueprintCallable)
 	void SetUnlimitedMoney(bool bIsUnlimitedMoney);
 

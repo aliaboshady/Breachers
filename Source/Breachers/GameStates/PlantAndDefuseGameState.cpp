@@ -5,9 +5,17 @@ void APlantAndDefuseGameState::BeginPlay()
 {
 	OneSecondTimespan = FTimespan(0, 0, 1);
 	
-	if(APlantAndDefuseGameMode* GM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
-		CountDownTimeSpan = FTimespan(0, GM->GetRoundTimeInMinutes(), 0);
+		CountDownTimeSpan = FTimespan(0, PDGM->GetRoundTimeInMinutes(), 0);
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &APlantAndDefuseGameState::Multicast_DecrementCountdownTime, 1, true);
+	}
+}
+
+void APlantAndDefuseGameState::EndOfRound()
+{
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		PDGM->EndOfRound();
 	}
 }

@@ -10,4 +10,5 @@ class BREACHERS_API APlantAndDefuseGameState : public ABreachersGameState
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndOfRound() override;
 };

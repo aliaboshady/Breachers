@@ -69,7 +69,11 @@ void ABreachersGameModeBase::SpawnCharacter(TSubclassOf<ACharacterBase> Characte
 	{
 		Controller->Possess(Character);
 		Character->Tags.Add(FName(Tag));
-		if(ABreachersPlayerController* PC = Cast<ABreachersPlayerController>(Controller)) PC->BuyMenu->EnableBuying(true);
+		if(ABreachersPlayerController* PC = Cast<ABreachersPlayerController>(Controller))
+		{
+			PC->OnPlayerSpawn();
+			PC->BuyMenu->EnableBuying(true);
+		}
 	}
 }
 
