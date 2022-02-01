@@ -21,12 +21,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetRoundNumberPerHalf_NextGM(int32 RoundNumberPerHalf);
 
+	UFUNCTION(BlueprintCallable)
+	void SetGameModeRef_NextGM(FString GameModeRef);
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void EndOfRound() override;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void GoToNextGameMode();
 	
 	bool bUnlimitedMoney_NextGM;
 	bool bUnlimitedRounds_NextGM;
 	int32 RoundTimeInMinutes_NextGM;
 	int32 RoundNumberPerHalf_NextGM;
+
+	UPROPERTY(BlueprintReadOnly)
+	FString GameModeRef_NextGM;
 };

@@ -8,7 +8,7 @@ void AWarmUpGameState::BeginPlay()
 
 void AWarmUpGameState::EndOfRound()
 {
-	Super::EndOfRound();
+	GoToNextGameMode();
 }
 
 void AWarmUpGameState::SetUnlimitedMoney_NextGM(bool bIsUnlimitedMoney)
@@ -29,4 +29,9 @@ void AWarmUpGameState::SetRoundTimeInMinutes_NextGM(int32 RoundTime)
 void AWarmUpGameState::SetRoundNumberPerHalf_NextGM(int32 RoundNumberPerHalf)
 {
 	RoundNumberPerHalf_NextGM = RoundNumberPerHalf;
+}
+
+void AWarmUpGameState::SetGameModeRef_NextGM(FString GameModeRef)
+{
+	GameModeRef_NextGM = GameModeRef;
 }

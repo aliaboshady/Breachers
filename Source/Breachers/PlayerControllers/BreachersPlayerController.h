@@ -29,6 +29,9 @@ public:
 	void UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
 
 	UFUNCTION(Client, Reliable)
+	void Client_ClearAllWidgets();
+	
+	UFUNCTION(Client, Reliable)
 	void Client_DisableScoreBoard();
 	
 	UFUNCTION(Client, Reliable)

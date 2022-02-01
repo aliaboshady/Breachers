@@ -25,9 +25,9 @@ void ABreachersGameModeBase::BeginPlay()
 	BreachersGameState = GetGameState<ABreachersGameState>();
 }
 
-void ABreachersGameModeBase::PostLogin(APlayerController* NewPlayer)
+void ABreachersGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
-	Super::PostLogin(NewPlayer);
+	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
 
 	if(ABreachersPlayerController* CharacterPC = Cast<ABreachersPlayerController>(NewPlayer))
 	{

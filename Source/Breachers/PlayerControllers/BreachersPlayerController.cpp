@@ -1,5 +1,6 @@
 #include "BreachersPlayerController.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
@@ -46,6 +47,11 @@ void ABreachersPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABreachersPlayerController, CharacterPlayer);
+}
+
+void ABreachersPlayerController::Client_ClearAllWidgets_Implementation()
+{
+	UWidgetLayoutLibrary::RemoveAllWidgets(this);
 }
 
 void ABreachersPlayerController::Client_CreatePauseMenuWidget_Implementation()
@@ -95,6 +101,7 @@ void ABreachersPlayerController::KillPlayer()
 
 void ABreachersPlayerController::ShowTeamSelectionMenu()
 {
+	Client_ClearAllWidgets();
 	Client_ShowTeamSelectionMenu();
 }
 

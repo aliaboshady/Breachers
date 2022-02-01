@@ -36,7 +36,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	virtual void PostLogin(APlayerController* NewPlayer) override;
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	void GetPlayersStarts();
 	void SpawnCharacter(TSubclassOf<ACharacterBase> CharacterClass, FTransform SpawnTransform, AController* Controller, FString Tag) const;
 	void EndServer();
