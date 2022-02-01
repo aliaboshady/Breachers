@@ -1,4 +1,5 @@
 #include "PlantAndDefuseGameMode.h"
+#include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
@@ -32,6 +33,8 @@ void APlantAndDefuseGameMode::RespawnALlPlayers()
 		{
 			if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(PlayerState->GetOwner()))
 			{
+				if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
+				
 				ETeam PlayerTeam = BPC->GetPlayerTeam();
 				if(PlayerTeam == Attacker) RequestAttackerSpawn(BPC);
 				else RequestDefenderSpawn(BPC);

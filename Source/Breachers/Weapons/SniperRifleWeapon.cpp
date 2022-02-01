@@ -1,7 +1,6 @@
 #include "SniperRifleWeapon.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Blueprint/UserWidget.h"
-#include "Breachers/Components/HealthSystem.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Kismet/KismetMathLibrary.h"
 
@@ -40,6 +39,16 @@ void ASniperRifleWeapon::OnDie(AController* InstigatedBy, AActor* DamageCauser)
 	Server_ForceUnscope();
 }
 
+void ASniperRifleWeapon::OnPlayerUnpossessed()
+{
+	Server_ForceUnscope();
+}
+
+void ASniperRifleWeapon::OnRestartRound()
+{
+	Server_ForceUnscope();
+}
+
 void ASniperRifleWeapon::OnPrimaryFire()
 {
 	if(bCanFire && CurrentAmmoInClip > 0)
@@ -67,25 +76,6 @@ void ASniperRifleWeapon::OnUnquip()
 {
 	Super::OnUnquip();
 	Server_ForceUnscope();
-}
-
-
-void ASniperRifleWeapon::OnTaken()
-{
-	Super::OnTaken();
-	if(CharacterPlayer && CharacterPlayer->HealthSystem)
-	{
-		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &ASniperRifleWeapon::OnDie);
-	}
-}
-
-void ASniperRifleWeapon::OnDrop(ACharacterBase* DropperCharacter)
-{
-	Super::OnDrop(DropperCharacter);
-	if(CharacterPlayer && CharacterPlayer->HealthSystem)
-	{
-		CharacterPlayer->HealthSystem->OnDie.RemoveDynamic(this, &ASniperRifleWeapon::OnDie);
-	}
 }
 
 void ASniperRifleWeapon::ResetCanScope()

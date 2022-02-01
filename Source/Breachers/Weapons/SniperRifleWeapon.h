@@ -12,7 +12,6 @@ public:
 	ASniperRifleWeapon();
 
 protected:
-	virtual void OnDie(AController* InstigatedBy, AActor* DamageCauser) override;
 	virtual void OnPrimaryFire() override;
 	virtual void OnSecondaryFire() override;
 	virtual void OnReload() override;
@@ -20,11 +19,13 @@ protected:
 	virtual void OnUnquip() override;
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
-	virtual void OnTaken() override;
-	virtual void OnDrop(ACharacterBase* DropperCharacter) override;
 	virtual void Client_Recoil(FVector CalculatedRecoil) override;
 	virtual FVector RecoilShot(float Spread);
 	void ResetCanScope();
+	virtual void OnRestartRound() override;
+
+	virtual void OnDie(AController* InstigatedBy, AActor* DamageCauser) override;
+	virtual void OnPlayerUnpossessed() override;
 
 	UFUNCTION(Client, Reliable)
 	void Client_ChangeAddedRecoil(float AddedRecoil);

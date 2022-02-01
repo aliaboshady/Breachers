@@ -34,6 +34,7 @@ public:
 	virtual void OnEquip();
 	virtual void OnUnquip();
 	void OnCancelEquip();
+	virtual void OnRestartRound();
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
 
@@ -53,9 +54,11 @@ protected:
 	void SetupWeaponInfo();
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
-
 	void DecreaseRecoilTimePerShot();
 	void WaitRecoilTimePerShot();
+
+	UFUNCTION()
+	virtual void OnPlayerUnpossessed();
 
 	UFUNCTION()
 	virtual void OnDie(AController* InstigatedBy, AActor* DamageCauser);

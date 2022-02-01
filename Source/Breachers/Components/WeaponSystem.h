@@ -24,6 +24,7 @@ public:
 	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType = Melee);
 	void DropAllWeapons();
 	void DestroyAllWeapons();
+	void OnRestartRound();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;

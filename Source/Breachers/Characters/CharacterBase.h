@@ -49,6 +49,7 @@ class USpringArmComponent;
 class ABreachersPlayerController;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnLand);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnpossessed);
 
 UCLASS()
 class BREACHERS_API ACharacterBase : public ACharacter
@@ -69,6 +70,9 @@ public:
 
 	UPROPERTY()
 	FOnLand OnLand;
+	
+	UPROPERTY()
+	FOnUnpossessed OnUnpossessed;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UWeaponSystem* WeaponSystem;
@@ -97,7 +101,7 @@ protected:
 	void OpenScoreBoard();
 	void CloseScoreBoard();
 	void ChangeTeam();
-
+	virtual void UnPossessed() override;
 	void OnDie();
 
 	UFUNCTION(BlueprintCallable)

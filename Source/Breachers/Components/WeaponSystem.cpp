@@ -229,6 +229,13 @@ void UWeaponSystem::DestroyAllWeapons()
 	}
 }
 
+void UWeaponSystem::OnRestartRound()
+{
+	if(PrimaryWeapon) PrimaryWeapon->OnRestartRound();
+	if(SecondaryWeapon) SecondaryWeapon->OnRestartRound();
+	if(MeleeWeapon) MeleeWeapon->OnRestartRound();
+}
+
 void UWeaponSystem::Server_EquipWeapon_Implementation(AWeaponBase* Weapon)
 {
 	Server_CancelReload();

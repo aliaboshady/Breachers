@@ -252,6 +252,12 @@ void ACharacterBase::ChangeTeam()
 	PC->ToggleChangeTeamMenu();
 }
 
+void ACharacterBase::UnPossessed()
+{
+	Super::UnPossessed();
+	OnUnpossessed.Broadcast();
+}
+
 void ACharacterBase::SetMouseSensitivityFactor(float NewFactor)
 {
 	Client_SetMouseSensitivityFactor(NewFactor);

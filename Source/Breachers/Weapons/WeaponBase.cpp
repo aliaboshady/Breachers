@@ -1,6 +1,7 @@
 #include "WeaponBase.h"
 #include "DrawDebugHelpers.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/GameModes/DeathMatchGameMode.h"
@@ -407,6 +408,12 @@ void AWeaponBase::OnTaken()
 		Mesh_TP->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	Multicast_OnTaken();
+
+	if(CharacterPlayer && CharacterPlayer->HealthSystem)
+	{
+		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &AWeaponBase::OnDie);
+		CharacterPlayer->OnUnpossessed.AddDynamic(this, &AWeaponBase::OnPlayerUnpossessed);
+	}
 }
 
 void AWeaponBase::Multicast_OnTaken_Implementation()
@@ -437,6 +444,11 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	
 	FTimerHandle OverlapHandle;
 	GetWorldTimerManager().SetTimer(OverlapHandle, this, &AWeaponBase::Multicast_OnDropEnableOverlap, 1, false, TIME_PickWeaponAfterDrop);
+
+	if(CharacterPlayer && CharacterPlayer->HealthSystem)
+	{
+		CharacterPlayer->HealthSystem->OnDie.RemoveDynamic(this, &AWeaponBase::OnDie);
+	}
 }
 
 void AWeaponBase::Multicast_OnDropEnableOverlap_Implementation()
@@ -508,6 +520,14 @@ void AWeaponBase::CancelAllAnimations() const
 	if(AnimIn_Mesh_TP) AnimIn_Mesh_TP->StopAllMontages(0);
 	if(AnimIn_CharacterMesh_FP) AnimIn_CharacterMesh_FP->StopAllMontages(0);
 	if(AnimIn_CharacterMesh_TP) AnimIn_CharacterMesh_TP->StopAllMontages(0);
+}
+
+void AWeaponBase::OnPlayerUnpossessed()
+{
+}
+
+void AWeaponBase::OnRestartRound()
+{
 }
 
 FVector AWeaponBase::RecoilShot(float Spread)
