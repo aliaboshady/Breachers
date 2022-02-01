@@ -7,5 +7,7 @@ UCLASS()
 class BREACHERS_API AWarmUpGameMode : public ADeathMatchGameMode
 {
 	GENERATED_BODY()
-	
+
+protected:
+	virtual void BeginPlay() override;
 };
