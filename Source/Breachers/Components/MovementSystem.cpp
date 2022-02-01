@@ -2,6 +2,7 @@
 #include "HealthSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UMovementSystem::UMovementSystem()
 {
@@ -84,8 +85,11 @@ void UMovementSystem::MoveRight(float Value)
 	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
 	if(CharacterPlayer->GetCharacterMovement()->IsFalling())
 	{
-		MoveForward(Value * MouseTurnValue);
-		if(MouseTurnValue > 0.5 || MouseTurnValue < -0.5) CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
+		if(MouseTurnValue > 0.1 || MouseTurnValue < -0.1)
+		{
+			MoveForward(Value * MouseTurnValue);
+			CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
+		}
 	}
 	else CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
 }
