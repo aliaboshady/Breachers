@@ -3,6 +3,11 @@
 
 void APlantAndDefuseGameState::BeginPlay()
 {
+	StartCountDownTimer();
+}
+
+void APlantAndDefuseGameState::StartCountDownTimer()
+{
 	OneSecondTimespan = FTimespan(0, 0, 1);
 	
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))

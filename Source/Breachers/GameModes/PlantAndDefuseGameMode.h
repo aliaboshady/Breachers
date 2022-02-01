@@ -13,6 +13,11 @@ public:
 	void EndOfRound();
 
 protected:
+
+	void RestartRound();
+	void RespawnALlPlayers();
+	void RemoveAllUnpossessedBodies();
+	void RestartCountDownTimer();
 	
 	UFUNCTION(BlueprintCallable)
 	void SetUnlimitedMoney(bool bIsUnlimitedMoney);
