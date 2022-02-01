@@ -14,7 +14,9 @@ void UMoneySystem::BeginPlay()
 {
 	Super::BeginPlay();
 	SetIsReplicated(true);
-	Server_SetMoney();
+
+	FTimerHandle SetMoneyTimer;
+	GetWorld()->GetTimerManager().SetTimer(SetMoneyTimer, this, &UMoneySystem::Server_SetMoney, 1, false, 0.25);
 }
 
 void UMoneySystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

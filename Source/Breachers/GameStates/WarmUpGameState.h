@@ -30,10 +30,17 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void GoToNextGameMode();
-	
+
+	UPROPERTY(BlueprintReadOnly)
 	bool bUnlimitedMoney_NextGM;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool bUnlimitedRounds_NextGM;
+
+	UPROPERTY(BlueprintReadOnly)
 	int32 RoundTimeInMinutes_NextGM;
+
+	UPROPERTY(BlueprintReadOnly)
 	int32 RoundNumberPerHalf_NextGM;
 
 	UPROPERTY(BlueprintReadOnly)
