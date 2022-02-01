@@ -68,6 +68,9 @@ protected:
 	UPROPERTY()
 	ACharacterBase* CharacterPlayer;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float JumpMoveFactor;
+
 	bool bCanTakeInput;
 	bool bIsWalking;
 	float MouseTurnValue;

@@ -13,6 +13,7 @@ UMovementSystem::UMovementSystem()
 	bCanTakeInput = true;
 	bIsWalking = false;
 	MouseSensitivityFactor = 1;
+	JumpMoveFactor = 0.2;
 }
 
 void UMovementSystem::BeginPlay()
@@ -77,7 +78,14 @@ void UMovementSystem::SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSp
 void UMovementSystem::MoveForward(float Value)
 {
 	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
-	CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorForwardVector(), Value);
+	if(!CharacterPlayer->GetCharacterMovement()->IsFalling() || MouseTurnValue > 0.1 || MouseTurnValue < -0.1)
+	{
+		CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorForwardVector(), Value);
+	}
+	else
+	{
+		CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorForwardVector(), Value * JumpMoveFactor);
+	}
 }
 
 void UMovementSystem::MoveRight(float Value)
@@ -89,6 +97,10 @@ void UMovementSystem::MoveRight(float Value)
 		{
 			MoveForward(Value * MouseTurnValue);
 			CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
+		}
+		else
+		{
+			CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value * JumpMoveFactor);
 		}
 	}
 	else CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorRightVector(), Value);
