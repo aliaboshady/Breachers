@@ -17,6 +17,7 @@ protected:
 	void RestartRound();
 	void RespawnALlPlayers();
 	void RemoveAllUnpossessedBodies();
+	void RemoveAllUnownedWeapons();
 	void RestartCountDownTimer();
 	
 	UFUNCTION(BlueprintCallable)

@@ -2,6 +2,7 @@
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
+#include "Breachers/Weapons/WeaponBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -19,6 +20,7 @@ void APlantAndDefuseGameMode::RestartRound()
 {
 	RespawnALlPlayers();
 	RemoveAllUnpossessedBodies();
+	RemoveAllUnownedWeapons();
 	RestartCountDownTimer();
 }
 
@@ -47,6 +49,18 @@ void APlantAndDefuseGameMode::RemoveAllUnpossessedBodies()
 	for (AActor* Player : AllPlayers)
 	{
 		if(!Player->GetInstigatorController()) Player->Destroy();
+	}
+}
+
+void APlantAndDefuseGameMode::RemoveAllUnownedWeapons()
+{
+	TArray<AActor*> AllWeapons;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TAG_Weapon, AllWeapons);
+	if(AllWeapons.Num() == 0) return;
+
+	for (AActor* Weapon : AllWeapons)
+	{
+		if(!Weapon->GetOwner() || !Weapon->GetOwner()->GetInstigatorController()) Weapon->Destroy();
 	}
 }
 
