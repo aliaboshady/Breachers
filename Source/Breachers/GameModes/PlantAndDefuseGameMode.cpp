@@ -1,4 +1,5 @@
 #include "PlantAndDefuseGameMode.h"
+#include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
@@ -54,6 +55,8 @@ void APlantAndDefuseGameMode::RespawnALlPlayers()
 					{
 						if(PlayerTeam == Attacker) RequestAttackerRepositionToSpawn(BPC);
 						else RequestDefenderRepositionToSpawn(BPC);
+
+						if(BPC->CharacterPlayer) BPC->CharacterPlayer->HealthSystem->Reset();
 					}
 				}
 			}

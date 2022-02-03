@@ -18,6 +18,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_KillPlayer(AController* InstigatedBy, AActor* DamageCauser);
 
+	void Reset();
+
 	FORCEINLINE bool GetIsDead(){return bIsDead;}
 
 	UPROPERTY()

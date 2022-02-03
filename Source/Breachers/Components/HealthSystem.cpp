@@ -44,6 +44,12 @@ void UHealthSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UHealthSystem, bIsDead);
 }
 
+void UHealthSystem::Reset()
+{
+	bIsDead = false;
+	CurrentHealth = MaxHealth;
+}
+
 void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AController* InstigatedBy,
                                       FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
                                       const UDamageType* DamageType, AActor* DamageCauser)
