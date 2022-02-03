@@ -59,9 +59,11 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
 {
-	if(MeleeWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(MeleeWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
-	if(PistolWeaponClass) GetWorld()->SpawnActor<AWeaponBase>(PistolWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+	if(MeleeWeaponClass && !MeleeWeapon) GetWorld()->SpawnActor<AWeaponBase>(MeleeWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+	if(PistolWeaponClass && !SecondaryWeapon) GetWorld()->SpawnActor<AWeaponBase>(PistolWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
 
+	if(CurrentWeapon && CurrentWeapon == PrimaryWeapon) return;
+	
 	FTimerHandle SpawnedWeaponHandle;
 	GetWorld()->GetTimerManager().SetTimer(SpawnedWeaponHandle, this, &UWeaponSystem::EquipStartUpWeapons, 1, false, 0.05);
 }
@@ -233,8 +235,9 @@ void UWeaponSystem::OnRestartRound()
 {
 	Server_CancelReload();
 	if(PrimaryWeapon) PrimaryWeapon->OnRestartRound();
+	
 	if(SecondaryWeapon) SecondaryWeapon->OnRestartRound();
-	if(MeleeWeapon) MeleeWeapon->OnRestartRound();
+	else Server_SpawnStartWeapons();
 }
 
 void UWeaponSystem::Server_EquipWeapon_Implementation(AWeaponBase* Weapon)
