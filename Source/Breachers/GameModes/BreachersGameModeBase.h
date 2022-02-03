@@ -26,9 +26,11 @@ public:
 
 	UFUNCTION()
 	virtual void RequestAttackerSpawn(AController* Controller);
+	virtual void RequestAttackerRepositionToSpawn(AController* Controller);
 	
 	UFUNCTION()
 	virtual void RequestDefenderSpawn(AController* Controller);
+	virtual void RequestDefenderRepositionToSpawn(AController* Controller);
 	
 	virtual void OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn);
 

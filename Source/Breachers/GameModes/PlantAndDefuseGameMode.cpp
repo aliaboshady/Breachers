@@ -40,15 +40,20 @@ void APlantAndDefuseGameMode::RespawnALlPlayers()
 		{
 			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
 			{
-				if(BPS->GetIsDead())
+				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
 				{
-					if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
+					ETeam PlayerTeam = BPC->GetPlayerTeam();
+					if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
+					
+					if(BPS->GetIsDead())
 					{
-						if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
-				
-						ETeam PlayerTeam = BPC->GetPlayerTeam();
 						if(PlayerTeam == Attacker) RequestAttackerSpawn(BPC);
 						else RequestDefenderSpawn(BPC);
+					}
+					else
+					{
+						if(PlayerTeam == Attacker) RequestAttackerRepositionToSpawn(BPC);
+						else RequestDefenderRepositionToSpawn(BPC);
 					}
 				}
 			}

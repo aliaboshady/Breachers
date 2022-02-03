@@ -45,6 +45,16 @@ void ABreachersGameModeBase::RequestAttackerSpawn(AController* Controller)
 	}
 }
 
+void ABreachersGameModeBase::RequestAttackerRepositionToSpawn(AController* Controller)
+{
+	if(AttackerSpawns.Num() > 0)
+	{
+		const int32 RandInd = FMath::RandRange(0, AttackerSpawns.Num() - 1);
+		const FTransform NewTransform = AttackerSpawns[RandInd]->GetActorTransform();
+		if(Controller->GetPawn()) Controller->GetPawn()->SetActorTransform(NewTransform);
+	}
+}
+
 void ABreachersGameModeBase::RequestDefenderSpawn(AController* Controller)
 {
 	if(DefenderSpawns.Num() > 0)
@@ -52,6 +62,16 @@ void ABreachersGameModeBase::RequestDefenderSpawn(AController* Controller)
 		const int32 RandInd = FMath::RandRange(0, DefenderSpawns.Num() - 1);
 		const FTransform SpawnTransform = DefenderSpawns[RandInd]->GetActorTransform();
 		if(DefenderClass) SpawnCharacter(DefenderClass, SpawnTransform, Controller, TAG_Defender);
+	}
+}
+
+void ABreachersGameModeBase::RequestDefenderRepositionToSpawn(AController* Controller)
+{
+	if(DefenderSpawns.Num() > 0)
+	{
+		const int32 RandInd = FMath::RandRange(0, DefenderSpawns.Num() - 1);
+		const FTransform NewTransform = DefenderSpawns[RandInd]->GetActorTransform();
+		if(Controller->GetPawn()) Controller->GetPawn()->SetActorTransform(NewTransform);
 	}
 }
 
