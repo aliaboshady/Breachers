@@ -528,6 +528,11 @@ void AWeaponBase::OnPlayerUnpossessed()
 
 void AWeaponBase::OnRestartRound()
 {
+	const int32 MaxTotalAmmo = WeaponInfo.ReloadInfo.MaxTotalAmmo;
+	const int32 MaxAmmoInClip = WeaponInfo.ReloadInfo.MaxAmmoInClip;
+	
+	CurrentTotalAmmo = MaxTotalAmmo - MaxAmmoInClip;
+	CurrentAmmoInClip = MaxAmmoInClip;
 }
 
 FVector AWeaponBase::RecoilShot(float Spread)
