@@ -46,7 +46,7 @@ void ASniperRifleWeapon::OnPlayerUnpossessed()
 
 void ASniperRifleWeapon::OnRestartRound()
 {
-	Server_ForceUnscope();
+	if(IsCurrentWeapon()) Server_ForceUnscope();
 }
 
 void ASniperRifleWeapon::OnPrimaryFire()

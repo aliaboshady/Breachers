@@ -578,3 +578,9 @@ void AWeaponBase::WaitRecoilTimePerShot()
 {
 	GetWorld()->GetTimerManager().SetTimer(RecoilTimeHandle, this, &AWeaponBase::DecreaseRecoilTimePerShot, 0.05, true);
 }
+
+bool AWeaponBase::IsCurrentWeapon()
+{
+	if(!CharacterPlayer) return false;
+	return CharacterPlayer->WeaponSystem->GetCurrentWeapon() == this;
+}

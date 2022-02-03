@@ -56,6 +56,7 @@ protected:
 	void CancelAllAnimations() const;
 	void DecreaseRecoilTimePerShot();
 	void WaitRecoilTimePerShot();
+	bool IsCurrentWeapon();
 
 	UFUNCTION()
 	virtual void OnPlayerUnpossessed();
