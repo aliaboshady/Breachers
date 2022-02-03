@@ -13,7 +13,7 @@ public:
 	void EndOfRound();
 
 protected:
-
+	virtual void BeginPlay() override;
 	void RestartRound();
 	void RespawnALlPlayers();
 	void RemoveAllUnpossessedBodies();
@@ -31,7 +31,6 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SetRoundNumber(int32 RoundsCount);
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bUnlimitedRounds;

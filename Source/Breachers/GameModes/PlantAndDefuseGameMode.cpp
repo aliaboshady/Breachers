@@ -3,9 +3,16 @@
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
+#include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+
+void APlantAndDefuseGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	RoundTimeInMinutes = 1;
+}
 
 void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn)
 {
@@ -31,13 +38,19 @@ void APlantAndDefuseGameMode::RespawnALlPlayers()
 	{
 		for (APlayerState* PlayerState : BGS->PlayerArray)
 		{
-			if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(PlayerState->GetOwner()))
+			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
 			{
-				if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
+				if(BPS->GetIsDead())
+				{
+					if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
+					{
+						if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
 				
-				ETeam PlayerTeam = BPC->GetPlayerTeam();
-				if(PlayerTeam == Attacker) RequestAttackerSpawn(BPC);
-				else RequestDefenderSpawn(BPC);
+						ETeam PlayerTeam = BPC->GetPlayerTeam();
+						if(PlayerTeam == Attacker) RequestAttackerSpawn(BPC);
+						else RequestDefenderSpawn(BPC);
+					}
+				}
 			}
 		}
 	}
@@ -87,10 +100,10 @@ void APlantAndDefuseGameMode::SetUnlimitedRounds(bool bIsUnlimitedRounds)
 
 void APlantAndDefuseGameMode::SetRoundTime(int32 RoundTime)
 {
-	RoundTimeInMinutes = RoundTime;
+	if(RoundTime > 0) RoundTimeInMinutes = RoundTime;
 }
 
 void APlantAndDefuseGameMode::SetRoundNumber(int32 RoundsCount)
 {
-	RoundsNumber = RoundsCount;
+	if(RoundsCount > 0) RoundsNumber = RoundsCount;
 }
