@@ -45,6 +45,7 @@ protected:
 	void SlowDownTime();
 	void SetNormalTimeSpeed();
 	void OpenEndMatchScoreBoard();
+	virtual FTransform GetSpawnTransform(TArray<AActor*> &SpawnPoints, ETeam NextTeamRespawn = Attacker);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bFriendlyFireOn;

@@ -37,42 +37,22 @@ void ABreachersGameModeBase::HandleStartingNewPlayer_Implementation(APlayerContr
 
 void ABreachersGameModeBase::RequestAttackerSpawn(AController* Controller)
 {
-	if(AttackerSpawns.Num() > 0)
-	{
-		const int32 RandInd = FMath::RandRange(0, AttackerSpawns.Num() - 1);
-		const FTransform SpawnTransform = AttackerSpawns[RandInd]->GetActorTransform();
-		if(AttackerClass) SpawnCharacter(AttackerClass, SpawnTransform, Controller, TAG_Attacker);
-	}
+	if(AttackerClass) SpawnCharacter(AttackerClass, GetSpawnTransform(AttackerSpawns), Controller, TAG_Attacker);
 }
 
 void ABreachersGameModeBase::RequestAttackerRepositionToSpawn(AController* Controller)
 {
-	if(AttackerSpawns.Num() > 0)
-	{
-		const int32 RandInd = FMath::RandRange(0, AttackerSpawns.Num() - 1);
-		const FTransform NewTransform = AttackerSpawns[RandInd]->GetActorTransform();
-		if(Controller->GetPawn()) Controller->GetPawn()->SetActorTransform(NewTransform);
-	}
+	if(Controller->GetPawn()) Controller->GetPawn()->SetActorTransform(GetSpawnTransform(AttackerSpawns));
 }
 
 void ABreachersGameModeBase::RequestDefenderSpawn(AController* Controller)
 {
-	if(DefenderSpawns.Num() > 0)
-	{
-		const int32 RandInd = FMath::RandRange(0, DefenderSpawns.Num() - 1);
-		const FTransform SpawnTransform = DefenderSpawns[RandInd]->GetActorTransform();
-		if(DefenderClass) SpawnCharacter(DefenderClass, SpawnTransform, Controller, TAG_Defender);
-	}
+	if(DefenderClass) SpawnCharacter(DefenderClass, GetSpawnTransform(DefenderSpawns), Controller, TAG_Defender);
 }
 
 void ABreachersGameModeBase::RequestDefenderRepositionToSpawn(AController* Controller)
 {
-	if(DefenderSpawns.Num() > 0)
-	{
-		const int32 RandInd = FMath::RandRange(0, DefenderSpawns.Num() - 1);
-		const FTransform NewTransform = DefenderSpawns[RandInd]->GetActorTransform();
-		if(Controller->GetPawn()) Controller->GetPawn()->SetActorTransform(NewTransform);
-	}
+	if(Controller->GetPawn()) Controller->GetPawn()->SetActorTransform(GetSpawnTransform(DefenderSpawns));
 }
 
 void ABreachersGameModeBase::GetPlayersStarts()
@@ -140,4 +120,14 @@ void ABreachersGameModeBase::OpenEndMatchScoreBoard()
 			BPC->Client_DisableScoreBoard();
 		}
 	}
+}
+
+FTransform ABreachersGameModeBase::GetSpawnTransform(TArray<AActor*>& SpawnPoints, ETeam NextTeamRespawn)
+{
+	if(SpawnPoints.Num() > 0)
+	{
+		const int32 RandInd = FMath::RandRange(0, SpawnPoints.Num() - 1);
+		return SpawnPoints[RandInd]->GetActorTransform();
+	}
+	return FTransform();
 }

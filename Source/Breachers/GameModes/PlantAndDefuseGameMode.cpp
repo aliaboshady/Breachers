@@ -56,7 +56,7 @@ void APlantAndDefuseGameMode::HandleStartingNewPlayer_Implementation(APlayerCont
 	FTimerHandle SpawnPlayerHandle;
 	FTimerDelegate SpawnPlayerDelegate;
 	SpawnPlayerDelegate.BindUFunction(this, FName(TEXT("SpawnPlayerWithSelectedTeam")), NewPlayer);
-	GetWorldTimerManager().SetTimer(SpawnPlayerHandle, SpawnPlayerDelegate, 1, false, 0.2);
+	GetWorldTimerManager().SetTimer(SpawnPlayerHandle, SpawnPlayerDelegate, 1, false, 3);
 }
 
 void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn)
@@ -71,6 +71,10 @@ void APlantAndDefuseGameMode::EndOfRound()
 
 void APlantAndDefuseGameMode::RestartRound()
 {
+	AttackerSpawnIndex = 0;
+	DefenderSpawnIndex = 0;
+	ShuffleSpawnPoints(AttackerSpawns);
+	ShuffleSpawnPoints(DefenderSpawns);
 	RespawnALlPlayers();
 	RemoveAllUnpossessedBodies();
 	RemoveAllUnownedWeapons();
@@ -158,4 +162,32 @@ void APlantAndDefuseGameMode::SetRoundTime(int32 RoundTime)
 void APlantAndDefuseGameMode::SetRoundNumber(int32 RoundsCount)
 {
 	if(RoundsCount > 0) RoundsNumber = RoundsCount;
+}
+
+void APlantAndDefuseGameMode::ShuffleSpawnPoints(TArray<AActor*>& SpawnArray)
+{
+	if (SpawnArray.Num() > 0)
+	{
+		int32 LastIndex = SpawnArray.Num() - 1;
+		for (int32 i = 0; i <= LastIndex; ++i)
+		{
+			int32 Index = FMath::RandRange(i, LastIndex);
+			if (i != Index)
+			{
+				SpawnArray.Swap(i, Index);
+			}
+		}
+	}
+}
+
+FTransform APlantAndDefuseGameMode::GetSpawnTransform(TArray<AActor*>& SpawnPoints, ETeam NextTeamRespawn)
+{
+	if(NextTeamRespawn == Attacker)
+	{
+		return SpawnPoints[AttackerSpawnIndex++]->GetTransform();
+	}
+	else
+	{
+		return SpawnPoints[DefenderSpawnIndex++]->GetTransform();
+	}
 }
