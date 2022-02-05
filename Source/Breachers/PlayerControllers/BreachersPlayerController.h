@@ -30,9 +30,16 @@ public:
 	void OnKill();
 	void OnPlayerSpawn();
 	void UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
+	
+	UFUNCTION(Server, Reliable)
+	void Server_ChangeTeam(ETeam NewTeam);
 
 	FORCEINLINE TEnumAsByte<ETeam> GetPlayerTeam(){return NextTeamRespawn;}
+	FORCEINLINE bool HasChosenTeam(){return bHasChosenTeam;}
 
+	UFUNCTION(Client, Reliable)
+	void Client_ShowPlayerUI();
+	
 	UFUNCTION(Client, Reliable)
 	void Client_ClearAllWidgets();
 	
@@ -79,19 +86,19 @@ protected:
 	void OnSelectCharacter();
 
 	UFUNCTION(Server, Reliable)
-	void Server_ChangeTeam(ETeam NewTeam);
-
-	UFUNCTION(Server, Reliable)
 	void Server_SpawnAttacker();
 
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnDefender();
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetNextTeam(ETeam NextTeam);
+
+	UFUNCTION(Client, Reliable)
+	void Client_SetNextTeam(ETeam NextTeam);
+
 	UFUNCTION(Client, Reliable)
 	void Client_ShowTeamSelectionMenu();
-	
-	UFUNCTION(Client, Reliable)
-	void Client_ShowPlayerUI();
 
 	UFUNCTION(Client, Reliable)
 	void Client_CreatePauseMenuWidget();
@@ -101,6 +108,9 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void Client_CreateKillfeedWidget();
+
+	UFUNCTION(Client, Reliable)
+	void Client_CreateCountDownWidget();
 
 	UFUNCTION(Client, Reliable)
 	void Client_UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
@@ -146,5 +156,10 @@ protected:
 
 	bool bPauseMenuOpen;
 	bool bCanOpenCloseScoreBoard;
+
+	UPROPERTY(Replicated)
 	TEnumAsByte<ETeam> NextTeamRespawn;
+
+	UPROPERTY(Replicated)
+	bool bHasChosenTeam;
 };

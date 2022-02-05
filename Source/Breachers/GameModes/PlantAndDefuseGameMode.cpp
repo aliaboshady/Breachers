@@ -1,6 +1,7 @@
 #include "PlantAndDefuseGameMode.h"
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Breachers/GameInstance/MainGameInstance.h"
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
@@ -13,6 +14,49 @@ void APlantAndDefuseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	RoundTimeInMinutes = 1;
+}
+
+void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
+{
+	if(ABreachersPlayerController* CharacterPC = Cast<ABreachersPlayerController>(NewPlayer))
+	{		
+		CharacterPC->Client_ClearAllWidgets();
+		CharacterPC->Client_ShowPlayerUI();
+
+		FTimerHandle RespawnHandle;
+		FTimerDelegate RespawnDelegate;
+	
+		if(CharacterPC->HasChosenTeam())
+		{			
+			ETeam Team = CharacterPC->GetPlayerTeam();
+			if(Team == Attacker) RespawnDelegate.BindUFunction(this, FName(TEXT("RequestAttackerSpawn")), CharacterPC);
+			else RespawnDelegate.BindUFunction(this, FName(TEXT("RequestDefenderSpawn")), CharacterPC);
+		}
+		else
+		{
+			int32 RandomTeam = FMath::RandRange(0, 1);
+			if(RandomTeam)
+			{
+				RespawnDelegate.BindUFunction(this, FName(TEXT("RequestAttackerSpawn")), CharacterPC);
+				CharacterPC->Server_ChangeTeam(Attacker);
+			}
+			else
+			{
+				RespawnDelegate.BindUFunction(this, FName(TEXT("RequestDefenderSpawn")), CharacterPC);
+				CharacterPC->Server_ChangeTeam(Defender);
+			}
+		}
+			
+		GetWorldTimerManager().SetTimer(RespawnHandle, RespawnDelegate, 1, false, 0.2);
+	}
+}
+
+void APlantAndDefuseGameMode::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
+{
+	FTimerHandle SpawnPlayerHandle;
+	FTimerDelegate SpawnPlayerDelegate;
+	SpawnPlayerDelegate.BindUFunction(this, FName(TEXT("SpawnPlayerWithSelectedTeam")), NewPlayer);
+	GetWorldTimerManager().SetTimer(SpawnPlayerHandle, SpawnPlayerDelegate, 1, false, 0.2);
 }
 
 void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn)

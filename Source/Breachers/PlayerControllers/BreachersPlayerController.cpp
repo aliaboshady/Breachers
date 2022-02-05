@@ -6,6 +6,7 @@
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Breachers/GameInstance/MainGameInstance.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
@@ -33,12 +34,17 @@ void ABreachersPlayerController::BeginPlay()
 	Client_CreatePauseMenuWidget();
 	Client_CreateScoreBoardWidget();
 	Client_CreateKillfeedWidget();
-
-	if(CountDownTimerWidgetClass && IsLocalPlayerController())
+	Client_CreateCountDownWidget();
+	
+	if(IsLocalController())
 	{
-		if(UUserWidget* CountDownTimerWidget = CreateWidget(this, CountDownTimerWidgetClass))
+		if(UMainGameInstance* GameInstance = Cast<UMainGameInstance>(GetGameInstance()))
 		{
-			CountDownTimerWidget->AddToViewport();
+			if(GameInstance->HasChosenTeam())
+			{
+				Server_SetNextTeam(GameInstance->GetNextTeam());
+				Client_SetNextTeam(GameInstance->GetNextTeam());
+			}
 		}
 	}
 }
@@ -47,11 +53,13 @@ void ABreachersPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABreachersPlayerController, CharacterPlayer);
+	//DOREPLIFETIME(ABreachersPlayerController, NextTeamRespawn);
 }
 
 void ABreachersPlayerController::Client_ClearAllWidgets_Implementation()
 {
 	UWidgetLayoutLibrary::RemoveAllWidgets(this);
+	Client_CreateCountDownWidget();
 }
 
 void ABreachersPlayerController::Client_CreatePauseMenuWidget_Implementation()
@@ -68,6 +76,16 @@ void ABreachersPlayerController::Client_CreateKillfeedWidget_Implementation()
 	{
 		KillfeedWidget = CreateWidget<UKillfeed>(this, KillfeedWidgetClass);
 		if(KillfeedWidget) KillfeedWidget->AddToViewport();
+	}
+}
+void ABreachersPlayerController::Client_CreateCountDownWidget_Implementation()
+{
+	if(CountDownTimerWidgetClass && IsLocalPlayerController())
+	{
+		if(UUserWidget* CountDownTimerWidget = CreateWidget(this, CountDownTimerWidgetClass))
+		{
+			CountDownTimerWidget->AddToViewport();
+		}
 	}
 }
 
@@ -146,8 +164,23 @@ void ABreachersPlayerController::SelectDefender()
 void ABreachersPlayerController::OnSelectCharacter()
 {
 	if(TeamSelectWidget) TeamSelectWidget->RemoveFromParent();
-	SetInputUI(false);
 	Client_ShowPlayerUI();
+}
+
+void ABreachersPlayerController::Client_SetNextTeam_Implementation(ETeam NextTeam)
+{
+	if(UMainGameInstance* GameInstance = Cast<UMainGameInstance>(GetGameInstance()))
+	{
+		GameInstance->ChooseNextTeam(NextTeam);
+	}
+	NextTeamRespawn = NextTeam;
+	bHasChosenTeam = true;
+}
+
+void ABreachersPlayerController::Server_SetNextTeam_Implementation(ETeam NextTeam)
+{
+	NextTeamRespawn = NextTeam;
+	bHasChosenTeam = true;
 }
 
 void ABreachersPlayerController::Client_ShowPlayerUI_Implementation()
@@ -155,12 +188,15 @@ void ABreachersPlayerController::Client_ShowPlayerUI_Implementation()
 	if(!PlayerUIWidgetClass) return;
 	UUserWidget* UIWidget = CreateWidget(this, PlayerUIWidgetClass);
 	if(UIWidget) UIWidget->AddToViewport();
+	SetInputUI(false);
 }
 
 void ABreachersPlayerController::Server_SpawnAttacker_Implementation()
 {
 	if(BreachersGameModeBase)
 	{
+		Server_SetNextTeam(Attacker);
+		Client_SetNextTeam(Attacker);
 		BreachersGameModeBase->RequestAttackerSpawn(this);
 	}
 }
@@ -169,6 +205,8 @@ void ABreachersPlayerController::Server_SpawnDefender_Implementation()
 {
 	if(BreachersGameModeBase)
 	{
+		Server_SetNextTeam(Defender);
+		Client_SetNextTeam(Defender);
 		BreachersGameModeBase->RequestDefenderSpawn(this);
 	}
 }
@@ -279,5 +317,6 @@ void ABreachersPlayerController::Client_UpdateKillfeed_Implementation(FName Kill
 
 void ABreachersPlayerController::Server_ChangeTeam_Implementation(ETeam NewTeam)
 {
-	NextTeamRespawn = NewTeam;
+	Server_SetNextTeam(NewTeam);
+	Client_SetNextTeam(NewTeam);
 }

@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Breachers/Characters/CharacterBase.h"
 #include "Engine/GameInstance.h"
 #include "MainGameInstance.generated.h"
 
@@ -11,4 +12,12 @@ class BREACHERS_API UMainGameInstance : public UGameInstance
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void DestroyGameSession();
+
+	void ChooseNextTeam(ETeam Team);
+	FORCEINLINE bool HasChosenTeam(){return bHasChosenTeam;}
+	FORCEINLINE ETeam GetNextTeam(){return NextTeamRespawn;}
+
+protected:
+	TEnumAsByte<ETeam> NextTeamRespawn;
+	bool bHasChosenTeam = false;
 };

@@ -14,6 +14,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
+	
+	UFUNCTION()
+	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);
+	
 	void RestartRound();
 	void RespawnALlPlayers();
 	void RemoveAllUnpossessedBodies();
