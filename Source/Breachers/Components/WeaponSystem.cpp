@@ -234,10 +234,18 @@ void UWeaponSystem::DestroyAllWeapons()
 void UWeaponSystem::OnRestartRound()
 {
 	Server_CancelReload();
-	if(PrimaryWeapon) PrimaryWeapon->OnRestartRound();
-	
-	if(SecondaryWeapon) SecondaryWeapon->OnRestartRound();
+	if(SecondaryWeapon)
+	{
+		SecondaryWeapon->OnRestartRound();
+		Server_EquipSecondary();
+	}
 	else Server_SpawnStartWeapons();
+	
+	if(PrimaryWeapon)
+	{
+		PrimaryWeapon->OnRestartRound();
+		Server_EquipPrimary();
+	}
 }
 
 void UWeaponSystem::Server_EquipWeapon_Implementation(AWeaponBase* Weapon)

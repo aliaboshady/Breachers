@@ -13,7 +13,6 @@
 void APlantAndDefuseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	RoundTimeInMinutes = 1;
 }
 
 void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
