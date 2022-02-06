@@ -23,6 +23,7 @@ ABreachersPlayerController::ABreachersPlayerController()
 	BuyMenu = CreateDefaultSubobject<UBuyMenu>(TEXT("Buy Menu"));
 	bCanOpenCloseScoreBoard = true;
 	bCanMove = true;
+	bCanShoot = true;
 }
 
 void ABreachersPlayerController::BeginPlay()
@@ -236,6 +237,7 @@ void ABreachersPlayerController::OnPossess(APawn* InPawn)
 	{
 		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &ABreachersPlayerController::OnDie);
 		CharacterPlayer->MovementSystem->SetCanMove(bCanMove);
+		CharacterPlayer->WeaponSystem->EnableShooting(bCanShoot);
 	}
 }
 
@@ -338,4 +340,22 @@ void ABreachersPlayerController::Server_SetCanMove_Implementation(bool bCanMoveP
 	bCanMove = bCanMovePlayer;
 	if(CharacterPlayer) CharacterPlayer->MovementSystem->SetCanMove(bCanMove);
 	Client_SetCanMove(bCanMovePlayer);
+}
+
+void ABreachersPlayerController::SetCanShoot(bool bCanShootPlayer)
+{
+	Server_SetCanShoot(bCanShootPlayer);
+}
+
+void ABreachersPlayerController::Client_SetCanShoot_Implementation(bool bCanShootPlayer)
+{
+	bCanShoot = bCanShootPlayer;
+	if(CharacterPlayer) CharacterPlayer->WeaponSystem->EnableShooting(bCanShoot);
+}
+
+void ABreachersPlayerController::Server_SetCanShoot_Implementation(bool bCanShootPlayer)
+{
+	bCanShoot = bCanShootPlayer;
+	if(CharacterPlayer) CharacterPlayer->WeaponSystem->EnableShooting(bCanShoot);
+	Client_SetCanShoot(bCanShootPlayer);
 }

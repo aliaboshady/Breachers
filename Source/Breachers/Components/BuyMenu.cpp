@@ -4,6 +4,7 @@
 #include "WeaponSystem.h"
 #include "Blueprint/UserWidget.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/GameModes/DeathMatchGameMode.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
@@ -73,7 +74,7 @@ void UBuyMenu::SetInputUI(bool bIsUI)
 	if(bIsUI) PC->SetInputMode(FInputModeGameAndUI());
 	else PC->SetInputMode(FInputModeGameOnly());
 	PC->bShowMouseCursor = bIsUI;
-	PC->EnableShooting(!bIsUI);
+	if(Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode())) PC->EnableShooting(!bIsUI);
 }
 
 void UBuyMenu::EnableBuying(bool bEnableBuying)

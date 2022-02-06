@@ -31,6 +31,7 @@ public:
 	void OnPlayerSpawn();
 	void UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
 	void SetCanMove(bool bCanMovePlayer);
+	void SetCanShoot(bool bCanShootPlayer);
 	
 	UFUNCTION(Server, Reliable)
 	void Server_ChangeTeam(ETeam NewTeam);
@@ -122,6 +123,12 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_SetCanMove(bool bCanMovePlayer);
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetCanShoot(bool bCanShootPlayer);
+	
+	UFUNCTION(Client, Reliable)
+	void Client_SetCanShoot(bool bCanShootPlayer);
+
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
 	
@@ -170,6 +177,6 @@ protected:
 	UPROPERTY(Replicated)
 	bool bHasChosenTeam;
 
-	UPROPERTY(Replicated)
 	bool bCanMove;
+	bool bCanShoot;
 };

@@ -33,6 +33,7 @@ void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* New
 			if(PDGS->GetCurrentGamePhase() == BuyPhase)
 			{
 				CharacterPC->SetCanMove(false);
+				CharacterPC->SetCanShoot(false);
 			}
 			else
 			{
@@ -97,6 +98,7 @@ void APlantAndDefuseGameMode::StartBuyPhase()
 				{
 					BPC->BuyMenu->EnableBuying(true);
 					BPC->SetCanMove(false);
+					BPC->SetCanShoot(false);
 				}
 			}
 		}
@@ -116,6 +118,7 @@ void APlantAndDefuseGameMode::StartMainPhase()
 					BPC->BuyMenu->CloseBuyMenu();
 					BPC->BuyMenu->EnableBuying(false);
 					BPC->SetCanMove(true);
+					BPC->SetCanShoot(true);
 				}
 			}
 		}
