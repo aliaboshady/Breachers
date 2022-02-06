@@ -5,6 +5,7 @@
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MoneySystem.h"
+#include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameInstance/MainGameInstance.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
@@ -21,6 +22,7 @@ ABreachersPlayerController::ABreachersPlayerController()
 	MoneySystem = CreateDefaultSubobject<UMoneySystem>(TEXT("Money System"));
 	BuyMenu = CreateDefaultSubobject<UBuyMenu>(TEXT("Buy Menu"));
 	bCanOpenCloseScoreBoard = true;
+	bCanMove = true;
 }
 
 void ABreachersPlayerController::BeginPlay()
@@ -53,7 +55,6 @@ void ABreachersPlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProp
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABreachersPlayerController, CharacterPlayer);
-	//DOREPLIFETIME(ABreachersPlayerController, NextTeamRespawn);
 }
 
 void ABreachersPlayerController::Client_ClearAllWidgets_Implementation()
@@ -234,6 +235,7 @@ void ABreachersPlayerController::OnPossess(APawn* InPawn)
 	if(CharacterPlayer && CharacterPlayer->HealthSystem)
 	{
 		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &ABreachersPlayerController::OnDie);
+		CharacterPlayer->MovementSystem->SetCanMove(bCanMove);
 	}
 }
 
@@ -319,4 +321,21 @@ void ABreachersPlayerController::Server_ChangeTeam_Implementation(ETeam NewTeam)
 {
 	Server_SetNextTeam(NewTeam);
 	Client_SetNextTeam(NewTeam);
+}
+
+void ABreachersPlayerController::SetCanMove(bool bCanMovePlayer)
+{
+	Server_SetCanMove(bCanMovePlayer);
+}
+void ABreachersPlayerController::Client_SetCanMove_Implementation(bool bCanMovePlayer)
+{
+	bCanMove = bCanMovePlayer;
+	if(CharacterPlayer) CharacterPlayer->MovementSystem->SetCanMove(bCanMove);
+}
+
+void ABreachersPlayerController::Server_SetCanMove_Implementation(bool bCanMovePlayer)
+{
+	bCanMove = bCanMovePlayer;
+	if(CharacterPlayer) CharacterPlayer->MovementSystem->SetCanMove(bCanMove);
+	Client_SetCanMove(bCanMovePlayer);
 }

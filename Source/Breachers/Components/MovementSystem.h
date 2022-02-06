@@ -26,9 +26,11 @@ public:
 	float RunSpeed;
 
 	void SetMouseSensitivityFactor(float NewFactor);
+	void SetCanMove(bool bCanMovePlayer);
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UFUNCTION(Server, Reliable)
 	void Server_SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSpeed, float WeaponCrouchSpeed);
@@ -71,6 +73,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float JumpMoveFactor;
 
+	UPROPERTY(Replicated)
+	bool bCanMove;
+	
 	bool bCanTakeInput;
 	bool bIsWalking;
 	float MouseTurnValue;

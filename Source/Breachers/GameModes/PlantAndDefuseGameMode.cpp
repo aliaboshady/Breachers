@@ -2,6 +2,7 @@
 
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
+#include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameInstance/MainGameInstance.h"
 #include "Breachers/GameStates/BreachersGameState.h"
@@ -26,7 +27,20 @@ void APlantAndDefuseGameMode::BeginPlay()
 void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
 {
 	if(ABreachersPlayerController* CharacterPC = Cast<ABreachersPlayerController>(NewPlayer))
-	{		
+	{
+		if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
+		{
+			if(PDGS->GetCurrentGamePhase() == BuyPhase)
+			{
+				CharacterPC->SetCanMove(false);
+			}
+			else
+			{
+				CharacterPC->BuyMenu->EnableBuying(false);
+				CharacterPC->BuyMenu->CloseBuyMenu();
+			}
+		}
+		
 		CharacterPC->Client_ClearAllWidgets();
 		CharacterPC->Client_ShowPlayerUI();
 
@@ -82,6 +96,7 @@ void APlantAndDefuseGameMode::StartBuyPhase()
 				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
 				{
 					BPC->BuyMenu->EnableBuying(true);
+					BPC->SetCanMove(false);
 				}
 			}
 		}
@@ -100,6 +115,7 @@ void APlantAndDefuseGameMode::StartMainPhase()
 				{
 					BPC->BuyMenu->CloseBuyMenu();
 					BPC->BuyMenu->EnableBuying(false);
+					BPC->SetCanMove(true);
 				}
 			}
 		}

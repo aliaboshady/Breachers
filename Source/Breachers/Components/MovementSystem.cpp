@@ -2,7 +2,7 @@
 #include "HealthSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 UMovementSystem::UMovementSystem()
 {
@@ -11,6 +11,7 @@ UMovementSystem::UMovementSystem()
 	WalkSpeed = 300;
 	RunSpeed = 600;
 	bCanTakeInput = true;
+	bCanMove = true;
 	bIsWalking = false;
 	MouseSensitivityFactor = 1;
 	JumpMoveFactor = 0.2;
@@ -25,6 +26,12 @@ void UMovementSystem::BeginPlay()
 	{
 		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &UMovementSystem::Client_OnDie);
 	}
+}
+
+void UMovementSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UMovementSystem, bCanMove);
 }
 
 void UMovementSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -77,7 +84,7 @@ void UMovementSystem::SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSp
 
 void UMovementSystem::MoveForward(float Value)
 {
-	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput || !bCanMove) return;
 	if(!CharacterPlayer->GetCharacterMovement()->IsFalling() || MouseTurnValue > 0.1 || MouseTurnValue < -0.1)
 	{
 		CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorForwardVector(), Value);
@@ -90,7 +97,7 @@ void UMovementSystem::MoveForward(float Value)
 
 void UMovementSystem::MoveRight(float Value)
 {
-	if (Value == 0 || !CharacterPlayer || !bCanTakeInput) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput || !bCanMove) return;
 	if(CharacterPlayer->GetCharacterMovement()->IsFalling())
 	{
 		if(MouseTurnValue > 0.1 || MouseTurnValue < -0.1)
@@ -121,7 +128,7 @@ void UMovementSystem::Turn(float Value)
 
 void UMovementSystem::Jump()
 {
-	if (!CharacterPlayer || !bCanTakeInput) return;
+	if (!CharacterPlayer || !bCanTakeInput || !bCanMove) return;
 	CharacterPlayer->Jump();
 }
 
@@ -187,4 +194,9 @@ void UMovementSystem::Client_OnDie_Implementation(AController* InstigatedBy, AAc
 void UMovementSystem::SetMouseSensitivityFactor(float NewFactor)
 {
 	MouseSensitivityFactor = NewFactor;
+}
+
+void UMovementSystem::SetCanMove(bool bCanMovePlayer)
+{
+	bCanMove = bCanMovePlayer;
 }
