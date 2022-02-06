@@ -9,8 +9,11 @@ class BREACHERS_API APlantAndDefuseGameMode : public ABreachersGameModeBase
 	GENERATED_BODY()
 
 public:
+	APlantAndDefuseGameMode();
 	virtual void OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn) override;
 	void EndOfRound();
+	FORCEINLINE int32 GetBuyPhaseTimeInSeconds(){return BuyPhaseTimeInSeconds;}
+	FORCEINLINE int32 GetEndPhaseTimeInSeconds(){return EndPhaseTimeInSeconds;}
 
 protected:
 	virtual void BeginPlay() override;
@@ -20,7 +23,14 @@ protected:
 	
 	UFUNCTION()
 	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);
-	
+
+	void StartBuyPhase();
+	void EndOfBuyPhase();
+
+	void StartMainPhase();
+	void EndOfMainPhase();
+
+	void StartEndPhase();
 	void RestartRound();
 	void RespawnALlPlayers();
 	void RemoveAllUnpossessedBodies();
@@ -38,6 +48,12 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SetRoundNumber(int32 RoundsCount);
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 BuyPhaseTimeInSeconds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 EndPhaseTimeInSeconds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bUnlimitedRounds;

@@ -10,6 +10,12 @@
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
+APlantAndDefuseGameMode::APlantAndDefuseGameMode()
+{
+	BuyPhaseTimeInSeconds = 20;
+	EndPhaseTimeInSeconds = 5;
+}
+
 void APlantAndDefuseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -63,6 +69,24 @@ void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controlle
 	Super::OnPlayerDied(Controller, NextTeamRespawn);
 }
 
+void APlantAndDefuseGameMode::StartBuyPhase()
+{
+	
+}
+void APlantAndDefuseGameMode::EndOfBuyPhase()
+{
+}
+
+void APlantAndDefuseGameMode::StartMainPhase()
+{
+}
+void APlantAndDefuseGameMode::EndOfMainPhase()
+{
+}
+
+void APlantAndDefuseGameMode::StartEndPhase()
+{
+}
 void APlantAndDefuseGameMode::EndOfRound()
 {
 	RestartRound();
