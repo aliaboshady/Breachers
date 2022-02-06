@@ -69,6 +69,7 @@ void APlantAndDefuseGameState::StartBuyPhase()
 {
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
+		PDGM->StartBuyPhase();
 		CountDownTimeSpan = FTimespan(0, 0, PDGM->GetBuyPhaseTimeInSeconds());
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &APlantAndDefuseGameState::Multicast_DecrementCountdownTime, 1, true);
 	}
@@ -83,6 +84,7 @@ void APlantAndDefuseGameState::StartMainPhase()
 {
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
+		PDGM->StartMainPhase();
 		CountDownTimeSpan = FTimespan(0, PDGM->GetRoundTimeInMinutes(), 0);
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &APlantAndDefuseGameState::Multicast_DecrementCountdownTime, 1, true);
 	}

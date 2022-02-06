@@ -1,4 +1,6 @@
 #include "PlantAndDefuseGameMode.h"
+
+#include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameInstance/MainGameInstance.h"
@@ -71,17 +73,37 @@ void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controlle
 
 void APlantAndDefuseGameMode::StartBuyPhase()
 {
-	
-}
-void APlantAndDefuseGameMode::EndOfBuyPhase()
-{
+	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
+	{
+		for (APlayerState* PlayerState : BGS->PlayerArray)
+		{
+			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
+			{
+				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
+				{
+					BPC->BuyMenu->EnableBuying(true);
+				}
+			}
+		}
+	}
 }
 
 void APlantAndDefuseGameMode::StartMainPhase()
 {
-}
-void APlantAndDefuseGameMode::EndOfMainPhase()
-{
+	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
+	{
+		for (APlayerState* PlayerState : BGS->PlayerArray)
+		{
+			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
+			{
+				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
+				{
+					BPC->BuyMenu->CloseBuyMenu();
+					BPC->BuyMenu->EnableBuying(false);
+				}
+			}
+		}
+	}
 }
 
 void APlantAndDefuseGameMode::StartEndPhase()

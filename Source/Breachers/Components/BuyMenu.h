@@ -24,6 +24,7 @@ public:
 	void BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType);
 
 	void ShowHideBuyMenu();
+	void CloseBuyMenu();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -36,6 +37,9 @@ protected:
 
 	UFUNCTION(Client, Reliable)
 	void Client_CreateBuyMenu();
+	
+	UFUNCTION(Client, Reliable)
+	void Client_CloseBuyMenu();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> BuyMenuWidgetClass;

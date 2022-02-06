@@ -57,6 +57,15 @@ void UBuyMenu::ShowHideBuyMenu()
 	SetInputUI(bBuyMenuOpen);
 }
 
+void UBuyMenu::CloseBuyMenu()
+{
+	Client_CloseBuyMenu();
+}
+void UBuyMenu::Client_CloseBuyMenu_Implementation()
+{
+	if(bBuyMenuOpen) ShowHideBuyMenu();
+}
+
 void UBuyMenu::SetInputUI(bool bIsUI)
 {
 	if(!PC) return;

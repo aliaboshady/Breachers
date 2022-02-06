@@ -15,6 +15,9 @@ public:
 	FORCEINLINE int32 GetBuyPhaseTimeInSeconds(){return BuyPhaseTimeInSeconds;}
 	FORCEINLINE int32 GetEndPhaseTimeInSeconds(){return EndPhaseTimeInSeconds;}
 
+	void StartBuyPhase();
+	void StartMainPhase();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
@@ -23,12 +26,6 @@ protected:
 	
 	UFUNCTION()
 	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);
-
-	void StartBuyPhase();
-	void EndOfBuyPhase();
-
-	void StartMainPhase();
-	void EndOfMainPhase();
 
 	void StartEndPhase();
 	void RestartRound();
