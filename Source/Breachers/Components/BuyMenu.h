@@ -40,6 +40,9 @@ protected:
 	
 	UFUNCTION(Client, Reliable)
 	void Client_CloseBuyMenu();
+	
+	UFUNCTION(Client, Reliable)
+	void Client_ShowHideBuyMenu();
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> BuyMenuWidgetClass;

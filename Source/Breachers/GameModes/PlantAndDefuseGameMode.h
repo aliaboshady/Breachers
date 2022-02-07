@@ -33,6 +33,7 @@ protected:
 	void RemoveAllUnpossessedBodies();
 	void RemoveAllUnownedWeapons();
 	void RestartCountDownTimer();
+	void BuyPhasePlayerConstrains(bool bIsInBuyPhase);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetUnlimitedMoney(bool bIsUnlimitedMoney);

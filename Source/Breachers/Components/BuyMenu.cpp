@@ -6,6 +6,7 @@
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/GameModes/DeathMatchGameMode.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 UBuyMenu::UBuyMenu()
@@ -49,6 +50,11 @@ void UBuyMenu::Client_CreateBuyMenu_Implementation()
 }
 
 void UBuyMenu::ShowHideBuyMenu()
+{
+	Client_ShowHideBuyMenu();
+}
+
+void UBuyMenu::Client_ShowHideBuyMenu_Implementation()
 {
 	if(!bCanBuy || !BuyMenuWidget || !PC) return;
 	

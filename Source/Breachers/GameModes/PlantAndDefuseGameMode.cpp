@@ -86,7 +86,7 @@ void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controlle
 	Super::OnPlayerDied(Controller, NextTeamRespawn);
 }
 
-void APlantAndDefuseGameMode::StartBuyPhase()
+void APlantAndDefuseGameMode::BuyPhasePlayerConstrains(bool bIsInBuyPhase)
 {
 	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
 	{
@@ -96,33 +96,23 @@ void APlantAndDefuseGameMode::StartBuyPhase()
 			{
 				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
 				{
-					BPC->BuyMenu->EnableBuying(true);
-					BPC->SetCanMove(false);
-					BPC->SetCanShoot(false);
+					BPC->BuyMenu->EnableBuying(bIsInBuyPhase);
+					BPC->SetCanMove(!bIsInBuyPhase);
+					BPC->SetCanShoot(!bIsInBuyPhase);
 				}
 			}
 		}
 	}
 }
 
+void APlantAndDefuseGameMode::StartBuyPhase()
+{
+	BuyPhasePlayerConstrains(true);
+}
+
 void APlantAndDefuseGameMode::StartMainPhase()
 {
-	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
-	{
-		for (APlayerState* PlayerState : BGS->PlayerArray)
-		{
-			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
-			{
-				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
-				{
-					BPC->BuyMenu->CloseBuyMenu();
-					BPC->BuyMenu->EnableBuying(false);
-					BPC->SetCanMove(true);
-					BPC->SetCanShoot(true);
-				}
-			}
-		}
-	}
+	BuyPhasePlayerConstrains(false);
 }
 
 void APlantAndDefuseGameMode::StartEndPhase()
