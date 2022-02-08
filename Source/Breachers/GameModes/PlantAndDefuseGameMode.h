@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "BreachersGameModeBase.h"
+#include "Breachers/Widgets/GamePhaseBanner.h"
 #include "PlantAndDefuseGameMode.generated.h"
 
 UCLASS()
@@ -34,6 +35,7 @@ protected:
 	void RemoveAllUnownedWeapons();
 	void RestartCountDownTimer();
 	void BuyPhasePlayerConstrains(bool bIsInBuyPhase);
+	void SetPhaseBanner(EPhaseBanner PhaseBanner);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetUnlimitedMoney(bool bIsUnlimitedMoney);

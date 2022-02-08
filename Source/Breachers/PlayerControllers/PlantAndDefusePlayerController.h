@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "BreachersPlayerController.h"
+#include "Breachers/Widgets/GamePhaseBanner.h"
 #include "PlantAndDefusePlayerController.generated.h"
 
 class UGamePhaseBanner;
@@ -10,12 +11,21 @@ class BREACHERS_API APlantAndDefusePlayerController : public ABreachersPlayerCon
 {
 	GENERATED_BODY()
 
+public:
+	void SwitchRoundPhaseBanner(EPhaseBanner Phase);
+
 protected:
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
+
+	UFUNCTION(Client, Reliable)
+	void Client_CheckIfPhaseBannerInViewport();
+	
+	UFUNCTION(Client, Reliable)
+	void Client_SwitchRoundPhaseBanner(EPhaseBanner Phase);
 	
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UGamePhaseBanner> UGamePhaseBannerWidgetClass;
+	TSubclassOf<UGamePhaseBanner> GamePhaseBannerWidgetClass;
 	
 	UPROPERTY()
-	UGamePhaseBanner* UGamePhaseBannerWidget;
+	UGamePhaseBanner* GamePhaseBannerWidget;
 };

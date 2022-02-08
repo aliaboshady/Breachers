@@ -8,6 +8,7 @@
 #include "Breachers/GameStates/BreachersGameState.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
+#include "Breachers/PlayerControllers/PlantAndDefusePlayerController.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "GameFramework/PlayerState.h"
@@ -86,6 +87,23 @@ void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controlle
 	Super::OnPlayerDied(Controller, NextTeamRespawn);
 }
 
+void APlantAndDefuseGameMode::SetPhaseBanner(EPhaseBanner PhaseBanner)
+{
+	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
+	{
+		for (APlayerState* PlayerState : BGS->PlayerArray)
+		{
+			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
+			{
+				if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(BPS->GetOwner()))
+				{
+					PDPC->SwitchRoundPhaseBanner(PhaseBanner);
+				}
+			}
+		}
+	}
+}
+
 void APlantAndDefuseGameMode::BuyPhasePlayerConstrains(bool bIsInBuyPhase)
 {
 	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
@@ -108,11 +126,13 @@ void APlantAndDefuseGameMode::BuyPhasePlayerConstrains(bool bIsInBuyPhase)
 void APlantAndDefuseGameMode::StartBuyPhase()
 {
 	BuyPhasePlayerConstrains(true);
+	SetPhaseBanner(BuyPhaseBanner);
 }
 
 void APlantAndDefuseGameMode::StartMainPhase()
 {
 	BuyPhasePlayerConstrains(false);
+	SetPhaseBanner(MainPhaseBanner);
 }
 
 void APlantAndDefuseGameMode::StartEndPhase()
