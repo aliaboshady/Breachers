@@ -4,6 +4,15 @@
 #include "PlantAndDefuseGameState.generated.h"
 
 UENUM(BlueprintType)
+enum ERoundState
+{
+	BombUnplanted,
+	BombPlanted,
+	BombDefused,
+	BombExploded
+};
+
+UENUM(BlueprintType)
 enum EPhase
 {
 	BuyPhase,
@@ -19,6 +28,7 @@ class BREACHERS_API APlantAndDefuseGameState : public ABreachersGameState
 public:
 	void StartCountDownTimer();
 	FORCEINLINE EPhase GetCurrentGamePhase(){return CurrentGamePhase;}
+	FORCEINLINE void SetCurrentRoundState(ERoundState NewRoundState){CurrentRoundState = NewRoundState;}
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -37,4 +47,7 @@ protected:
 
 	UPROPERTY(Replicated)
 	TEnumAsByte<EPhase> CurrentGamePhase;
+
+	UPROPERTY(Replicated)
+	TEnumAsByte<ERoundState> CurrentRoundState;
 };

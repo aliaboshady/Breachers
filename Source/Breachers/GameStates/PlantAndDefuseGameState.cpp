@@ -5,6 +5,7 @@
 void APlantAndDefuseGameState::BeginPlay()
 {
 	CurrentGamePhase = BuyPhase;
+	CurrentRoundState = BombUnplanted;
 	OneSecondTimespan = FTimespan(0, 0, 1);
 	if(HasAuthority()) StartCountDownTimer();
 }
@@ -13,6 +14,7 @@ void APlantAndDefuseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentGamePhase);
+	DOREPLIFETIME(APlantAndDefuseGameState, CurrentRoundState);
 }
 
 void APlantAndDefuseGameState::StartCountDownTimer()
@@ -67,6 +69,7 @@ void APlantAndDefuseGameState::Multicast_DecrementCountdownTime_Implementation()
 
 void APlantAndDefuseGameState::StartBuyPhase()
 {
+	CurrentRoundState = BombUnplanted;
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->StartBuyPhase();
