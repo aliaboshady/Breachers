@@ -9,8 +9,9 @@
 #define TRACE_WeaponPick ECC_GameTraceChannel1
 #define TAG_Weapon "Weapon"
 #define TAG_Primary "Primary"
-#define TAG_Secondary "Primary"
+#define TAG_Secondary "Secondary"
 #define TAG_Melee "Melee"
+#define TAG_Bomb "Bomb"
 
 class ABulletTracer;
 class ACharacterBase;
@@ -52,6 +53,7 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual FVector RecoilShot(float Spread);
 	void SetupWeaponInfo();
+	void AddWeaponTag();
 	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
 	void DecreaseRecoilTimePerShot();

@@ -15,7 +15,8 @@ enum EWeaponType
 {
 	Primary,
 	Secondary,
-	Melee
+	Melee,
+	Bomb
 };
 
 UENUM(BlueprintType)

@@ -56,6 +56,9 @@ protected:
 	void Server_EquipMelee();
 
 	UFUNCTION(Server, Reliable)
+	void Server_EquipBomb();
+
+	UFUNCTION(Server, Reliable)
 	void Server_EquipLastBoughtWeapon();
 
 	UFUNCTION(Server, Reliable)
@@ -129,6 +132,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	AWeaponBase* MeleeWeapon;
+
+	UPROPERTY(Replicated)
+	AWeaponBase* Bomb;
 
 	UPROPERTY(EditAnywhere)
 	float WeaponPickupDistance;

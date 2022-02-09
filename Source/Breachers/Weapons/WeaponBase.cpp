@@ -66,14 +66,11 @@ void AWeaponBase::BeginPlay()
 	SetReplicateMovement(true);
 	SetActorTickEnabled(false);
 	SetupWeaponInfo();
+	AddWeaponTag();
 	
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AWeaponBase::OnOverlapped);
 	CurrentTotalAmmo = WeaponInfo.ReloadInfo.MaxTotalAmmo - WeaponInfo.ReloadInfo.MaxAmmoInClip;
 	CurrentAmmoInClip = WeaponInfo.ReloadInfo.MaxAmmoInClip;
-
-	if(WeaponInfo.WeaponType == Primary) Tags.Add(TAG_Primary);
-	else if(WeaponInfo.WeaponType == Secondary) Tags.Add(TAG_Secondary);
-	else Tags.Add(TAG_Melee);
 }
 
 void AWeaponBase::SetupWeaponInfo()
@@ -84,6 +81,14 @@ void AWeaponBase::SetupWeaponInfo()
 		const FWeaponInfo* WeaponInfoFromDT = WeaponInfoDataTable->FindRow<FWeaponInfo>(DataTableKey, ContextString, true);
 		if(WeaponInfoFromDT) WeaponInfo = *WeaponInfoFromDT;
 	}
+}
+
+void AWeaponBase::AddWeaponTag()
+{
+	if(WeaponInfo.WeaponType == Primary) Tags.Add(TAG_Primary);
+	else if(WeaponInfo.WeaponType == Secondary) Tags.Add(TAG_Secondary);
+	else if(WeaponInfo.WeaponType == Melee) Tags.Add(TAG_Melee);
+	else if(WeaponInfo.WeaponType == Bomb) Tags.Add(TAG_Bomb);
 }
 
 void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

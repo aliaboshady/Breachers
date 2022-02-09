@@ -24,6 +24,7 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, PrimaryWeapon);
 	DOREPLIFETIME(UWeaponSystem, SecondaryWeapon);
 	DOREPLIFETIME(UWeaponSystem, MeleeWeapon);
+	DOREPLIFETIME(UWeaponSystem, Bomb);
 	DOREPLIFETIME(UWeaponSystem, CharacterPlayer);
 	DOREPLIFETIME(UWeaponSystem, bShootingEnabled);
 }
@@ -43,6 +44,7 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &UWeaponSystem::Server_EquipPrimary);
 		PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &UWeaponSystem::Server_EquipSecondary);
+		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UWeaponSystem::Server_EquipBomb);
 		PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &UWeaponSystem::Server_EquipMelee);
 	
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartPrimaryFire);
@@ -149,10 +151,15 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 		}
 		SecondaryWeapon = Weapon;
 	}
+	else if(Weapon->WeaponInfo.WeaponType == EWeaponType::Bomb && Bomb == nullptr)
+	{
+		Bomb = Weapon;
+	}
 	else if(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr)
 	{
 		MeleeWeapon = Weapon;
 	}
+	
 	else return;
 
 	LastTakenWeapon = Weapon;
@@ -176,6 +183,10 @@ void UWeaponSystem::Server_DropWeapon_Implementation()
 	else if(CurrentWeapon->WeaponInfo.WeaponType == Secondary)
 	{
 		SecondaryWeapon = nullptr;
+	}
+	else if(CurrentWeapon->WeaponInfo.WeaponType == EWeaponType::Bomb)
+	{
+		Bomb = nullptr;
 	}
 
 	Multicast_DropWeaponVisualsTP(CurrentWeapon);
@@ -209,6 +220,11 @@ void UWeaponSystem::DropAllWeapons()
 		Server_EquipSecondary();
 		DropWeapon();
 	}
+	if(Bomb)
+	{
+		Server_EquipBomb();
+		DropWeapon();
+	}
 	if(MeleeWeapon) UnequipWeapon(MeleeWeapon);
 }
 
@@ -223,6 +239,11 @@ void UWeaponSystem::DestroyAllWeapons()
 	{
 		SecondaryWeapon->Destroy();
 		SecondaryWeapon = nullptr;
+	}
+	if(Bomb)
+	{
+		Bomb->Destroy();
+		Bomb = nullptr;
 	}
 	if(MeleeWeapon)
 	{
@@ -297,8 +318,9 @@ bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 {
 	bool bCanTakeWeaponP = Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr;
 	bool bCanTakeWeaponS = Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr;
+	bool bCanTakeWeaponB = Weapon->WeaponInfo.WeaponType == EWeaponType::Bomb && Bomb == nullptr;
 	bool bCanTakeWeaponM = Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr;
-	return bCanTakeWeaponP || bCanTakeWeaponS || bCanTakeWeaponM;
+	return bCanTakeWeaponP || bCanTakeWeaponS || bCanTakeWeaponB || bCanTakeWeaponM;
 }
 
 void UWeaponSystem::Server_EquipPrimary_Implementation()
@@ -317,6 +339,12 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 {
 	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon) return;
 	EquipWeapon(MeleeWeapon);
+}
+
+void UWeaponSystem::Server_EquipBomb_Implementation()
+{
+	if(!Bomb || CurrentWeapon == Bomb) return;
+	EquipWeapon(Bomb);
 }
 
 void UWeaponSystem::EquipeLastTakenWeapon()
