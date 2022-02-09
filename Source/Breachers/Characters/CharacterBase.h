@@ -45,6 +45,7 @@ class UWeaponSystem;
 class UHealthSystem;
 class UMovementSystem;
 class UCameraComponent;
+class UPlantDefuseSystem;
 class USpringArmComponent;
 class ABreachersPlayerController;
 
@@ -82,6 +83,9 @@ public:
 	
 	UPROPERTY(VisibleAnywhere)
 	UMovementSystem* MovementSystem;
+	
+	UPROPERTY(VisibleAnywhere)
+	UPlantDefuseSystem* PlantDefuseSystem;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TEnumAsByte<ETeam> Team;

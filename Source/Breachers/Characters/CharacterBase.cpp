@@ -2,6 +2,7 @@
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MovementSystem.h"
+#include "Breachers/Components/PlantDefuseSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
@@ -22,6 +23,7 @@ ACharacterBase::ACharacterBase()
 	MovementSystem = CreateDefaultSubobject<UMovementSystem>(TEXT("Movement System"));
 	WeaponSystem = CreateDefaultSubobject<UWeaponSystem>(TEXT("Weapon System"));
 	HealthSystem = CreateDefaultSubobject<UHealthSystem>(TEXT("Health System"));
+	PlantDefuseSystem = CreateDefaultSubobject<UPlantDefuseSystem>(TEXT("Plant Defuse System"));
 	
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCharacterMovement()->MaxWalkSpeed = MovementSystem->RunSpeed;
@@ -105,6 +107,8 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	if(MovementSystem) MovementSystem->SetPlayerInputComponent(PlayerInputComponent);
 	if(WeaponSystem) WeaponSystem->SetPlayerInputComponent(PlayerInputComponent);
+	if(PlantDefuseSystem) PlantDefuseSystem->SetPlayerInputComponent(PlayerInputComponent);
+	
 	PlayerInputComponent->BindAction(INPUT_OpenBuyMenu, IE_Pressed, this, &ACharacterBase::ShowHideBuyMenu);
 	PlayerInputComponent->BindAction(INPUT_Pause, IE_Pressed, this, &ACharacterBase::ShowHidePauseMenu);
 	PlayerInputComponent->BindAction(INPUT_ScoreBoard, IE_Pressed, this, &ACharacterBase::OpenScoreBoard);
