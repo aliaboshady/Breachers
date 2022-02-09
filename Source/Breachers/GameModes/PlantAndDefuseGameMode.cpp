@@ -114,6 +114,7 @@ void APlantAndDefuseGameMode::BuyPhasePlayerConstrains(bool bIsInBuyPhase)
 			{
 				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
 				{
+					BPC->BuyMenu->CloseBuyMenu();
 					BPC->BuyMenu->EnableBuying(bIsInBuyPhase);
 					BPC->SetCanMove(!bIsInBuyPhase);
 					BPC->SetCanShoot(!bIsInBuyPhase);
