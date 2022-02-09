@@ -15,9 +15,15 @@ public:
 	void EndOfRound();
 	FORCEINLINE int32 GetBuyPhaseTimeInSeconds(){return BuyPhaseTimeInSeconds;}
 	FORCEINLINE int32 GetEndPhaseTimeInSeconds(){return EndPhaseTimeInSeconds;}
+	FORCEINLINE int32 GetPlantTimeInSeconds(){return PlantTimeInSeconds;}
+	FORCEINLINE int32 GetDefuseTimeInSeconds(){return DefuseTimeInSeconds;}
+	FORCEINLINE int32 GetDetonateTimeInSeconds(){return DetonateTimeInSeconds;}
 
 	void StartBuyPhase();
 	void StartMainPhase();
+
+	void PlantBomb();
+	void DefuseBomb();
 
 protected:
 	virtual void BeginPlay() override;
@@ -48,6 +54,15 @@ protected:
 
 	UFUNCTION(BlueprintCallable)
 	void SetRoundNumber(int32 RoundsCount);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 PlantTimeInSeconds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 DefuseTimeInSeconds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 DetonateTimeInSeconds;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 BuyPhaseTimeInSeconds;

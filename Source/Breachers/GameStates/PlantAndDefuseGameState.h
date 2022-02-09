@@ -30,9 +30,19 @@ public:
 	FORCEINLINE EPhase GetCurrentGamePhase(){return CurrentGamePhase;}
 	FORCEINLINE void SetCurrentRoundState(ERoundState NewRoundState){CurrentRoundState = NewRoundState;}
 	
+	void OnPlantBomb();
+	void OnDefuseBomb();
+	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void Multicast_DecrementCountdownTime_Implementation() override;
+	void SetBombDetonateTimer();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ChangeCurrentRoundState(ERoundState NewRoundState);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetBombPlantedTimer();
 	
 	void StartBuyPhase();
 	void EndOfBuyPhase();
@@ -50,4 +60,6 @@ protected:
 
 	UPROPERTY(Replicated)
 	TEnumAsByte<ERoundState> CurrentRoundState;
+
+	int32 BombDetonateTime;
 };

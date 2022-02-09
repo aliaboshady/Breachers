@@ -7,6 +7,7 @@ void APlantAndDefuseGameState::BeginPlay()
 	CurrentGamePhase = BuyPhase;
 	CurrentRoundState = BombUnplanted;
 	OneSecondTimespan = FTimespan(0, 0, 1);
+	SetBombDetonateTimer();
 	if(HasAuthority()) StartCountDownTimer();
 }
 
@@ -15,6 +16,14 @@ void APlantAndDefuseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentGamePhase);
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentRoundState);
+}
+
+void APlantAndDefuseGameState::SetBombDetonateTimer()
+{
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		BombDetonateTime = PDGM->GetDetonateTimeInSeconds();
+	}
 }
 
 void APlantAndDefuseGameState::StartCountDownTimer()
@@ -66,6 +75,16 @@ void APlantAndDefuseGameState::Multicast_DecrementCountdownTime_Implementation()
 	}
 }
 
+void APlantAndDefuseGameState::Multicast_ChangeCurrentRoundState_Implementation(ERoundState NewRoundState)
+{
+	CurrentRoundState = NewRoundState;
+}
+
+
+void APlantAndDefuseGameState::Multicast_SetBombPlantedTimer_Implementation()
+{
+	CountDownTimeSpan = FTimespan(0, 0, BombDetonateTime);
+}
 
 void APlantAndDefuseGameState::StartBuyPhase()
 {
@@ -114,4 +133,15 @@ void APlantAndDefuseGameState::EndOfRound()
 	{
 		PDGM->EndOfRound();
 	}
+}
+
+void APlantAndDefuseGameState::OnPlantBomb()
+{
+	Multicast_SetBombPlantedTimer();
+	Multicast_ChangeCurrentRoundState(BombPlanted);
+}
+
+void APlantAndDefuseGameState::OnDefuseBomb()
+{
+	Multicast_ChangeCurrentRoundState(BombDefused);
 }

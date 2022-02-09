@@ -19,8 +19,12 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void GetCharacterTag();
 	void ToPlantOrDefuse();
-	void Plant();
-	void Defuse();
+
+	UFUNCTION(Server, Reliable)
+	void Server_Plant();
+	
+	UFUNCTION(Server, Reliable)
+	void Server_Defuse();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;

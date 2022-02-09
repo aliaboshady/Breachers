@@ -16,6 +16,9 @@
 
 APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 {
+	PlantTimeInSeconds = 4;
+	DefuseTimeInSeconds = 7;
+	DetonateTimeInSeconds = 30;
 	BuyPhaseTimeInSeconds = 20;
 	EndPhaseTimeInSeconds = 5;
 }
@@ -23,6 +26,7 @@ APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 void APlantAndDefuseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+	DetonateTimeInSeconds = 5;
 }
 
 void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
@@ -264,5 +268,21 @@ FTransform APlantAndDefuseGameMode::GetSpawnTransform(TArray<AActor*>& SpawnPoin
 	else
 	{
 		return SpawnPoints[DefenderSpawnIndex++]->GetTransform();
+	}
+}
+
+void APlantAndDefuseGameMode::PlantBomb()
+{
+	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
+	{
+		PDGS->OnPlantBomb();
+	}
+}
+
+void APlantAndDefuseGameMode::DefuseBomb()
+{
+	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
+	{
+		PDGS->OnDefuseBomb();
 	}
 }

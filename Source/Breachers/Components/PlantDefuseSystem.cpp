@@ -1,5 +1,6 @@
 #include "PlantDefuseSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/GameModes/PlantAndDefuseGameMode.h"
 #include "Net/UnrealNetwork.h"
 
 UPlantDefuseSystem::UPlantDefuseSystem()
@@ -39,16 +40,22 @@ void UPlantDefuseSystem::SetPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void UPlantDefuseSystem::ToPlantOrDefuse()
 {
-	if(bIsPlanter) Plant();
-	else Defuse();
+	if(bIsPlanter) Server_Plant();
+	else Server_Defuse();
 }
 
-void UPlantDefuseSystem::Plant()
+void UPlantDefuseSystem::Server_Plant_Implementation()
 {
-	
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		PDGM->PlantBomb();
+	}
 }
 
-void UPlantDefuseSystem::Defuse()
+void UPlantDefuseSystem::Server_Defuse_Implementation()
 {
-	
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		PDGM->DefuseBomb();
+	}
 }
