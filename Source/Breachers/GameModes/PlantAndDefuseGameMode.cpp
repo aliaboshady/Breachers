@@ -140,8 +140,10 @@ void APlantAndDefuseGameMode::StartMainPhase()
 	SetPhaseBanner(MainPhaseBanner);
 }
 
-void APlantAndDefuseGameMode::StartEndPhase()
+void APlantAndDefuseGameMode::StartEndPhase(bool bAttackersWin)
 {
+	if(bAttackersWin) SetPhaseBanner(AttackersWinBanner);
+	else SetPhaseBanner(DefendersWinBanner);
 }
 void APlantAndDefuseGameMode::EndOfRound()
 {

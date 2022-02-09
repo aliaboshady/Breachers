@@ -6,6 +6,7 @@ void APlantAndDefuseGameState::BeginPlay()
 {
 	CurrentGamePhase = BuyPhase;
 	CurrentRoundState = BombUnplanted;
+	bAttackersWin = false;
 	OneSecondTimespan = FTimespan(0, 0, 1);
 	SetBombDetonateTimer();
 	if(HasAuthority()) StartCountDownTimer();
@@ -16,6 +17,7 @@ void APlantAndDefuseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentGamePhase);
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentRoundState);
+	DOREPLIFETIME(APlantAndDefuseGameState, bAttackersWin);
 }
 
 void APlantAndDefuseGameState::SetBombDetonateTimer()
@@ -91,6 +93,11 @@ void APlantAndDefuseGameState::Multicast_SetBombPlantedTimer_Implementation()
 	CountDownTimeSpan = FTimespan(0, 0, BombDetonateTime);
 }
 
+void APlantAndDefuseGameState::Multicast_SetWinnerTeam_Implementation(bool bDidAttackersWin)
+{
+	bAttackersWin = bDidAttackersWin;
+}
+
 void APlantAndDefuseGameState::StartBuyPhase()
 {
 	CurrentRoundState = BombUnplanted;
@@ -128,6 +135,8 @@ void APlantAndDefuseGameState::StartEndPhase()
 {
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
+		if(CurrentRoundState == BombPlanted) OnBombExploded();
+		PDGM->StartEndPhase(bAttackersWin);
 		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
 		CountDownTimeSpan = FTimespan(0, 0, PDGM->GetEndPhaseTimeInSeconds());
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &APlantAndDefuseGameState::Multicast_DecrementCountdownTime, 1, true);
@@ -151,7 +160,16 @@ void APlantAndDefuseGameState::OnPlantBomb()
 
 void APlantAndDefuseGameState::OnDefuseBomb()
 {
+	bAttackersWin = false;
 	Multicast_ChangeCurrentRoundState(BombDefused);
+	Multicast_ChangeCurrentGamePhase(EndPhase);
+	StartEndPhase();
+}
+
+void APlantAndDefuseGameState::OnBombExploded()
+{
+	bAttackersWin = true;
+	Multicast_ChangeCurrentRoundState(BombExploded);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }

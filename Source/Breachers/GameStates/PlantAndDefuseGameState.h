@@ -32,6 +32,7 @@ public:
 	
 	void OnPlantBomb();
 	void OnDefuseBomb();
+	void OnBombExploded();
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -43,6 +44,9 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangeCurrentRoundState(ERoundState NewRoundState);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetWinnerTeam(bool bDidAttackersWin);
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetBombPlantedTimer();
@@ -63,6 +67,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	TEnumAsByte<ERoundState> CurrentRoundState;
+
+	UPROPERTY(Replicated)
+	bool bAttackersWin;
 
 	int32 BombDetonateTime;
 };

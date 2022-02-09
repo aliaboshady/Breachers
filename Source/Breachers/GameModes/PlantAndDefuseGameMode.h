@@ -21,6 +21,7 @@ public:
 
 	void StartBuyPhase();
 	void StartMainPhase();
+	void StartEndPhase(bool bAttackersWin);
 
 	void PlantBomb();
 	void DefuseBomb();
@@ -34,7 +35,6 @@ protected:
 	UFUNCTION()
 	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);
 
-	void StartEndPhase();
 	void RestartRound();
 	void RespawnALlPlayers();
 	void RemoveAllUnpossessedBodies();
