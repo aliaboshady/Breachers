@@ -75,6 +75,11 @@ void APlantAndDefuseGameState::Multicast_DecrementCountdownTime_Implementation()
 	}
 }
 
+void APlantAndDefuseGameState::Multicast_ChangeCurrentGamePhase_Implementation(EPhase NewGamePhase)
+{
+	CurrentGamePhase = NewGamePhase;
+}
+
 void APlantAndDefuseGameState::Multicast_ChangeCurrentRoundState_Implementation(ERoundState NewRoundState)
 {
 	CurrentRoundState = NewRoundState;
@@ -92,6 +97,7 @@ void APlantAndDefuseGameState::StartBuyPhase()
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->StartBuyPhase();
+		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
 		CountDownTimeSpan = FTimespan(0, 0, PDGM->GetBuyPhaseTimeInSeconds());
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &APlantAndDefuseGameState::Multicast_DecrementCountdownTime, 1, true);
 	}
@@ -99,7 +105,7 @@ void APlantAndDefuseGameState::StartBuyPhase()
 
 void APlantAndDefuseGameState::EndOfBuyPhase()
 {
-	CurrentGamePhase = MainPhase;
+	Multicast_ChangeCurrentGamePhase(MainPhase);
 }
 
 void APlantAndDefuseGameState::StartMainPhase()
@@ -107,6 +113,7 @@ void APlantAndDefuseGameState::StartMainPhase()
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->StartMainPhase();
+		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
 		CountDownTimeSpan = FTimespan(0, PDGM->GetRoundTimeInMinutes(), 0);
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &APlantAndDefuseGameState::Multicast_DecrementCountdownTime, 1, true);
 	}
@@ -114,13 +121,14 @@ void APlantAndDefuseGameState::StartMainPhase()
 
 void APlantAndDefuseGameState::EndOfMainPhase()
 {
-	CurrentGamePhase = EndPhase;
+	Multicast_ChangeCurrentGamePhase(EndPhase);
 }
 
 void APlantAndDefuseGameState::StartEndPhase()
 {
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
+		GetWorldTimerManager().ClearTimer(CountDownTimerHandle);
 		CountDownTimeSpan = FTimespan(0, 0, PDGM->GetEndPhaseTimeInSeconds());
 		GetWorldTimerManager().SetTimer(CountDownTimerHandle, this, &APlantAndDefuseGameState::Multicast_DecrementCountdownTime, 1, true);
 	}
@@ -128,7 +136,7 @@ void APlantAndDefuseGameState::StartEndPhase()
 
 void APlantAndDefuseGameState::EndOfRound()
 {
-	CurrentGamePhase = BuyPhase;
+	Multicast_ChangeCurrentGamePhase(BuyPhase);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->EndOfRound();
@@ -137,11 +145,13 @@ void APlantAndDefuseGameState::EndOfRound()
 
 void APlantAndDefuseGameState::OnPlantBomb()
 {
-	Multicast_SetBombPlantedTimer();
 	Multicast_ChangeCurrentRoundState(BombPlanted);
+	Multicast_SetBombPlantedTimer();
 }
 
 void APlantAndDefuseGameState::OnDefuseBomb()
 {
 	Multicast_ChangeCurrentRoundState(BombDefused);
+	Multicast_ChangeCurrentGamePhase(EndPhase);
+	StartEndPhase();
 }

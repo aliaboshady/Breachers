@@ -39,6 +39,9 @@ protected:
 	void SetBombDetonateTimer();
 
 	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ChangeCurrentGamePhase(EPhase NewGamePhase);
+	
+	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangeCurrentRoundState(ERoundState NewRoundState);
 	
 	UFUNCTION(NetMulticast, Reliable)
