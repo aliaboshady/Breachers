@@ -4,6 +4,7 @@
 #include "PlantAndDefuseGameState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamsNumberChange, int32 , AttackersCount, int32 , DefendersCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamsScoreChange, int32 , AttackersScore, int32 , DefendersScore);
 
 UENUM(BlueprintType)
 enum ERoundState
@@ -51,6 +52,9 @@ protected:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnTeamsNumberChange OnTeamsNumberChange;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnTeamsScoreChange OnTeamsScoreChange;
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnCountDownChange(int32 AttackersCount, int32 DefendersCount);
@@ -69,6 +73,12 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetBombPlantedTimer();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_IncreaseAttackersScore();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_IncreaseDefendersScore();
 	
 	void StartBuyPhase();
 	void EndOfBuyPhase();
@@ -91,4 +101,10 @@ protected:
 	bool bAttackersWin;
 
 	int32 BombDetonateTime;
+
+	UPROPERTY(Replicated)
+	int32 AttackersScore;
+	
+	UPROPERTY(Replicated)
+	int32 DefendersScore;
 };

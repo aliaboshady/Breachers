@@ -12,6 +12,8 @@ APlantAndDefuseGameState::APlantAndDefuseGameState()
 
 void APlantAndDefuseGameState::BeginPlay()
 {
+	AttackersScore = 0;
+	DefendersScore = 0;
 	CurrentGamePhase = BuyPhase;
 	CurrentRoundState = BombUnplanted;
 	bAttackersWin = false;
@@ -26,6 +28,8 @@ void APlantAndDefuseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentGamePhase);
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentRoundState);
 	DOREPLIFETIME(APlantAndDefuseGameState, bAttackersWin);
+	DOREPLIFETIME(APlantAndDefuseGameState, AttackersScore);
+	DOREPLIFETIME(APlantAndDefuseGameState, DefendersScore);
 }
 
 void APlantAndDefuseGameState::Tick(float DeltaSeconds)
@@ -103,7 +107,6 @@ void APlantAndDefuseGameState::Multicast_ChangeCurrentRoundState_Implementation(
 	CurrentRoundState = NewRoundState;
 }
 
-
 void APlantAndDefuseGameState::Multicast_SetBombPlantedTimer_Implementation()
 {
 	CountDownTimeSpan = FTimespan(0, 0, BombDetonateTime);
@@ -112,6 +115,9 @@ void APlantAndDefuseGameState::Multicast_SetBombPlantedTimer_Implementation()
 void APlantAndDefuseGameState::Multicast_SetWinnerTeam_Implementation(bool bDidAttackersWin)
 {
 	bAttackersWin = bDidAttackersWin;
+	if(bDidAttackersWin) Multicast_IncreaseAttackersScore();
+	else Multicast_IncreaseDefendersScore();
+	OnTeamsScoreChange.Broadcast(AttackersScore, DefendersScore);
 }
 
 void APlantAndDefuseGameState::StartBuyPhase()
@@ -179,7 +185,7 @@ void APlantAndDefuseGameState::OnPlantBomb()
 void APlantAndDefuseGameState::OnDefuseBomb()
 {
 	Multicast_ChangeCurrentRoundState(BombDefused);
-	bAttackersWin = false;
+	Multicast_SetWinnerTeam(false);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }
@@ -187,7 +193,7 @@ void APlantAndDefuseGameState::OnDefuseBomb()
 void APlantAndDefuseGameState::OnBombExploded()
 {
 	Multicast_ChangeCurrentRoundState(BombExploded);
-	bAttackersWin = true;
+	Multicast_SetWinnerTeam(true);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }
@@ -257,7 +263,17 @@ void APlantAndDefuseGameState::Multicast_OnCountDownChange_Implementation(int32 
 
 void APlantAndDefuseGameState::OnFullTeamKilled(bool bAttackersWon)
 {
-	bAttackersWin = bAttackersWon;
+	Multicast_SetWinnerTeam(bAttackersWon);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
+}
+
+void APlantAndDefuseGameState::Multicast_IncreaseAttackersScore_Implementation()
+{
+	AttackersScore++;
+}
+
+void APlantAndDefuseGameState::Multicast_IncreaseDefendersScore_Implementation()
+{
+	DefendersScore++;
 }
