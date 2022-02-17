@@ -1,6 +1,12 @@
 #include "PlantAndDefuseGameState.h"
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
+
+APlantAndDefuseGameState::APlantAndDefuseGameState()
+{
+	PrimaryActorTick.bCanEverTick = true;
+}
 
 void APlantAndDefuseGameState::BeginPlay()
 {
@@ -18,6 +24,14 @@ void APlantAndDefuseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentGamePhase);
 	DOREPLIFETIME(APlantAndDefuseGameState, CurrentRoundState);
 	DOREPLIFETIME(APlantAndDefuseGameState, bAttackersWin);
+}
+
+void APlantAndDefuseGameState::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	FString GamePhase = UEnum::GetValueAsName(CurrentGamePhase).ToString();
+	FString RoundState = UEnum::GetValueAsName(CurrentRoundState).ToString();
+	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s - %s"), *GamePhase, *RoundState));
 }
 
 void APlantAndDefuseGameState::SetBombDetonateTimer()

@@ -277,7 +277,8 @@ void APlantAndDefuseGameMode::PlantBomb()
 {
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
-		PDGS->OnPlantBomb();
+		if(PDGS->GetCurrentGamePhase() == BuyPhase) return;
+		if(PDGS->GetCurrentRoundState() == BombUnplanted) PDGS->OnPlantBomb();
 	}
 }
 
@@ -285,6 +286,7 @@ void APlantAndDefuseGameMode::DefuseBomb()
 {
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
-		PDGS->OnDefuseBomb();
+		if(PDGS->GetCurrentGamePhase() == BuyPhase) return;
+		if(PDGS->GetCurrentRoundState() == BombPlanted) PDGS->OnDefuseBomb();
 	}
 }

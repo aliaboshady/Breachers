@@ -26,8 +26,10 @@ class BREACHERS_API APlantAndDefuseGameState : public ABreachersGameState
 	GENERATED_BODY()
 
 public:
+	APlantAndDefuseGameState();
 	void StartCountDownTimer();
 	FORCEINLINE EPhase GetCurrentGamePhase(){return CurrentGamePhase;}
+	FORCEINLINE ERoundState GetCurrentRoundState(){return CurrentRoundState;}
 	FORCEINLINE void SetCurrentRoundState(ERoundState NewRoundState){CurrentRoundState = NewRoundState;}
 	
 	void OnPlantBomb();
@@ -36,6 +38,7 @@ public:
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void Multicast_DecrementCountdownTime_Implementation() override;
 	void SetBombDetonateTimer();
 
