@@ -32,6 +32,7 @@ public:
 	FORCEINLINE ERoundState GetCurrentRoundState(){return CurrentRoundState;}
 	FORCEINLINE void SetCurrentRoundState(ERoundState NewRoundState){CurrentRoundState = NewRoundState;}
 	
+	void OnPlayerDied();
 	void OnPlantBomb();
 	void OnDefuseBomb();
 	void OnBombExploded();
@@ -41,6 +42,8 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void Multicast_DecrementCountdownTime_Implementation() override;
 	void SetBombDetonateTimer();
+	void CheckPlayersCount();
+	void OnFullTeamKilled(bool bAttackersWon);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangeCurrentGamePhase(EPhase NewGamePhase);

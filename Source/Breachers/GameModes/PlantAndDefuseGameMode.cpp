@@ -89,6 +89,10 @@ void APlantAndDefuseGameMode::HandleStartingNewPlayer_Implementation(APlayerCont
 void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn)
 {
 	Super::OnPlayerDied(Controller, NextTeamRespawn);
+	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
+	{
+		PDGS->OnPlayerDied();
+	}
 }
 
 void APlantAndDefuseGameMode::SetPhaseBanner(EPhaseBanner PhaseBanner)

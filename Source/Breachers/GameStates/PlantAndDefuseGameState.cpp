@@ -1,5 +1,7 @@
 #include "PlantAndDefuseGameState.h"
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
+#include "Breachers/PlayerStates/BreachersPlayerState.h"
+#include "GameFramework/PlayerState.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -31,7 +33,7 @@ void APlantAndDefuseGameState::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	FString GamePhase = UEnum::GetValueAsName(CurrentGamePhase).ToString();
 	FString RoundState = UEnum::GetValueAsName(CurrentRoundState).ToString();
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s - %s"), *GamePhase, *RoundState));
+	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s - %s"), *GamePhase, *RoundState));
 }
 
 void APlantAndDefuseGameState::SetBombDetonateTimer()
@@ -168,22 +170,63 @@ void APlantAndDefuseGameState::EndOfRound()
 
 void APlantAndDefuseGameState::OnPlantBomb()
 {
+	if(CurrentGamePhase == EndPhase) return;
 	Multicast_ChangeCurrentRoundState(BombPlanted);
 	Multicast_SetBombPlantedTimer();
 }
 
 void APlantAndDefuseGameState::OnDefuseBomb()
 {
-	bAttackersWin = false;
 	Multicast_ChangeCurrentRoundState(BombDefused);
+	bAttackersWin = false;
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }
 
 void APlantAndDefuseGameState::OnBombExploded()
 {
-	bAttackersWin = true;
 	Multicast_ChangeCurrentRoundState(BombExploded);
+	bAttackersWin = true;
+	Multicast_ChangeCurrentGamePhase(EndPhase);
+	StartEndPhase();
+}
+
+void APlantAndDefuseGameState::OnPlayerDied()
+{
+	FTimerHandle DeadHandle;
+	GetWorldTimerManager().SetTimer(DeadHandle, this, &APlantAndDefuseGameState::CheckPlayersCount, 1, false, 0.05);
+}
+
+void APlantAndDefuseGameState::CheckPlayersCount()
+{
+	if(CurrentGamePhase == EndPhase) return;
+	
+	int32 AttackersCount = 0;
+	int32 DefendersCount = 0;
+	
+	for (APlayerState* Player : PlayerArray)
+	{
+		if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(Player))
+		{
+			if(BPS->GetIsDead()) continue;
+			if(BPS->GetPawn()->ActorHasTag(TAG_Attacker)) AttackersCount++;
+			else if(BPS->GetPawn()->ActorHasTag(TAG_Defender)) DefendersCount++;
+		}
+	}
+
+	if(DefendersCount == 0 && (CurrentRoundState == BombUnplanted || CurrentRoundState == BombPlanted))
+	{
+		OnFullTeamKilled(true);
+	}
+	else if(AttackersCount == 0 && CurrentRoundState == BombUnplanted)
+	{
+		OnFullTeamKilled(false);
+	}
+}
+
+void APlantAndDefuseGameState::OnFullTeamKilled(bool bAttackersWon)
+{
+	bAttackersWin = bAttackersWon;
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }
