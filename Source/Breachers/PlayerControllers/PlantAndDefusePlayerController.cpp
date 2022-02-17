@@ -4,7 +4,11 @@
 void APlantAndDefusePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Client_CreateBannerWidget();
+}
+
+void APlantAndDefusePlayerController::Client_CreateBannerWidget_Implementation()
+{
 	if(GamePhaseBannerWidgetClass)
 	{
 		GamePhaseBannerWidget = CreateWidget<UGamePhaseBanner>(this, GamePhaseBannerWidgetClass);
