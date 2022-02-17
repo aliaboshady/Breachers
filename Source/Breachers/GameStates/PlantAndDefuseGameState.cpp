@@ -116,6 +116,7 @@ void APlantAndDefuseGameState::Multicast_SetWinnerTeam_Implementation(bool bDidA
 
 void APlantAndDefuseGameState::StartBuyPhase()
 {
+	ShowTeamsCountUI();
 	CurrentRoundState = BombUnplanted;
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
@@ -199,21 +200,12 @@ void APlantAndDefuseGameState::OnPlayerDied()
 
 void APlantAndDefuseGameState::CheckPlayersCount()
 {
+	int32 AttackersCount;
+	int32 DefendersCount;
+	GetTeamsCount(AttackersCount, DefendersCount);
+
 	if(CurrentGamePhase == EndPhase) return;
 	
-	int32 AttackersCount = 0;
-	int32 DefendersCount = 0;
-	
-	for (APlayerState* Player : PlayerArray)
-	{
-		if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(Player))
-		{
-			if(BPS->GetIsDead()) continue;
-			if(BPS->GetPawn()->ActorHasTag(TAG_Attacker)) AttackersCount++;
-			else if(BPS->GetPawn()->ActorHasTag(TAG_Defender)) DefendersCount++;
-		}
-	}
-
 	if(DefendersCount == 0 && (CurrentRoundState == BombUnplanted || CurrentRoundState == BombPlanted))
 	{
 		OnFullTeamKilled(true);
@@ -222,6 +214,45 @@ void APlantAndDefuseGameState::CheckPlayersCount()
 	{
 		OnFullTeamKilled(false);
 	}
+}
+
+void APlantAndDefuseGameState::GetTeamsCount(int32& AttackersCount, int32& DefendersCount)
+{
+	AttackersCount = 0;
+	DefendersCount = 0;
+	
+	for (APlayerState* Player : PlayerArray)
+	{
+		if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(Player))
+		{
+			if(BPS->GetIsDead()) continue;
+
+			if(APawn* PlayerPawn = BPS->GetPawn())
+			{
+				if(PlayerPawn->ActorHasTag(TAG_Attacker)) AttackersCount++;
+				else if(PlayerPawn->ActorHasTag(TAG_Defender)) DefendersCount++;
+			}
+		}
+	}
+
+	Multicast_OnCountDownChange(AttackersCount, DefendersCount);
+}
+
+void APlantAndDefuseGameState::ShowTeamsCountUI()
+{
+	Multicast_ShowTeamsCountUI();
+}
+
+void APlantAndDefuseGameState::Multicast_ShowTeamsCountUI_Implementation()
+{
+	int32 AttackersCount;
+	int32 DefendersCount;
+	GetTeamsCount(AttackersCount, DefendersCount);
+}
+
+void APlantAndDefuseGameState::Multicast_OnCountDownChange_Implementation(int32 AttackersCount, int32 DefendersCount)
+{
+	OnTeamsNumberChange.Broadcast(AttackersCount, DefendersCount);
 }
 
 void APlantAndDefuseGameState::OnFullTeamKilled(bool bAttackersWon)

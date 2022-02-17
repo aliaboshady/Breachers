@@ -1,10 +1,21 @@
 #include "PlantAndDefusePlayerController.h"
+
+#include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/Widgets/GamePhaseBanner.h"
 
 void APlantAndDefusePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	Client_CreateBannerWidget();
+}
+
+void APlantAndDefusePlayerController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+	if(APlantAndDefuseGameState* PDGS = Cast<APlantAndDefuseGameState>(GetWorld()->GetGameState()))
+	{
+		PDGS->ShowTeamsCountUI();
+	}
 }
 
 void APlantAndDefusePlayerController::Client_CreateBannerWidget_Implementation()

@@ -3,6 +3,8 @@
 #include "BreachersGameState.h"
 #include "PlantAndDefuseGameState.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamsNumberChange, int32 , AttackersCount, int32 , DefendersCount);
+
 UENUM(BlueprintType)
 enum ERoundState
 {
@@ -36,6 +38,7 @@ public:
 	void OnPlantBomb();
 	void OnDefuseBomb();
 	void OnBombExploded();
+	void ShowTeamsCountUI();
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -44,7 +47,17 @@ protected:
 	void SetBombDetonateTimer();
 	void CheckPlayersCount();
 	void OnFullTeamKilled(bool bAttackersWon);
+	void GetTeamsCount(int32& AttackersCount, int32& DefendersCount);
 
+	UPROPERTY(BlueprintAssignable)
+	FOnTeamsNumberChange OnTeamsNumberChange;
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnCountDownChange(int32 AttackersCount, int32 DefendersCount);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ShowTeamsCountUI();
+	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangeCurrentGamePhase(EPhase NewGamePhase);
 	
