@@ -1,12 +1,15 @@
 #include "PlantAndDefusePlayerController.h"
-
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/Widgets/GamePhaseBanner.h"
+#include "Breachers/Widgets/Killfeed.h"
 
 void APlantAndDefusePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	Client_CreateBannerWidget();
+	
+	FTimerHandle CheckKillfeedWidgetTimerHandle;
+	GetWorldTimerManager().SetTimer(CheckKillfeedWidgetTimerHandle, this, &APlantAndDefusePlayerController::Client_CheckIfKillfeedWidgetInViewport, 1, true);
 }
 
 void APlantAndDefusePlayerController::OnPossess(APawn* InPawn)
@@ -16,6 +19,11 @@ void APlantAndDefusePlayerController::OnPossess(APawn* InPawn)
 	{
 		PDGS->ShowTeamsCountUI();
 	}
+}
+
+void APlantAndDefusePlayerController::Client_CheckIfKillfeedWidgetInViewport_Implementation()
+{
+	if(KillfeedWidget && !KillfeedWidget->IsInViewport()) KillfeedWidget->AddToViewport();
 }
 
 void APlantAndDefusePlayerController::Client_CreateBannerWidget_Implementation()

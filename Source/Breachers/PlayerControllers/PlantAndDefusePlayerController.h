@@ -19,6 +19,9 @@ protected:
 	virtual void OnPossess(APawn* InPawn) override;
 
 	UFUNCTION(Client, Reliable)
+	void Client_CheckIfKillfeedWidgetInViewport();
+
+	UFUNCTION(Client, Reliable)
 	void Client_CreateBannerWidget();
 	
 	UFUNCTION(Client, Reliable)
