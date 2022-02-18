@@ -112,6 +112,11 @@ void APlantAndDefuseGameState::Multicast_SetBombPlantedTimer_Implementation()
 	CountDownTimeSpan = FTimespan(0, 0, BombDetonateTime);
 }
 
+void APlantAndDefuseGameState::Server_SetWinnerTeam_Implementation(bool bDidAttackersWin)
+{
+	Multicast_SetWinnerTeam(bDidAttackersWin);
+}
+
 void APlantAndDefuseGameState::Multicast_SetWinnerTeam_Implementation(bool bDidAttackersWin)
 {
 	bAttackersWin = bDidAttackersWin;
@@ -152,6 +157,10 @@ void APlantAndDefuseGameState::StartMainPhase()
 void APlantAndDefuseGameState::EndOfMainPhase()
 {
 	Multicast_ChangeCurrentGamePhase(EndPhase);
+	if(TimeRanOutBothTeamsAlive())
+	{
+		Server_SetWinnerTeam(false);
+	}
 }
 
 void APlantAndDefuseGameState::StartEndPhase()
@@ -185,7 +194,7 @@ void APlantAndDefuseGameState::OnPlantBomb()
 void APlantAndDefuseGameState::OnDefuseBomb()
 {
 	Multicast_ChangeCurrentRoundState(BombDefused);
-	Multicast_SetWinnerTeam(false);
+	Server_SetWinnerTeam(false);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }
@@ -193,7 +202,7 @@ void APlantAndDefuseGameState::OnDefuseBomb()
 void APlantAndDefuseGameState::OnBombExploded()
 {
 	Multicast_ChangeCurrentRoundState(BombExploded);
-	Multicast_SetWinnerTeam(true);
+	Server_SetWinnerTeam(true);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }
@@ -263,7 +272,7 @@ void APlantAndDefuseGameState::Multicast_OnCountDownChange_Implementation(int32 
 
 void APlantAndDefuseGameState::OnFullTeamKilled(bool bAttackersWon)
 {
-	Multicast_SetWinnerTeam(bAttackersWon);
+	Server_SetWinnerTeam(bAttackersWon);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 }
@@ -276,4 +285,12 @@ void APlantAndDefuseGameState::Multicast_IncreaseAttackersScore_Implementation()
 void APlantAndDefuseGameState::Multicast_IncreaseDefendersScore_Implementation()
 {
 	DefendersScore++;
+}
+
+bool APlantAndDefuseGameState::TimeRanOutBothTeamsAlive()
+{
+	int32 AttackersCount;
+	int32 DefendersCount;
+	GetTeamsCount(AttackersCount, DefendersCount);
+	return AttackersCount > 0 && DefendersCount > 0 && CurrentRoundState == BombUnplanted;
 }

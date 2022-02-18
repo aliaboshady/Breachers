@@ -68,6 +68,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangeCurrentRoundState(ERoundState NewRoundState);
 	
+	UFUNCTION(Server, Reliable)
+	void Server_SetWinnerTeam(bool bDidAttackersWin);
+	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetWinnerTeam(bool bDidAttackersWin);
 	
@@ -79,6 +82,8 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_IncreaseDefendersScore();
+
+	bool TimeRanOutBothTeamsAlive();
 	
 	void StartBuyPhase();
 	void EndOfBuyPhase();
