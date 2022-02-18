@@ -11,5 +11,6 @@ class BREACHERS_API UKillfeed : public UUserWidget
 public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
-	void AddKillfeedRow(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
+	void AddKillfeedRow(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker);
 };
+	

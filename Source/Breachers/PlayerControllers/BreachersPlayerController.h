@@ -29,7 +29,7 @@ public:
 	void ToggleChangeTeamMenu();
 	void OnKill();
 	void OnPlayerSpawn();
-	void UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
+	void UpdateKillfeed(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker);
 	void SetCanMove(bool bCanMovePlayer);
 	void SetCanShoot(bool bCanShootPlayer);
 	
@@ -115,7 +115,7 @@ protected:
 	void Client_CreateCountDownWidget();
 
 	UFUNCTION(Client, Reliable)
-	void Client_UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
+	void Client_UpdateKillfeed(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker);
 	
 	UFUNCTION(Server, Reliable)
 	void Server_SetCanMove(bool bCanMovePlayer);

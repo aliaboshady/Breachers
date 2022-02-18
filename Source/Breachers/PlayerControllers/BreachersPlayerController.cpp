@@ -309,14 +309,14 @@ void ABreachersPlayerController::Client_DisableScoreBoard_Implementation()
 	bCanOpenCloseScoreBoard = false;
 }
 
-void ABreachersPlayerController::UpdateKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName)
+void ABreachersPlayerController::UpdateKillfeed(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker)
 {
-	Client_UpdateKillfeed(KillerName, WeaponIcon, KilledName);
+	Client_UpdateKillfeed(KillerName, bKillerIsAttacker, WeaponIcon, KilledName, bKilledIsAttacker);
 }
 
-void ABreachersPlayerController::Client_UpdateKillfeed_Implementation(FName KillerName, UTexture2D* WeaponIcon, FName KilledName)
+void ABreachersPlayerController::Client_UpdateKillfeed_Implementation(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker)
 {
-	if(KillfeedWidget) KillfeedWidget->AddKillfeedRow(KillerName, WeaponIcon, KilledName);
+	if(KillfeedWidget) KillfeedWidget->AddKillfeedRow(KillerName, bKillerIsAttacker, WeaponIcon, KilledName, bKilledIsAttacker);
 }
 
 void ABreachersPlayerController::Server_ChangeTeam_Implementation(ETeam NewTeam)

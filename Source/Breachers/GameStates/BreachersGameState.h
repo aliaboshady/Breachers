@@ -21,7 +21,7 @@ protected:
 	virtual void EndOfRound();
 	virtual void EndOfMatch();
 	bool IsRoundTimeIsFinished();
-	void AddToAllPlayersKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName);
+	void AddToAllPlayersKillfeed(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker);
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnCountDownChange OnCountDownChange;

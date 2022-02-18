@@ -59,12 +59,16 @@ void ABreachersGameState::Multicast_DecrementCountdownTime_Implementation()
 void ABreachersGameState::PlayerOnDied(AController* Killer, AActor* DamageCauser, ABreachersPlayerState* KilledPlayerState)
 {
 	FName KillerName;
+	bool bKillerIsAttacker = false;
 	UTexture2D* WeaponIcon = nullptr;
 	FName KilledName;
+	bool bKilledIsAttacker = false;
 	
 	if(ABreachersPlayerState* KillerBPS = Killer->GetPlayerState<ABreachersPlayerState>())
 	{
 		KillerName = FName(KillerBPS->GetPlayerName());
+		APawn* KillerPawn = KillerBPS->GetPawn();
+		if(KillerPawn && KillerPawn->ActorHasTag(TAG_Attacker)) bKillerIsAttacker = true;
 	}
 	
 	if(AWeaponBase* Weapon = Cast<AWeaponBase>(DamageCauser))
@@ -75,18 +79,20 @@ void ABreachersGameState::PlayerOnDied(AController* Killer, AActor* DamageCauser
 	if(KilledPlayerState)
 	{
 		KilledName = FName(KilledPlayerState->GetPlayerName());
+		APawn* KilledPawn = KilledPlayerState->GetPawn();
+		if(KilledPawn && KilledPawn->ActorHasTag(TAG_Attacker)) bKilledIsAttacker = true;
 	}
 
-	AddToAllPlayersKillfeed(KillerName, WeaponIcon, KilledName);
+	AddToAllPlayersKillfeed(KillerName, bKillerIsAttacker, WeaponIcon, KilledName, bKilledIsAttacker);
 }
 
-void ABreachersGameState::AddToAllPlayersKillfeed(FName KillerName, UTexture2D* WeaponIcon, FName KilledName)
+void ABreachersGameState::AddToAllPlayersKillfeed(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker)
 {
 	for (auto PlayerState : PlayerArray)
 	{
 		if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(PlayerState->GetOwner()))
 		{
-			BPC->UpdateKillfeed(KillerName, WeaponIcon, KilledName);
+			BPC->UpdateKillfeed(KillerName, bKillerIsAttacker, WeaponIcon, KilledName, bKilledIsAttacker);
 		}
 	}
 }
