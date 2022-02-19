@@ -1,4 +1,6 @@
 #include "PlantDefuseSystem.h"
+
+#include "WeaponSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
 #include "Net/UnrealNetwork.h"
@@ -44,9 +46,10 @@ void UPlantDefuseSystem::SetPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void UPlantDefuseSystem::ToPlantOrDefuse()
 {
+	if(!CharacterPlayer) return;
 	if(bIsPlanter)
 	{
-		if(bIsInSite) Server_Plant();
+		if(bIsInSite && CharacterPlayer->WeaponSystem->HasBomb()) Server_Plant();
 	}
 	else Server_Defuse();
 }

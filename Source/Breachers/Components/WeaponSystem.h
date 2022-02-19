@@ -25,6 +25,7 @@ public:
 	void DropAllWeapons();
 	void DestroyAllWeapons();
 	void OnRestartRound();
+	FORCEINLINE bool HasBomb(){return Bomb ? true : false;}
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
