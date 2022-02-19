@@ -3,9 +3,6 @@
 #include "BreachersGameState.h"
 #include "PlantAndDefuseGameState.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamsNumberChange, int32 , AttackersCount, int32 , DefendersCount);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamsScoreChange, int32 , AttackersScore, int32 , DefendersScore);
-
 UENUM(BlueprintType)
 enum ERoundState
 {
@@ -22,6 +19,10 @@ enum EPhase
 	MainPhase,
 	EndPhase
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamsNumberChange, int32, AttackersCount, int32 , DefendersCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamsScoreChange, int32, AttackersScore, int32 , DefendersScore);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRoundState, ERoundState, BombState);
 
 UCLASS()
 class BREACHERS_API APlantAndDefuseGameState : public ABreachersGameState
@@ -43,7 +44,6 @@ public:
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	virtual void Tick(float DeltaSeconds) override;
 	virtual void Multicast_DecrementCountdownTime_Implementation() override;
 	void SetBombDetonateTimer();
 	void CheckPlayersCount();
@@ -55,6 +55,9 @@ protected:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnTeamsScoreChange OnTeamsScoreChange;
+	
+	UPROPERTY(BlueprintAssignable)
+	FOnRoundState OnRoundStateChange;
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnCountDownChange(int32 AttackersCount, int32 DefendersCount);

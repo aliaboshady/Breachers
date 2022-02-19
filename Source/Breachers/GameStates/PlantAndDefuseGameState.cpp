@@ -32,14 +32,6 @@ void APlantAndDefuseGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(APlantAndDefuseGameState, DefendersScore);
 }
 
-void APlantAndDefuseGameState::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-	FString GamePhase = UEnum::GetValueAsName(CurrentGamePhase).ToString();
-	FString RoundState = UEnum::GetValueAsName(CurrentRoundState).ToString();
-	//UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s - %s"), *GamePhase, *RoundState));
-}
-
 void APlantAndDefuseGameState::SetBombDetonateTimer()
 {
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
@@ -105,6 +97,7 @@ void APlantAndDefuseGameState::Multicast_ChangeCurrentGamePhase_Implementation(E
 void APlantAndDefuseGameState::Multicast_ChangeCurrentRoundState_Implementation(ERoundState NewRoundState)
 {
 	CurrentRoundState = NewRoundState;
+	OnRoundStateChange.Broadcast(CurrentRoundState);
 }
 
 void APlantAndDefuseGameState::Multicast_SetBombPlantedTimer_Implementation()
@@ -128,7 +121,7 @@ void APlantAndDefuseGameState::Multicast_SetWinnerTeam_Implementation(bool bDidA
 void APlantAndDefuseGameState::StartBuyPhase()
 {
 	ShowTeamsCountUI();
-	CurrentRoundState = BombUnplanted;
+	Multicast_ChangeCurrentRoundState(BombUnplanted);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->StartBuyPhase();
