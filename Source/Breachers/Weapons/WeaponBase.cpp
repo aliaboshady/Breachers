@@ -570,7 +570,10 @@ void AWeaponBase::Client_Recoil_Implementation(FVector CalculatedRecoil)
 	FRotator NewRotation = CharacterPlayer->GetControlRotation();
 	NewRotation.Pitch += CalculatedRecoil.Z;
 	NewRotation.Yaw += CalculatedRecoil.Y;
-	CharacterPlayer->GetBreacherPC()->SetControlRotation(NewRotation);
+	if(ABreachersPlayerController* BPC =  CharacterPlayer->GetBreacherPC())
+	{
+		BPC->SetControlRotation(NewRotation);
+	}
 }
 
 void AWeaponBase::Client_ResetRecoil_Implementation()
