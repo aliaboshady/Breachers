@@ -24,6 +24,7 @@ ABreachersPlayerController::ABreachersPlayerController()
 	bCanOpenCloseScoreBoard = true;
 	bCanMove = true;
 	bCanShoot = true;
+	SavedMouseSensitivityFactor = 1;
 }
 
 void ABreachersPlayerController::BeginPlay()
@@ -238,6 +239,7 @@ void ABreachersPlayerController::OnPossess(APawn* InPawn)
 		CharacterPlayer->HealthSystem->OnDie.AddDynamic(this, &ABreachersPlayerController::OnDie);
 		CharacterPlayer->MovementSystem->SetCanMove(bCanMove);
 		CharacterPlayer->WeaponSystem->EnableShooting(bCanShoot);
+		Client_PRV_SetMouseSensitivityFactor(CharacterPlayer);
 	}
 }
 
@@ -358,4 +360,20 @@ void ABreachersPlayerController::Server_SetCanShoot_Implementation(bool bCanShoo
 	bCanShoot = bCanShootPlayer;
 	if(CharacterPlayer) CharacterPlayer->WeaponSystem->EnableShooting(bCanShoot);
 	Client_SetCanShoot(bCanShootPlayer);
+}
+
+void ABreachersPlayerController::SetMouseSensitivityFactor(float NewFactor)
+{
+	Client_SetMouseSensitivityFactor(NewFactor);
+}
+
+void ABreachersPlayerController::Client_SetMouseSensitivityFactor_Implementation(float NewFactor)
+{
+	SavedMouseSensitivityFactor = NewFactor;
+	if(CharacterPlayer) Client_PRV_SetMouseSensitivityFactor(CharacterPlayer);
+}
+
+void ABreachersPlayerController::Client_PRV_SetMouseSensitivityFactor_Implementation(ACharacterBase* PlayerCharacter)
+{
+	PlayerCharacter->SetMouseSensitivityFactor(SavedMouseSensitivityFactor);
 }

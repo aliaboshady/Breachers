@@ -68,6 +68,7 @@ public:
 	FORCEINLINE ABreachersPlayerController* GetBreacherPC(){return PC;}
 	void PushOnDeath(AActor* DamageCauser, FVector PushDirection);
 	FHitResult GetSurfaceType();
+	void SetMouseSensitivityFactor(float NewFactor);
 
 	UPROPERTY()
 	FOnLand OnLand;
@@ -107,11 +108,6 @@ protected:
 	void ChangeTeam();
 	virtual void UnPossessed() override;
 	void OnDie();
-
-	UFUNCTION(BlueprintCallable)
-	void SetMouseSensitivityFactor(float NewFactor);
-	UFUNCTION(Client, Reliable)
-	void Client_SetMouseSensitivityFactor(float NewFactor);
 	
 	UFUNCTION(Server, Reliable)
 	void Server_OnDie(AController* InstigatedBy, AActor* DamageCauser);

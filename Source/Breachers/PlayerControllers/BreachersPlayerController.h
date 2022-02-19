@@ -14,6 +14,7 @@ class ABreachersGameModeBase;
 class ABreachersGameState;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSpawn);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPossessPlayer, ACharacterBase*, Character);
 
 UCLASS()
 class BREACHERS_API ABreachersPlayerController : public APlayerController
@@ -129,6 +130,13 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_SetCanShoot(bool bCanShootPlayer);
 
+	UFUNCTION(BlueprintCallable)
+	void SetMouseSensitivityFactor(float NewFactor);
+	UFUNCTION(Client, Reliable)
+	void Client_SetMouseSensitivityFactor(float NewFactor);
+	UFUNCTION(Client, Reliable)
+	void Client_PRV_SetMouseSensitivityFactor(ACharacterBase* PlayerCharacter);
+
 	UPROPERTY()
 	ABreachersGameModeBase* BreachersGameModeBase;
 	
@@ -179,4 +187,5 @@ protected:
 
 	bool bCanMove;
 	bool bCanShoot;
+	float SavedMouseSensitivityFactor;
 };
