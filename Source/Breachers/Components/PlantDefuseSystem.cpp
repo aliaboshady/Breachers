@@ -6,6 +6,8 @@
 UPlantDefuseSystem::UPlantDefuseSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	bIsInSite = false;
+	bIsNearBomb = false;
 }
 
 void UPlantDefuseSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -13,6 +15,8 @@ void UPlantDefuseSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UPlantDefuseSystem, CharacterPlayer);
 	DOREPLIFETIME(UPlantDefuseSystem, bIsPlanter);
+	DOREPLIFETIME(UPlantDefuseSystem, bIsInSite);
+	DOREPLIFETIME(UPlantDefuseSystem, bIsNearBomb);
 }
 
 void UPlantDefuseSystem::BeginPlay()

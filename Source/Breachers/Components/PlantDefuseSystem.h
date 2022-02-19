@@ -31,4 +31,10 @@ protected:
 	
 	UPROPERTY(Replicated)
 	bool bIsPlanter;
+
+	UPROPERTY(Replicated)
+	bool bIsInSite;
+
+	UPROPERTY(Replicated)
+	bool bIsNearBomb;
 };
