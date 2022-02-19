@@ -13,6 +13,8 @@ class BREACHERS_API UPlantDefuseSystem : public UActorComponent
 public:	
 	UPlantDefuseSystem();
 	void SetPlayerInputComponent(UInputComponent* PlayerInputComponent);
+	void OnPlayerEnterSite();
+	void OnPlayerExitSite();
 
 protected:
 	virtual void BeginPlay() override;
@@ -25,6 +27,16 @@ protected:
 	
 	UFUNCTION(Server, Reliable)
 	void Server_Defuse();
+
+	UFUNCTION(Server, Reliable)
+	void Server_OnPlayerEnterSite();
+	UFUNCTION(Client, Reliable)
+	void Client_OnPlayerEnterSite();
+
+	UFUNCTION(Server, Reliable)
+	void Server_OnPlayerExitSite();
+	UFUNCTION(Client, Reliable)
+	void Client_OnPlayerExitSite();
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;

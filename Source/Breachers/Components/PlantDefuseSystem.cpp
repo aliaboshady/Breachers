@@ -44,7 +44,10 @@ void UPlantDefuseSystem::SetPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void UPlantDefuseSystem::ToPlantOrDefuse()
 {
-	if(bIsPlanter) Server_Plant();
+	if(bIsPlanter)
+	{
+		if(bIsInSite) Server_Plant();
+	}
 	else Server_Defuse();
 }
 
@@ -62,4 +65,32 @@ void UPlantDefuseSystem::Server_Defuse_Implementation()
 	{
 		PDGM->DefuseBomb();
 	}
+}
+
+void UPlantDefuseSystem::OnPlayerEnterSite()
+{
+	Server_OnPlayerEnterSite();
+}
+void UPlantDefuseSystem::Server_OnPlayerEnterSite_Implementation()
+{
+	bIsInSite = true;
+	Client_OnPlayerEnterSite();
+}
+void UPlantDefuseSystem::Client_OnPlayerEnterSite_Implementation()
+{
+	bIsInSite = true;
+}
+
+void UPlantDefuseSystem::OnPlayerExitSite()
+{
+	Server_OnPlayerExitSite();
+}
+void UPlantDefuseSystem::Server_OnPlayerExitSite_Implementation()
+{
+	bIsInSite = false;
+	Client_OnPlayerExitSite();
+}
+void UPlantDefuseSystem::Client_OnPlayerExitSite_Implementation()
+{
+	bIsInSite = false;
 }
