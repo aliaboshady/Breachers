@@ -6,6 +6,7 @@
 
 #define COLLISION_Weapon "Weapon"
 #define COLLISION_WeaponOverlapSphere "WeaponOverlapSphere"
+#define COLLISION_NoCollision "NoCollision"
 #define TRACE_WeaponPick ECC_GameTraceChannel1
 #define TAG_Weapon "Weapon"
 #define TAG_Primary "Primary"

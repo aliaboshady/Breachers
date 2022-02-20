@@ -94,10 +94,11 @@ void UPlantDefuseSystem::StopPlantOrDefuse()
 
 void UPlantDefuseSystem::Server_Plant_Implementation()
 {
+	if(!Bomb || !CharacterPlayer) return;
 	SetPlayerConstraints(false);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
-		PDGM->PlantBomb();
+		PDGM->PlantBomb(Bomb, CharacterPlayer);
 	}
 }
 

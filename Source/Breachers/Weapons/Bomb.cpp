@@ -57,3 +57,18 @@ void ABomb::Client_SetIsBeingDefused_Implementation(bool bIsDefusing)
 {
 	bIsBeginDefused = bIsDefusing;
 }
+
+void ABomb::OnPlanted()
+{
+	if(Mesh_TP)
+	{
+		Mesh_TP->SetEnableGravity(false);
+		Mesh_TP->SetSimulatePhysics(false);
+		Mesh_TP->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	if(SphereComponent)
+	{
+		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SphereComponent->SetCollisionProfileName(COLLISION_NoCollision, false);
+	}
+}

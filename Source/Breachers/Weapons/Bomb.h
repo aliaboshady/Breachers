@@ -12,6 +12,7 @@ public:
 	ABomb();
 	void SetIsBeingDefused(bool bIsDefusing);
 	FORCEINLINE bool GetIsBeingDefused(){return bIsBeginDefused;}
+	void OnPlanted();
 	
 protected:
 	virtual void BeginPlay() override;

@@ -10,6 +10,7 @@
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Breachers/PlayerControllers/PlantAndDefusePlayerController.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
+#include "Breachers/Weapons/Bomb.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
@@ -271,8 +272,10 @@ FTransform APlantAndDefuseGameMode::GetSpawnTransform(TArray<AActor*>& SpawnPoin
 	}
 }
 
-void APlantAndDefuseGameMode::PlantBomb()
+void APlantAndDefuseGameMode::PlantBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer)
 {
+	PinBomb(Bomb, CharacterPlayer);
+	
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
 		if(PDGS->GetCurrentGamePhase() == BuyPhase) return;
@@ -287,4 +290,14 @@ void APlantAndDefuseGameMode::DefuseBomb()
 		if(PDGS->GetCurrentGamePhase() == BuyPhase) return;
 		if(PDGS->GetCurrentRoundState() == BombPlanted) PDGS->OnDefuseBomb();
 	}
+}
+
+void APlantAndDefuseGameMode::PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer)
+{
+	if(!Bomb || !CharacterPlayer) return;
+	CharacterPlayer->WeaponSystem->DropWeapon();
+	FTransform PlantTransform = CharacterPlayer->GetMesh()->GetComponentTransform();
+	PlantTransform.SetRotation(FRotator(PlantTransform.Rotator().Pitch, PlantTransform.Rotator().Yaw - 90, PlantTransform.Rotator().Roll).Quaternion());
+	Bomb->OnPlanted();
+	Bomb->SetActorTransform(PlantTransform);
 }

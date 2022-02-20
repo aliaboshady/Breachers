@@ -4,6 +4,8 @@
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "PlantAndDefuseGameMode.generated.h"
 
+class ABomb;
+
 UCLASS()
 class BREACHERS_API APlantAndDefuseGameMode : public ABreachersGameModeBase
 {
@@ -23,13 +25,14 @@ public:
 	void StartMainPhase();
 	void StartEndPhase(bool bAttackersWin);
 
-	void PlantBomb();
+	void PlantBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer);
 	void DefuseBomb();
 
 protected:
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	void ShuffleSpawnPoints(TArray<AActor*>& SpawnArray);
 	virtual FTransform GetSpawnTransform(TArray<AActor*> &SpawnPoints, ETeam NextTeamRespawn = Attacker) override;
+	void PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer);
 	
 	UFUNCTION()
 	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);
