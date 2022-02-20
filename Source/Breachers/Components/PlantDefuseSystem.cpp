@@ -49,7 +49,7 @@ void UPlantDefuseSystem::SetPlayerInputComponent(UInputComponent* PlayerInputCom
 	if(PlayerInputComponent && CharacterPlayer)
 	{
 		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UPlantDefuseSystem::Server_StartPlantOrDefuse);
-		PlayerInputComponent->BindAction("PlantDefuse", IE_Released, this, &UPlantDefuseSystem::StopPlantOrDefuse);
+		PlayerInputComponent->BindAction("PlantDefuse", IE_Released, this, &UPlantDefuseSystem::Server_StopPlantOrDefuse);
 	}
 }
 
@@ -85,7 +85,7 @@ void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Defuse, 1, false, DefuseTime);
 }
 
-void UPlantDefuseSystem::StopPlantOrDefuse()
+void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
 {
 	if(Bomb) Bomb->SetIsBeingDefused(false);
 	SetPlayerConstraints(false);
