@@ -49,7 +49,7 @@ void UPlantDefuseSystem::ToPlantOrDefuse()
 	if(!CharacterPlayer) return;
 	if(bIsPlanter)
 	{
-		if(bIsInSite && CharacterPlayer->WeaponSystem->HasBomb()) Server_Plant();
+		if(bIsInSite /*&& CharacterPlayer->WeaponSystem->HasBomb()*/) Server_Plant();
 	}
 	else Server_Defuse();
 }
