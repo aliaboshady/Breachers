@@ -420,7 +420,7 @@ void UWeaponSystem::Client_EquipWeaponVisualsFP_Implementation(AWeaponBase* Weap
 	if(CharacterPlayer && Weapon)
 	{
 		USkeletalMeshComponent* ArmsFP = CharacterPlayer->GetArmsMeshFP();
-		Weapon->Mesh_FP->AttachToComponent(ArmsFP, CreateAttachRules(), "WeaponSocket");
+		Weapon->Mesh_FP->AttachToComponent(ArmsFP, CreateAttachRules(), Weapon->WeaponInfo.EquipSocket);
 		Weapon->Mesh_FP->SetHiddenInGame(false);
 		ArmsFP->SetRelativeTransform(Weapon->WeaponInfo.ArmsTransformFP);
 	}
@@ -430,7 +430,7 @@ void UWeaponSystem::Multicast_EquipWeaponVisualsTP_Implementation(AWeaponBase* W
 	if(CharacterPlayer && Weapon)
 	{
 		USkeletalMeshComponent* ArmsTP = CharacterPlayer->GetMesh();
-		Weapon->Mesh_TP->AttachToComponent(ArmsTP, CreateAttachRules(), "WeaponSocket");
+		Weapon->Mesh_TP->AttachToComponent(ArmsTP, CreateAttachRules(), Weapon->WeaponInfo.EquipSocket);
 		Weapon->Mesh_TP->CastShadow = true;
 		Weapon->Mesh_TP->SetHiddenInGame(false);
 	}

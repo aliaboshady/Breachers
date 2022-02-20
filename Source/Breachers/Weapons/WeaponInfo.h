@@ -210,6 +210,9 @@ struct FWeaponInfo : public FTableRowBase
 	FString WeaponName;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName EquipSocket;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UTexture2D* WeaponIcon;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
