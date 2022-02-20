@@ -3,6 +3,8 @@
 #include "WeaponSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
+#include "Breachers/Weapons/Bomb.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 UPlantDefuseSystem::UPlantDefuseSystem()
@@ -54,7 +56,7 @@ void UPlantDefuseSystem::ToPlantOrDefuse()
 
 void UPlantDefuseSystem::Server_Plant_Implementation()
 {
-	if(!bIsInSite /*|| !CharacterPlayer->WeaponSystem->HasBomb()*/) return;
+	if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->PlantBomb();
@@ -63,10 +65,31 @@ void UPlantDefuseSystem::Server_Plant_Implementation()
 
 void UPlantDefuseSystem::Server_Defuse_Implementation()
 {
+	if(!Bomb || !IsStraightLineToBomb()) return;
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->DefuseBomb();
 	}
+}
+
+bool UPlantDefuseSystem::IsStraightLineToBomb()
+{
+	if(!Bomb || !CharacterPlayer) return false;
+	
+	FVector Start = CharacterPlayer->GetActorLocation();
+	FVector End = Bomb->GetActorLocation();
+	
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(CharacterPlayer);
+	
+	FHitResult OutHit;
+	UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
+	if(OutHit.bBlockingHit && OutHit.Actor->ActorHasTag(TAG_Bomb))
+	{
+		return true;
+	}
+	
+	return false;
 }
 
 void UPlantDefuseSystem::OnPlayerEnterSite()

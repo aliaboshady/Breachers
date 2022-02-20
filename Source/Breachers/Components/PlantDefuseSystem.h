@@ -51,6 +51,8 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_UnsetBombToDefuse();
 
+	bool IsStraightLineToBomb();
+
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
 
