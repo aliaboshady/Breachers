@@ -24,6 +24,12 @@ APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 	EndPhaseTimeInSeconds = 5;
 }
 
+void APlantAndDefuseGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	GetBombSpawnLocations();
+}
+
 void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
 {
 	if(ABreachersPlayerController* CharacterPC = Cast<ABreachersPlayerController>(NewPlayer))
@@ -131,6 +137,7 @@ void APlantAndDefuseGameMode::StartBuyPhase()
 {
 	BuyPhasePlayerConstrains(true);
 	SetPhaseBanner(BuyPhaseBanner);
+	SpawnBombAtRandomLocation();
 }
 
 void APlantAndDefuseGameMode::StartMainPhase()
@@ -300,4 +307,25 @@ void APlantAndDefuseGameMode::PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlay
 	PlantTransform.SetRotation(FRotator(PlantTransform.Rotator().Pitch, PlantTransform.Rotator().Yaw - 90, PlantTransform.Rotator().Roll).Quaternion());
 	Bomb->OnPlanted();
 	Bomb->SetActorTransform(PlantTransform);
+}
+
+void APlantAndDefuseGameMode::GetBombSpawnLocations()
+{
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), "BombSpawn", BombSpawns);
+}
+
+void APlantAndDefuseGameMode::SpawnBombAtRandomLocation()
+{
+	if(!BombClass) return;
+	
+	FTransform SpawnTransform;
+	if(BombSpawns.Num() > 0)
+	{
+		const int32 RandInd = FMath::RandRange(0, BombSpawns.Num() - 1);
+		SpawnTransform = BombSpawns[RandInd]->GetActorTransform();
+	}
+	
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	GetWorld()->SpawnActor<ABomb>(BombClass, SpawnTransform, SpawnParameters);
 }

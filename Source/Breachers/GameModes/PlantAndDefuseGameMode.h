@@ -29,10 +29,13 @@ public:
 	void DefuseBomb();
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	void ShuffleSpawnPoints(TArray<AActor*>& SpawnArray);
 	virtual FTransform GetSpawnTransform(TArray<AActor*> &SpawnPoints, ETeam NextTeamRespawn = Attacker) override;
 	void PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer);
+	void GetBombSpawnLocations();
+	void SpawnBombAtRandomLocation();
 	
 	UFUNCTION()
 	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);
@@ -80,4 +83,10 @@ protected:
 
 	int32 AttackerSpawnIndex;
 	int32 DefenderSpawnIndex;
+
+	UPROPERTY()
+	TArray<AActor*> BombSpawns;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ABomb> BombClass;
 };
