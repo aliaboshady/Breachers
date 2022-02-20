@@ -12,6 +12,8 @@ UPlantDefuseSystem::UPlantDefuseSystem()
 	PrimaryComponentTick.bCanEverTick = false;
 	bIsInSite = false;
 	bIsNearBomb = false;
+	bIsPlanting = false;
+	bIsDefusing = false;
 }
 
 void UPlantDefuseSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -19,6 +21,8 @@ void UPlantDefuseSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UPlantDefuseSystem, Bomb);
 	DOREPLIFETIME(UPlantDefuseSystem, CharacterPlayer);
+	DOREPLIFETIME(UPlantDefuseSystem, bIsPlanting);
+	DOREPLIFETIME(UPlantDefuseSystem, bIsDefusing);
 	DOREPLIFETIME(UPlantDefuseSystem, bIsPlanter);
 	DOREPLIFETIME(UPlantDefuseSystem, bIsInSite);
 	DOREPLIFETIME(UPlantDefuseSystem, bIsNearBomb);
@@ -43,20 +47,43 @@ void UPlantDefuseSystem::SetPlayerInputComponent(UInputComponent* PlayerInputCom
 {
 	if(PlayerInputComponent && CharacterPlayer)
 	{
-		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UPlantDefuseSystem::ToPlantOrDefuse);
+		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UPlantDefuseSystem::Server_StartPlantOrDefuse);
+		PlayerInputComponent->BindAction("PlantDefuse", IE_Released, this, &UPlantDefuseSystem::StopPlantOrDefuse);
 	}
 }
 
-void UPlantDefuseSystem::ToPlantOrDefuse()
+void UPlantDefuseSystem::Server_StartPlantOrDefuse_Implementation()
 {
 	if(!CharacterPlayer) return;
-	if(bIsPlanter) Server_Plant();
-	else Server_Defuse();
+
+	int32 PlantTime = 0;
+	int32 DefuseTime = 0;
+	
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		PlantTime = PDGM->GetPlantTimeInSeconds();
+		DefuseTime = PDGM->GetDefuseTimeInSeconds();
+	}
+	if(bIsPlanter)
+	{
+		if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
+		GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Plant, 1, false, PlantTime);
+	}
+	else
+	{
+		if(!Bomb || Bomb->GetIsBeingDefused() || !IsStraightLineToBomb()) return;
+		GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Defuse, 1, false, DefuseTime);
+	}
+}
+
+void UPlantDefuseSystem::StopPlantOrDefuse()
+{
+	if(Bomb) Bomb->SetIsBeingDefused(false);
+	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseTimerHandle);
 }
 
 void UPlantDefuseSystem::Server_Plant_Implementation()
 {
-	if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->PlantBomb();
@@ -65,7 +92,7 @@ void UPlantDefuseSystem::Server_Plant_Implementation()
 
 void UPlantDefuseSystem::Server_Defuse_Implementation()
 {
-	if(!Bomb || !IsStraightLineToBomb()) return;
+	Bomb->SetIsBeingDefused(true);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->DefuseBomb();

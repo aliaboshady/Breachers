@@ -23,12 +23,6 @@ APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 	EndPhaseTimeInSeconds = 5;
 }
 
-void APlantAndDefuseGameMode::BeginPlay()
-{
-	Super::BeginPlay();
-	DetonateTimeInSeconds = 5;
-}
-
 void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
 {
 	if(ABreachersPlayerController* CharacterPC = Cast<ABreachersPlayerController>(NewPlayer))

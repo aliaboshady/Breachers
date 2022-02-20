@@ -27,7 +27,6 @@ public:
 	void DefuseBomb();
 
 protected:
-	virtual void BeginPlay() override;
 	virtual void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 	void ShuffleSpawnPoints(TArray<AActor*>& SpawnArray);
 	virtual FTransform GetSpawnTransform(TArray<AActor*> &SpawnPoints, ETeam NextTeamRespawn = Attacker) override;

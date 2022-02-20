@@ -23,7 +23,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void GetCharacterTag();
-	void ToPlantOrDefuse();
+	void StopPlantOrDefuse();
+	bool IsStraightLineToBomb();
+
+	UFUNCTION(Server, Reliable)
+	void Server_StartPlantOrDefuse();
 
 	UFUNCTION(Server, Reliable)
 	void Server_Plant();
@@ -51,13 +55,17 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_UnsetBombToDefuse();
 
-	bool IsStraightLineToBomb();
-
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
 
 	UPROPERTY(Replicated)
 	ABomb* Bomb;
+
+	UPROPERTY(Replicated)
+	bool bIsPlanting;
+	
+	UPROPERTY(Replicated)
+	bool bIsDefusing;
 	
 	UPROPERTY(Replicated)
 	bool bIsPlanter;
@@ -67,4 +75,6 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bIsNearBomb;
+
+	FTimerHandle PlantOrDefuseTimerHandle;
 };

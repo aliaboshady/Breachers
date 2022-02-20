@@ -2,12 +2,21 @@
 #include "Breachers/Components/PlantDefuseSystem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 ABomb::ABomb()
 {
 	DefuseArea = CreateDefaultSubobject<USphereComponent>("DefuseArea");
 	DefuseArea->InitSphereRadius(130);
 	DefuseArea->SetupAttachment(RootComponent);
+
+	bIsBeginDefused = false;
+}
+
+void ABomb::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABomb, bIsBeginDefused);
 }
 
 void ABomb::BeginPlay()
@@ -18,7 +27,7 @@ void ABomb::BeginPlay()
 }
 
 void ABomb::OnPlayerEnterDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(UPlantDefuseSystem* PDSystem = OtherActor->FindComponentByClass<UPlantDefuseSystem>())
 	{
@@ -33,4 +42,18 @@ void ABomb::OnPlayerExitDefuseArea(UPrimitiveComponent* OverlappedComponent, AAc
 	{
 		PDSystem->UnsetBombToDefuse();
 	}
+}
+
+void ABomb::SetIsBeingDefused(bool bIsDefusing)
+{
+	Server_SetIsBeingDefused(bIsDefusing);
+}
+void ABomb::Server_SetIsBeingDefused_Implementation(bool bIsDefusing)
+{
+	bIsBeginDefused = bIsDefusing;
+	Client_SetIsBeingDefused(bIsDefusing);
+}
+void ABomb::Client_SetIsBeingDefused_Implementation(bool bIsDefusing)
+{
+	bIsBeginDefused = bIsDefusing;
 }
