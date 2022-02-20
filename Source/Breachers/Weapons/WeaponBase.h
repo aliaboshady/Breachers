@@ -55,7 +55,7 @@ protected:
 	virtual FVector RecoilShot(float Spread);
 	void SetupWeaponInfo();
 	void AddWeaponTag();
-	void PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
+	void PlayAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time);
 	void CancelAllAnimations() const;
 	void DecreaseRecoilTimePerShot();
 	void WaitRecoilTimePerShot();

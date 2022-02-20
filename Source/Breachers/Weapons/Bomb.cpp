@@ -1,4 +1,6 @@
 #include "Bomb.h"
+
+#include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/PlantDefuseSystem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -71,4 +73,16 @@ void ABomb::OnPlanted()
 		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SphereComponent->SetCollisionProfileName(COLLISION_NoCollision, false);
 	}
+}
+
+void ABomb::OnStartPlant(int32 PlantTime)
+{
+	if(!CharacterPlayer || !PlantMontage) return;
+	PlayAnimationWithTime(PlantMontage, CharacterPlayer->GetArmsMeshFP(), PlantTime);
+	PlayAnimationWithTime(PlantMontage, CharacterPlayer->GetMesh(), PlantTime);
+}
+
+void ABomb::OnStopPlant()
+{
+	CancelAllAnimations();
 }

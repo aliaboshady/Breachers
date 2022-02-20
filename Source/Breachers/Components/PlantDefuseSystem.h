@@ -28,6 +28,11 @@ protected:
 	void StartDefuse(int32 DefuseTime);
 	void SetPlayerConstraints(bool bPlantingOrDefusing);
 
+	UFUNCTION()
+	void PlantAnimation(int32 PlantTime);
+
+	void PlayPlantAnimationAfterTime(int32 PlantTime);
+
 	UFUNCTION(Server, Reliable)
 	void Server_StartPlantOrDefuse();
 
@@ -61,13 +66,13 @@ protected:
 	void Client_UnsetBombToDefuse();
 	
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_StartPlantDefuseEffects();
+	void Multicast_StartPlantDefuseEffects(int32 PlantTime = 0);
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_StopPlantDefuseEffects();
-
-	// UPROPERTY(EditAnywhere)
-	// UAnimMontage* PlantMontage;
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetIsPlanting(bool bPlanting);
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
@@ -91,4 +96,5 @@ protected:
 	bool bIsNearBomb;
 
 	FTimerHandle PlantOrDefuseTimerHandle;
+	FTimerHandle PlantOrDefuseAnimationTimerHandle;
 };

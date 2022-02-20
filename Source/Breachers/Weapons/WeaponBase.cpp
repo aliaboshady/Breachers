@@ -265,8 +265,8 @@ void AWeaponBase::Client_OnFireEffects_Implementation()
 		UGameplayStatics::PlaySound2D(GetWorld(), WeaponInfo.WeaponEffects.MuzzleFireSound);
 	}
 
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_FP, WeaponInfo.ShotInfo.FireAnimationTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ShotInfo.FireAnimationTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_FP, WeaponInfo.ShotInfo.FireAnimationTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
 void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
@@ -295,8 +295,8 @@ void AWeaponBase::Multicast_OnFireEffects_Implementation(FHitResult OutHit)
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.ImpactSound, OutHit.ImpactPoint);
 	}
 
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_TP, WeaponInfo.ShotInfo.FireAnimationTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ShotInfo.FireAnimationTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_Weapon, Mesh_TP, WeaponInfo.ShotInfo.FireAnimationTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.FireAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
 void AWeaponBase::SpawnBulletTracer(FHitResult OutHit, FVector Start, bool bIsClient)
@@ -382,14 +382,14 @@ void AWeaponBase::OnCancelReload()
 
 void AWeaponBase::Client_OnReloadAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponFP, Mesh_FP, WeaponInfo.ReloadInfo.ReloadTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadInfo.ReloadTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponFP, Mesh_FP, WeaponInfo.ReloadInfo.ReloadTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadInfo.ReloadTime);
 }
 
 void AWeaponBase::Multicast_OnReloadAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponTP, Mesh_TP, WeaponInfo.ReloadInfo.ReloadTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadInfo.ReloadTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_WeaponTP, Mesh_TP, WeaponInfo.ReloadInfo.ReloadTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.ReloadAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadInfo.ReloadTime);
 }
 
 void AWeaponBase::Multicast_OnCancelReloadAnimations_Implementation()
@@ -486,14 +486,14 @@ void AWeaponBase::OnCancelEquip()
 
 void AWeaponBase::Client_OnEquipAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_FP, WeaponInfo.ReloadInfo.EquipTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadInfo.EquipTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_FP, WeaponInfo.ReloadInfo.EquipTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsFP, CharacterPlayer->GetArmsMeshFP(), WeaponInfo.ReloadInfo.EquipTime);
 }
 
 void AWeaponBase::Multicast_OnEquipAnimations_Implementation()
 {
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_TP, WeaponInfo.ReloadInfo.EquipTime);
-	PlatAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadInfo.EquipTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_Weapon, Mesh_TP, WeaponInfo.ReloadInfo.EquipTime);
+	PlayAnimationWithTime(WeaponInfo.WeaponAnimations.EquipAnim_ArmsTP, CharacterPlayer->GetMesh(), WeaponInfo.ReloadInfo.EquipTime);
 }
 
 void AWeaponBase::Multicast_OnCancelEquipAnimations_Implementation()
@@ -501,7 +501,7 @@ void AWeaponBase::Multicast_OnCancelEquipAnimations_Implementation()
 	CancelAllAnimations();
 }
 
-void AWeaponBase::PlatAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time)
+void AWeaponBase::PlayAnimationWithTime(UAnimMontage* AnimationMontage, USkeletalMeshComponent* Mesh, float Time)
 {
 	if(!AnimationMontage || !Mesh || !Mesh->GetAnimInstance()) return;
 	const float MontageLength = Mesh->GetAnimInstance()->Montage_Play(AnimationMontage);

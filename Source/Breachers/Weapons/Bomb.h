@@ -12,6 +12,8 @@ public:
 	ABomb();
 	void SetIsBeingDefused(bool bIsDefusing);
 	FORCEINLINE bool GetIsBeingDefused(){return bIsBeginDefused;}
+	void OnStartPlant(int32 PlantTime);
+	void OnStopPlant();
 	void OnPlanted();
 	
 protected:
@@ -32,6 +34,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* DefuseArea;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* PlantMontage;
 
 	UPROPERTY(Replicated)
 	bool bIsBeginDefused;
