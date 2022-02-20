@@ -59,6 +59,15 @@ protected:
 	void Server_UnsetBombToDefuse();
 	UFUNCTION(Client, Reliable)
 	void Client_UnsetBombToDefuse();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_StartPlantDefuseEffects();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_StopPlantDefuseEffects();
+
+	// UPROPERTY(EditAnywhere)
+	// UAnimMontage* PlantMontage;
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;

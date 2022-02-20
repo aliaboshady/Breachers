@@ -73,22 +73,22 @@ void UPlantDefuseSystem::Server_StartPlantOrDefuse_Implementation()
 void UPlantDefuseSystem::StartPlant(int32 PlantTime)
 {
 	if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
-	SetPlayerConstraints(true);
+	Multicast_StartPlantDefuseEffects();
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Plant, 1, false, PlantTime);
 }
 
 void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 {
 	if(!Bomb || Bomb->GetIsBeingDefused() || !IsStraightLineToBomb()) return;
+	Multicast_StartPlantDefuseEffects();
 	Bomb->SetIsBeingDefused(true);
-	SetPlayerConstraints(true);
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Defuse, 1, false, DefuseTime);
 }
 
 void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
 {
 	if(Bomb) Bomb->SetIsBeingDefused(false);
-	SetPlayerConstraints(false);
+	Multicast_StopPlantDefuseEffects();
 	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseTimerHandle);
 }
 
@@ -195,4 +195,16 @@ void UPlantDefuseSystem::SetPlayerConstraints(bool bPlantingOrDefusing)
 		CharacterPlayer->MovementSystem->SetIsPlantingOrDefusing(bPlantingOrDefusing);
 		CharacterPlayer->WeaponSystem->SetIsPlantingOrDefusing(bPlantingOrDefusing);
 	}
+}
+
+void UPlantDefuseSystem::Multicast_StartPlantDefuseEffects_Implementation()
+{
+	SetPlayerConstraints(true);
+	CharacterPlayer->MovementSystem->StartCrouch();
+}
+
+void UPlantDefuseSystem::Multicast_StopPlantDefuseEffects_Implementation()
+{
+	SetPlayerConstraints(false);
+	CharacterPlayer->MovementSystem->StopCrouch();
 }

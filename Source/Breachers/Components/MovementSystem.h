@@ -28,6 +28,8 @@ public:
 	void SetMouseSensitivityFactor(float NewFactor);
 	void SetCanMove(bool bCanMovePlayer);
 	void SetIsPlantingOrDefusing(bool bPlantingOrDefusing);
+	void StartCrouch();
+	void StopCrouch();
 
 protected:
 	virtual void BeginPlay() override;
@@ -49,9 +51,6 @@ protected:
 
 	void Jump();
 	void StopJumping();
-
-	void StartCrouch();
-	void StopCrouch();
 
 	UFUNCTION(Client, Reliable)
 	void Client_StartWalk();
