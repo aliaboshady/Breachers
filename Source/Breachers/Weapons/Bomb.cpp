@@ -1,4 +1,6 @@
 #include "Bomb.h"
+
+#include "Breachers/Components/PlantDefuseSystem.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -19,11 +21,19 @@ void ABomb::BeginPlay()
 void ABomb::OnPlayerEnterDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
+	if(UPlantDefuseSystem* PDSystem = OtherActor->FindComponentByClass<UPlantDefuseSystem>())
+	{
+		PDSystem->SetBombToDefuse(this);
+		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Set Bomb")));
+	}
 }
 
 void ABomb::OnPlayerExitDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("%s"), *OtherActor->GetName()));
+	if(UPlantDefuseSystem* PDSystem = OtherActor->FindComponentByClass<UPlantDefuseSystem>())
+	{
+		PDSystem->UnsetBombToDefuse();
+		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Unset Bomb")));
+	}
 }

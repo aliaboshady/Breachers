@@ -15,6 +15,7 @@ UPlantDefuseSystem::UPlantDefuseSystem()
 void UPlantDefuseSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UPlantDefuseSystem, Bomb);
 	DOREPLIFETIME(UPlantDefuseSystem, CharacterPlayer);
 	DOREPLIFETIME(UPlantDefuseSystem, bIsPlanter);
 	DOREPLIFETIME(UPlantDefuseSystem, bIsInSite);
@@ -47,15 +48,13 @@ void UPlantDefuseSystem::SetPlayerInputComponent(UInputComponent* PlayerInputCom
 void UPlantDefuseSystem::ToPlantOrDefuse()
 {
 	if(!CharacterPlayer) return;
-	if(bIsPlanter)
-	{
-		if(bIsInSite /*&& CharacterPlayer->WeaponSystem->HasBomb()*/) Server_Plant();
-	}
+	if(bIsPlanter) Server_Plant();
 	else Server_Defuse();
 }
 
 void UPlantDefuseSystem::Server_Plant_Implementation()
 {
+	if(!bIsInSite /*|| !CharacterPlayer->WeaponSystem->HasBomb()*/) return;
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->PlantBomb();
@@ -96,4 +95,32 @@ void UPlantDefuseSystem::Server_OnPlayerExitSite_Implementation()
 void UPlantDefuseSystem::Client_OnPlayerExitSite_Implementation()
 {
 	bIsInSite = false;
+}
+
+void UPlantDefuseSystem::SetBombToDefuse(ABomb* BombToDefuse)
+{
+	Server_SetBombToDefuse(BombToDefuse);
+}
+void UPlantDefuseSystem::Server_SetBombToDefuse_Implementation(ABomb* BombToDefuse)
+{
+	Bomb = BombToDefuse;
+	Client_SetBombToDefuse(BombToDefuse);
+}
+void UPlantDefuseSystem::Client_SetBombToDefuse_Implementation(ABomb* BombToDefuse)
+{
+	Bomb = BombToDefuse;
+}
+
+void UPlantDefuseSystem::UnsetBombToDefuse()
+{
+	Server_UnsetBombToDefuse();
+}
+void UPlantDefuseSystem::Server_UnsetBombToDefuse_Implementation()
+{
+	Bomb = nullptr;
+	Client_UnsetBombToDefuse();
+}
+void UPlantDefuseSystem::Client_UnsetBombToDefuse_Implementation()
+{
+	Bomb = nullptr;
 }

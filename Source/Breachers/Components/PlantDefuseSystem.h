@@ -3,6 +3,7 @@
 #include "Components/ActorComponent.h"
 #include "PlantDefuseSystem.generated.h"
 
+class ABomb;
 class ACharacterBase;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -13,6 +14,8 @@ class BREACHERS_API UPlantDefuseSystem : public UActorComponent
 public:	
 	UPlantDefuseSystem();
 	void SetPlayerInputComponent(UInputComponent* PlayerInputComponent);
+	void SetBombToDefuse(ABomb* BombToDefuse);
+	void UnsetBombToDefuse();
 	void OnPlayerEnterSite();
 	void OnPlayerExitSite();
 
@@ -38,8 +41,21 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void Client_OnPlayerExitSite();
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetBombToDefuse(ABomb* BombToDefuse);
+	UFUNCTION(Client, Reliable)
+	void Client_SetBombToDefuse(ABomb* BombToDefuse);
+
+	UFUNCTION(Server, Reliable)
+	void Server_UnsetBombToDefuse();
+	UFUNCTION(Client, Reliable)
+	void Client_UnsetBombToDefuse();
+
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
+
+	UPROPERTY(Replicated)
+	ABomb* Bomb;
 	
 	UPROPERTY(Replicated)
 	bool bIsPlanter;
