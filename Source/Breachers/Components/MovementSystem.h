@@ -27,6 +27,7 @@ public:
 
 	void SetMouseSensitivityFactor(float NewFactor);
 	void SetCanMove(bool bCanMovePlayer);
+	void SetIsPlantingOrDefusing(bool bPlantingOrDefusing);
 
 protected:
 	virtual void BeginPlay() override;
@@ -75,6 +76,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bCanMove;
+	
+	UPROPERTY(Replicated)
+	bool bIsPlantingOrDefusing;
 	
 	bool bCanTakeInput;
 	bool bIsWalking;

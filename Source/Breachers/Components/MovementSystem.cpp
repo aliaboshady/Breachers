@@ -12,6 +12,7 @@ UMovementSystem::UMovementSystem()
 	RunSpeed = 600;
 	bCanTakeInput = true;
 	bCanMove = true;
+	bIsPlantingOrDefusing = false;
 	bIsWalking = false;
 	MouseSensitivityFactor = 1;
 	JumpMoveFactor = 0.2;
@@ -32,6 +33,7 @@ void UMovementSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(UMovementSystem, bCanMove);
+	DOREPLIFETIME(UMovementSystem, bIsPlantingOrDefusing);
 }
 
 void UMovementSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -84,7 +86,7 @@ void UMovementSystem::SetSpeedsOfWeapon(float WeaponRunSpeed, float WeaponWalkSp
 
 void UMovementSystem::MoveForward(float Value)
 {
-	if (Value == 0 || !CharacterPlayer || !bCanTakeInput || !bCanMove) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput || !bCanMove || bIsPlantingOrDefusing) return;
 	if(!CharacterPlayer->GetCharacterMovement()->IsFalling() || MouseTurnValue > 0.1 || MouseTurnValue < -0.1)
 	{
 		CharacterPlayer->AddMovementInput(CharacterPlayer->GetActorForwardVector(), Value);
@@ -97,7 +99,7 @@ void UMovementSystem::MoveForward(float Value)
 
 void UMovementSystem::MoveRight(float Value)
 {
-	if (Value == 0 || !CharacterPlayer || !bCanTakeInput || !bCanMove) return;
+	if (Value == 0 || !CharacterPlayer || !bCanTakeInput || !bCanMove || bIsPlantingOrDefusing) return;
 	if(CharacterPlayer->GetCharacterMovement()->IsFalling())
 	{
 		if(MouseTurnValue > 0.1 || MouseTurnValue < -0.1)
@@ -128,7 +130,7 @@ void UMovementSystem::Turn(float Value)
 
 void UMovementSystem::Jump()
 {
-	if (!CharacterPlayer || !bCanTakeInput || !bCanMove) return;
+	if (!CharacterPlayer || !bCanTakeInput || !bCanMove || bIsPlantingOrDefusing) return;
 	CharacterPlayer->Jump();
 }
 
@@ -146,7 +148,7 @@ void UMovementSystem::StartCrouch()
 
 void UMovementSystem::StopCrouch()
 {
-	if (!CharacterPlayer || !bCanTakeInput) return;
+	if (!CharacterPlayer || !bCanTakeInput || bIsPlantingOrDefusing) return;
 	CharacterPlayer->UnCrouch();
 }
 
@@ -199,4 +201,9 @@ void UMovementSystem::SetMouseSensitivityFactor(float NewFactor)
 void UMovementSystem::SetCanMove(bool bCanMovePlayer)
 {
 	bCanMove = bCanMovePlayer;
+}
+
+void UMovementSystem::SetIsPlantingOrDefusing(bool bPlantingOrDefusing)
+{
+	bIsPlantingOrDefusing = bPlantingOrDefusing;
 }

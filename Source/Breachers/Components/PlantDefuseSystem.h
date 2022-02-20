@@ -25,6 +25,9 @@ protected:
 	void GetCharacterTag();
 	void StopPlantOrDefuse();
 	bool IsStraightLineToBomb();
+	void StartPlant(int32 PlantTime);
+	void StartDefuse(int32 DefuseTime);
+	void SetPlayerConstraints(bool bPlantingOrDefusing);
 
 	UFUNCTION(Server, Reliable)
 	void Server_StartPlantOrDefuse();

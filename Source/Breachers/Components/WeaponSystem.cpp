@@ -12,6 +12,7 @@ UWeaponSystem::UWeaponSystem()
 	WeaponThrowForce = 40000;
 	WeaponPickupDistance = 200;
 	bShootingEnabled = true;
+	bIsPlantingOrDefusing = false;
 }
 
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -27,6 +28,7 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, Bomb);
 	DOREPLIFETIME(UWeaponSystem, CharacterPlayer);
 	DOREPLIFETIME(UWeaponSystem, bShootingEnabled);
+	DOREPLIFETIME(UWeaponSystem, bIsPlantingOrDefusing);
 }
 
 void UWeaponSystem::BeginPlay()
@@ -104,6 +106,7 @@ void UWeaponSystem::Server_SpawnWeapon_Implementation(TSubclassOf<AWeaponBase> W
 
 void UWeaponSystem::Client_PickWeapon_Implementation()
 {
+	if(bIsPlantingOrDefusing) return;
 	const FVector Start = CharacterPlayer->GetCameraLocation();
 	FVector End = CharacterPlayer->GetCameraDirection() * WeaponPickupDistance + Start;
 	
@@ -204,6 +207,7 @@ void UWeaponSystem::DropWeapon()
 
 void UWeaponSystem::Server_PlayerDropWeapon_Implementation()
 {
+	if(bIsPlantingOrDefusing) return;
 	if(ADeathMatchGameMode* DGM = Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode())) return;
 	Server_DropWeapon();
 }
@@ -299,7 +303,7 @@ void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
 {
-	if(PreviousWeapon) EquipWeapon(PreviousWeapon);
+	if(PreviousWeapon || bIsPlantingOrDefusing) EquipWeapon(PreviousWeapon);
 }
 
 void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
@@ -325,25 +329,25 @@ bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::Server_EquipPrimary_Implementation()
 {
-	if(!PrimaryWeapon || CurrentWeapon == PrimaryWeapon) return;
+	if(!PrimaryWeapon || CurrentWeapon == PrimaryWeapon || bIsPlantingOrDefusing) return;
 	EquipWeapon(PrimaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipSecondary_Implementation()
 {
-	if(!SecondaryWeapon || CurrentWeapon == SecondaryWeapon) return;
+	if(!SecondaryWeapon || CurrentWeapon == SecondaryWeapon || bIsPlantingOrDefusing) return;
 	EquipWeapon(SecondaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipMelee_Implementation()
 {
-	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon) return;
+	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon || bIsPlantingOrDefusing) return;
 	EquipWeapon(MeleeWeapon);
 }
 
 void UWeaponSystem::Server_EquipBomb_Implementation()
 {
-	if(!Bomb || CurrentWeapon == Bomb) return;
+	if(!Bomb || CurrentWeapon == Bomb || bIsPlantingOrDefusing) return;
 	EquipWeapon(Bomb);
 }
 
@@ -368,7 +372,7 @@ void UWeaponSystem::Server_EquipLastBoughtWeapon_Implementation()
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void UWeaponSystem::Server_StartPrimaryFire_Implementation()
 {
-	if(!bShootingEnabled) return;
+	if(!bShootingEnabled || bIsPlantingOrDefusing) return;
 	if(CurrentWeapon) CurrentWeapon->OnPrimaryFire();
 }
 
@@ -379,7 +383,7 @@ void UWeaponSystem::Server_StopPrimaryFire_Implementation()
 
 void UWeaponSystem::Server_SecondaryFire_Implementation()
 {
-	if(!bShootingEnabled) return;
+	if(!bShootingEnabled || bIsPlantingOrDefusing) return;
 	if(CurrentWeapon) CurrentWeapon->OnSecondaryFire();
 }
 
@@ -390,7 +394,7 @@ void UWeaponSystem::Server_SecondaryFire_Implementation()
 
 void UWeaponSystem::Server_Reload_Implementation()
 {
-	if(CurrentWeapon) CurrentWeapon->OnReload();
+	if(CurrentWeapon || bIsPlantingOrDefusing) CurrentWeapon->OnReload();
 }
 
 void UWeaponSystem::Server_CancelReload_Implementation()
@@ -463,4 +467,9 @@ FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 void UWeaponSystem::EnableShooting(bool bEnableShooting)
 {
 	bShootingEnabled = bEnableShooting;
+}
+
+void UWeaponSystem::SetIsPlantingOrDefusing(bool bPlantingOrDefusing)
+{
+	bIsPlantingOrDefusing = bPlantingOrDefusing;
 }

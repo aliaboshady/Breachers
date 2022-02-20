@@ -26,6 +26,7 @@ public:
 	void DestroyAllWeapons();
 	void OnRestartRound();
 	FORCEINLINE bool HasBomb(){return Bomb ? true : false;}
+	void SetIsPlantingOrDefusing(bool bPlantingOrDefusing);
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
@@ -148,4 +149,7 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bShootingEnabled;
+
+	UPROPERTY(Replicated)
+	bool bIsPlantingOrDefusing;
 };

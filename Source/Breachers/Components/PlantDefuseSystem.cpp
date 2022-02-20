@@ -1,5 +1,6 @@
 #include "PlantDefuseSystem.h"
 
+#include "MovementSystem.h"
 #include "WeaponSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
@@ -64,26 +65,36 @@ void UPlantDefuseSystem::Server_StartPlantOrDefuse_Implementation()
 		PlantTime = PDGM->GetPlantTimeInSeconds();
 		DefuseTime = PDGM->GetDefuseTimeInSeconds();
 	}
-	if(bIsPlanter)
-	{
-		if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
-		GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Plant, 1, false, PlantTime);
-	}
-	else
-	{
-		if(!Bomb || Bomb->GetIsBeingDefused() || !IsStraightLineToBomb()) return;
-		GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Defuse, 1, false, DefuseTime);
-	}
+	
+	if(bIsPlanter) StartPlant(PlantTime);
+	else StartDefuse(DefuseTime);
+}
+
+void UPlantDefuseSystem::StartPlant(int32 PlantTime)
+{
+	if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
+	SetPlayerConstraints(true);
+	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Plant, 1, false, PlantTime);
+}
+
+void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
+{
+	if(!Bomb || Bomb->GetIsBeingDefused() || !IsStraightLineToBomb()) return;
+	Bomb->SetIsBeingDefused(true);
+	SetPlayerConstraints(true);
+	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Defuse, 1, false, DefuseTime);
 }
 
 void UPlantDefuseSystem::StopPlantOrDefuse()
 {
 	if(Bomb) Bomb->SetIsBeingDefused(false);
+	SetPlayerConstraints(false);
 	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseTimerHandle);
 }
 
 void UPlantDefuseSystem::Server_Plant_Implementation()
 {
+	SetPlayerConstraints(false);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->PlantBomb();
@@ -92,7 +103,8 @@ void UPlantDefuseSystem::Server_Plant_Implementation()
 
 void UPlantDefuseSystem::Server_Defuse_Implementation()
 {
-	Bomb->SetIsBeingDefused(true);
+	Bomb->SetIsBeingDefused(false);
+	SetPlayerConstraints(false);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->DefuseBomb();
@@ -173,4 +185,13 @@ void UPlantDefuseSystem::Server_UnsetBombToDefuse_Implementation()
 void UPlantDefuseSystem::Client_UnsetBombToDefuse_Implementation()
 {
 	Bomb = nullptr;
+}
+
+void UPlantDefuseSystem::SetPlayerConstraints(bool bPlantingOrDefusing)
+{
+	if(CharacterPlayer)
+	{
+		CharacterPlayer->MovementSystem->SetIsPlantingOrDefusing(bPlantingOrDefusing);
+		CharacterPlayer->WeaponSystem->SetIsPlantingOrDefusing(bPlantingOrDefusing);
+	}
 }
