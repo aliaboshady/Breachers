@@ -13,6 +13,7 @@ ABomb::ABomb()
 	DefuseArea->SetupAttachment(RootComponent);
 
 	bIsBeginDefused = false;
+	ArmsPositionOffsetWhilePlanting = 50;
 }
 
 void ABomb::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

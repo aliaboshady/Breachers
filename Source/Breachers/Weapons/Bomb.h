@@ -15,6 +15,7 @@ public:
 	void OnStartPlant(int32 PlantTime);
 	void OnStopPlant();
 	void OnPlanted();
+	FORCEINLINE float GetArmsPositionOffset(){return ArmsPositionOffsetWhilePlanting;}
 	
 protected:
 	virtual void BeginPlay() override;
@@ -37,6 +38,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	UAnimMontage* PlantMontage;
+
+	UPROPERTY(EditAnywhere)
+	float ArmsPositionOffsetWhilePlanting;
 
 	UPROPERTY(Replicated)
 	bool bIsBeginDefused;
