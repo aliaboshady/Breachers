@@ -36,6 +36,7 @@ protected:
 	void PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer);
 	void GetBombSpawnLocations();
 	void SpawnBombAtRandomLocation();
+	void RemoveOldBombFromMap();
 	
 	UFUNCTION()
 	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);

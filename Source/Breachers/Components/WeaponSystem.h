@@ -27,6 +27,7 @@ public:
 	void OnRestartRound();
 	FORCEINLINE bool HasBomb(){return Bomb ? true : false;}
 	void SetIsPlantingOrDefusing(bool bPlantingOrDefusing);
+	void DropBomb();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;

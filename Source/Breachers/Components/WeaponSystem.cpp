@@ -232,6 +232,15 @@ void UWeaponSystem::DropAllWeapons()
 	if(MeleeWeapon) UnequipWeapon(MeleeWeapon);
 }
 
+void UWeaponSystem::DropBomb()
+{
+	if(Bomb)
+	{
+		Server_EquipBomb();
+		DropWeapon();
+	}
+}
+
 void UWeaponSystem::DestroyAllWeapons()
 {
 	if(PrimaryWeapon)

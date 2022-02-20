@@ -213,6 +213,8 @@ void APlantAndDefuseGameMode::RemoveAllUnpossessedBodies()
 
 void APlantAndDefuseGameMode::RemoveAllUnownedWeapons()
 {
+	RemoveOldBombFromMap();
+	
 	TArray<AActor*> AllWeapons;
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TAG_Weapon, AllWeapons);
 	if(AllWeapons.Num() == 0) return;
@@ -317,6 +319,10 @@ void APlantAndDefuseGameMode::GetBombSpawnLocations()
 void APlantAndDefuseGameMode::SpawnBombAtRandomLocation()
 {
 	if(!BombClass) return;
+
+	TArray<AActor*> AllBomb;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TAG_Bomb, AllBomb);
+	if(AllBomb.Num() > 0) return;
 	
 	FTransform SpawnTransform;
 	if(BombSpawns.Num() > 0)
@@ -328,4 +334,20 @@ void APlantAndDefuseGameMode::SpawnBombAtRandomLocation()
 	FActorSpawnParameters SpawnParameters;
 	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 	GetWorld()->SpawnActor<ABomb>(BombClass, SpawnTransform, SpawnParameters);
+}
+
+void APlantAndDefuseGameMode::RemoveOldBombFromMap()
+{
+	TArray<AActor*> AllBomb;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TAG_Bomb, AllBomb);
+	if(AllBomb.Num() == 0) return;
+
+	for (AActor* Bomb : AllBomb)
+	{
+		if(ACharacterBase* CharacterPlayer = Cast<ACharacterBase>(Bomb->GetOwner()))
+		{
+			CharacterPlayer->WeaponSystem->DropBomb();
+		}
+		Bomb->Destroy();
+	}
 }
