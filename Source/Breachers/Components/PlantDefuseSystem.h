@@ -27,7 +27,6 @@ protected:
 	void StartPlant(int32 PlantTime);
 	void StartDefuse(int32 DefuseTime);
 	void SetPlayerConstraints(bool bPlantingOrDefusing);
-	void PositionArms(bool bPlantStart);
 
 	UFUNCTION()
 	void PlantAnimation(int32 PlantTime);

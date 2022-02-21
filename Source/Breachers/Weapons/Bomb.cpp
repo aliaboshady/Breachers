@@ -13,7 +13,6 @@ ABomb::ABomb()
 	DefuseArea->SetupAttachment(RootComponent);
 
 	bIsBeginDefused = false;
-	ArmsPositionOffsetWhilePlanting = 50;
 }
 
 void ABomb::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -78,9 +77,11 @@ void ABomb::OnPlanted()
 
 void ABomb::OnStartPlant(int32 PlantTime)
 {
-	if(!CharacterPlayer || !PlantMontage) return;
-	PlayAnimationWithTime(PlantMontage, CharacterPlayer->GetArmsMeshFP(), PlantTime);
-	PlayAnimationWithTime(PlantMontage, CharacterPlayer->GetMesh(), PlantTime);
+	UAnimMontage* PlantMontage_FP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;
+	UAnimMontage* PlantMontage_TP= WeaponInfo.WeaponAnimations.FireAnim_ArmsTP;
+	if(!CharacterPlayer || !PlantMontage_FP || !PlantMontage_TP) return;
+	PlayAnimationWithTime(PlantMontage_FP, CharacterPlayer->GetArmsMeshFP(), PlantTime);
+	PlayAnimationWithTime(PlantMontage_TP, CharacterPlayer->GetMesh(), PlantTime);
 }
 
 void ABomb::OnStopPlant()

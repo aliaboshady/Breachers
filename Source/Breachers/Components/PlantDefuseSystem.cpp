@@ -90,11 +90,11 @@ void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 
 void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
 {
-	if(bIsDefusing) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
+	if(bIsDefusing || bIsPlanting) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
 	Multicast_SetIsDefusing(false);
+	Multicast_SetIsPlanting(false);
 	if(Bomb) Bomb->SetIsBeingDefused(false);
 	Multicast_StopPlantDefuseEffects();
-	Multicast_SetIsPlanting(false);
 	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseTimerHandle);
 }
 
@@ -228,21 +228,13 @@ void UPlantDefuseSystem::Multicast_StopPlantDefuseEffects_Implementation()
 {
 	SetPlayerConstraints(false);
 	CharacterPlayer->MovementSystem->StopCrouch();
-	if(bIsPlanter && Bomb && bIsPlanting)
-	{
-		Bomb->OnStopPlant();
-		PositionArms(false);
-	}
+	if(bIsPlanter && Bomb && bIsPlanting) Bomb->OnStopPlant();
 	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseAnimationTimerHandle);
 }
 
 void UPlantDefuseSystem::PlantAnimation(int32 PlantTime)
 {
-	if(bIsPlanter && Bomb)
-	{
-		Bomb->OnStartPlant(PlantTime);
-		PositionArms(true);
-	}
+	if(bIsPlanter && Bomb) Bomb->OnStartPlant(PlantTime);
 }
 
 void UPlantDefuseSystem::PlayPlantAnimationAfterTime(int32 PlantTime)
@@ -253,15 +245,4 @@ void UPlantDefuseSystem::PlayPlantAnimationAfterTime(int32 PlantTime)
 	FTimerDelegate AnimationDelegate;
 	AnimationDelegate.BindUFunction(this, FName(TEXT("PlantAnimation")), PlantTime);
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseAnimationTimerHandle, AnimationDelegate, 1, false, Delay + 0.01);
-}
-
-void UPlantDefuseSystem::PositionArms(bool bPlantStart)
-{
-	if(CharacterPlayer && Bomb)
-	{
-		float ArmsPositionOffset = Bomb->GetArmsPositionOffset();
-		FVector ArmsLocation = CharacterPlayer->GetArmsMeshFP()->GetRelativeLocation();
-		ArmsLocation.X = bPlantStart ? ArmsLocation.X - ArmsPositionOffset : ArmsLocation.X + ArmsPositionOffset;
-		CharacterPlayer->GetArmsMeshFP()->SetRelativeLocation(ArmsLocation);
-	}
 }
