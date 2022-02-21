@@ -17,6 +17,7 @@ void APlantAndDefuseGameState::BeginPlay()
 	CurrentGamePhase = BuyPhase;
 	CurrentRoundState = BombUnplanted;
 	bAttackersWin = false;
+	bCanSetWinnerTeam = true;
 	OneSecondTimespan = FTimespan(0, 0, 1);
 	SetBombDetonateTimer();
 	if(HasAuthority()) StartCountDownTimer();
@@ -107,7 +108,11 @@ void APlantAndDefuseGameState::Multicast_SetBombPlantedTimer_Implementation()
 
 void APlantAndDefuseGameState::Server_SetWinnerTeam_Implementation(bool bDidAttackersWin)
 {
-	Multicast_SetWinnerTeam(bDidAttackersWin);
+	if(bCanSetWinnerTeam)
+	{
+		Multicast_SetWinnerTeam(bDidAttackersWin);
+		Server_SetCanSetWinnerTeam(false);
+	}
 }
 
 void APlantAndDefuseGameState::Multicast_SetWinnerTeam_Implementation(bool bDidAttackersWin)
@@ -121,6 +126,7 @@ void APlantAndDefuseGameState::Multicast_SetWinnerTeam_Implementation(bool bDidA
 void APlantAndDefuseGameState::StartBuyPhase()
 {
 	ShowTeamsCountUI();
+	Server_SetCanSetWinnerTeam(true);
 	Multicast_ChangeCurrentRoundState(BombUnplanted);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
@@ -286,4 +292,14 @@ bool APlantAndDefuseGameState::TimeRanOutBothTeamsAlive()
 	int32 DefendersCount;
 	GetTeamsCount(AttackersCount, DefendersCount);
 	return AttackersCount > 0 && DefendersCount > 0 && CurrentRoundState == BombUnplanted;
+}
+
+void APlantAndDefuseGameState::Server_SetCanSetWinnerTeam_Implementation(bool bCanSetWinner)
+{
+	Multicast_SetCanSetWinnerTeam(bCanSetWinner);
+}
+
+void APlantAndDefuseGameState::Multicast_SetCanSetWinnerTeam_Implementation(bool bCanSetWinner)
+{
+	bCanSetWinnerTeam = bCanSetWinner;
 }

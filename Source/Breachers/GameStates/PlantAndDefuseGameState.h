@@ -86,6 +86,12 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_IncreaseDefendersScore();
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetCanSetWinnerTeam(bool bCanSetWinner);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetCanSetWinnerTeam(bool bCanSetWinner);
+
 	bool TimeRanOutBothTeamsAlive();
 	
 	void StartBuyPhase();
@@ -107,6 +113,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bAttackersWin;
+
+	UPROPERTY(Replicated)
+	bool bCanSetWinnerTeam;
 
 	int32 BombDetonateTime;
 
