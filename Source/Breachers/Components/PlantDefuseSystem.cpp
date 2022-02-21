@@ -92,8 +92,8 @@ void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 
 void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
 {
-	if(bIsDefusing || bIsPlanting) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
 	Multicast_StopPlantDefuseEffects();
+	if(bIsDefusing || bIsPlanting) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
 	Multicast_SetIsDefusing(false);
 	Multicast_SetIsPlanting(false);
 	if(Bomb) Bomb->SetIsBeingDefused(false);
