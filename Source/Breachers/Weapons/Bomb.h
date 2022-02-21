@@ -31,6 +31,9 @@ protected:
 
 	UFUNCTION()
 	void PlantAnimation(int32 PlantTime);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_PlayBombSound(USoundCue* BombSound);
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void NetMulticast_PlayPlantAnimationAfterTime(int32 PlantTime);

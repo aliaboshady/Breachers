@@ -3,6 +3,7 @@
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/PlantDefuseSystem.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -76,6 +77,7 @@ void ABomb::OnPlanted()
 
 void ABomb::OnStartPlant(int32 PlantTime)
 {
+	NetMulticast_PlayBombSound(WeaponInfo.WeaponEffects.MuzzleFireSound);
 	NetMulticast_PlayPlantAnimationAfterTime(PlantTime);
 }
 
@@ -124,4 +126,9 @@ void ABomb::PlantAnimation(int32 PlantTime)
 	if(!CharacterPlayer || !PlantMontage_FP || !PlantMontage_TP) return;
 	PlayAnimationWithTime(PlantMontage_FP, CharacterPlayer->GetArmsMeshFP(), PlantTime);
 	PlayAnimationWithTime(PlantMontage_TP, CharacterPlayer->GetMesh(), PlantTime);
+}
+
+void ABomb::NetMulticast_PlayBombSound_Implementation(USoundCue* BombSound)
+{
+	if(BombSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), BombSound, GetActorLocation(), GetActorRotation());
 }
