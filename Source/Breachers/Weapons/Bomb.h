@@ -29,6 +29,12 @@ protected:
 	UFUNCTION()
 	void OnPlayerExitDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
+	UFUNCTION()
+	void PlantAnimation(int32 PlantTime);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_PlayPlantAnimationAfterTime(int32 PlantTime);
+
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetIsBeingDefused(bool bIsDefusing);
 
@@ -55,4 +61,6 @@ protected:
 	
 	UPROPERTY(Replicated)
 	TEnumAsByte<ERoundState> BombState;
+
+	FTimerHandle PlantOrDefuseAnimationTimerHandle;
 };

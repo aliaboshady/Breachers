@@ -73,8 +73,9 @@ void UPlantDefuseSystem::Server_StartPlantOrDefuse_Implementation()
 void UPlantDefuseSystem::StartPlant(int32 PlantTime)
 {
 	if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
+	if(Bomb) Bomb->OnStartPlant(PlantTime);
 	Multicast_SetIsPlanting(true);
-	Multicast_StartPlantDefuseEffects(PlantTime);
+	Multicast_StartPlantDefuseEffects();
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Plant, 1, false, PlantTime);
 }
 
@@ -218,11 +219,10 @@ void UPlantDefuseSystem::Multicast_SetIsDefusing_Implementation(bool bDefusing)
 	bIsDefusing = bDefusing;
 }
 
-void UPlantDefuseSystem::Multicast_StartPlantDefuseEffects_Implementation(int32 PlantTime)
+void UPlantDefuseSystem::Multicast_StartPlantDefuseEffects_Implementation()
 {
 	SetPlayerConstraints(true);
 	CharacterPlayer->MovementSystem->StartCrouch();
-	PlayPlantAnimationAfterTime(PlantTime);
 }
 
 void UPlantDefuseSystem::Multicast_StopPlantDefuseEffects_Implementation()
@@ -230,20 +230,4 @@ void UPlantDefuseSystem::Multicast_StopPlantDefuseEffects_Implementation()
 	SetPlayerConstraints(false);
 	CharacterPlayer->MovementSystem->StopCrouch();
 	if(bIsPlanter && Bomb && bIsPlanting) Bomb->OnStopPlant();
-	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseAnimationTimerHandle);
-}
-
-void UPlantDefuseSystem::PlantAnimation(int32 PlantTime)
-{
-	if(bIsPlanter && Bomb) Bomb->OnStartPlant(PlantTime);
-}
-
-void UPlantDefuseSystem::PlayPlantAnimationAfterTime(int32 PlantTime)
-{
-	float Delay = 0;
-	if(Bomb) Delay = Bomb->WeaponInfo.ReloadInfo.EquipTime;
-	
-	FTimerDelegate AnimationDelegate;
-	AnimationDelegate.BindUFunction(this, FName(TEXT("PlantAnimation")), PlantTime);
-	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseAnimationTimerHandle, AnimationDelegate, 1, false, Delay + 0.01);
 }

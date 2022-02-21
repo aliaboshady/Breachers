@@ -76,16 +76,12 @@ void ABomb::OnPlanted()
 
 void ABomb::OnStartPlant(int32 PlantTime)
 {
-	Multicast_SetAimOffsetToPlanting();
-	UAnimMontage* PlantMontage_FP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;
-	UAnimMontage* PlantMontage_TP= WeaponInfo.WeaponAnimations.FireAnim_ArmsTP;
-	if(!CharacterPlayer || !PlantMontage_FP || !PlantMontage_TP) return;
-	PlayAnimationWithTime(PlantMontage_FP, CharacterPlayer->GetArmsMeshFP(), PlantTime);
-	PlayAnimationWithTime(PlantMontage_TP, CharacterPlayer->GetMesh(), PlantTime);
+	NetMulticast_PlayPlantAnimationAfterTime(PlantTime);
 }
 
 void ABomb::OnStopPlant()
 {
+	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseAnimationTimerHandle);
 	Multicast_SetAimOffsetToNormal();
 	CancelAllAnimations();
 }
@@ -108,4 +104,24 @@ void ABomb::SetBombState(ERoundState NewBombState)
 void ABomb::Multicast_SetBombState_Implementation(ERoundState NewBombState)
 {
 	BombState = NewBombState;
+}
+
+void ABomb::NetMulticast_PlayPlantAnimationAfterTime_Implementation(int32 PlantTime)
+{
+	float Delay = 0;
+	if(Bomb) Delay = WeaponInfo.ReloadInfo.EquipTime;
+	
+	FTimerDelegate AnimationDelegate;
+	AnimationDelegate.BindUFunction(this, FName(TEXT("PlantAnimation")), PlantTime);
+	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseAnimationTimerHandle, AnimationDelegate, 1, false, Delay + 0.01);
+}
+
+void ABomb::PlantAnimation(int32 PlantTime)
+{
+	Multicast_SetAimOffsetToPlanting();
+	UAnimMontage* PlantMontage_FP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;
+	UAnimMontage* PlantMontage_TP= WeaponInfo.WeaponAnimations.FireAnim_ArmsTP;
+	if(!CharacterPlayer || !PlantMontage_FP || !PlantMontage_TP) return;
+	PlayAnimationWithTime(PlantMontage_FP, CharacterPlayer->GetArmsMeshFP(), PlantTime);
+	PlayAnimationWithTime(PlantMontage_TP, CharacterPlayer->GetMesh(), PlantTime);
 }
