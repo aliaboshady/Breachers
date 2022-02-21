@@ -3,6 +3,8 @@
 #include "BreachersGameState.h"
 #include "PlantAndDefuseGameState.generated.h"
 
+class USoundCue;
+
 UENUM(BlueprintType)
 enum ERoundState
 {
@@ -92,6 +94,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetCanSetWinnerTeam(bool bCanSetWinner);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void NetMulticast_PlaySound(USoundCue* Sound);
+
 	bool TimeRanOutBothTeamsAlive();
 	
 	void StartBuyPhase();
@@ -104,6 +109,12 @@ protected:
 	
 	virtual void BeginPlay() override;
 	virtual void EndOfRound() override;
+
+	UPROPERTY(EditAnywhere)
+	USoundCue* BombPlantedSound;
+	
+	UPROPERTY(EditAnywhere)
+	USoundCue* BombDefusedSound;
 
 	UPROPERTY(Replicated)
 	TEnumAsByte<EPhase> CurrentGamePhase;

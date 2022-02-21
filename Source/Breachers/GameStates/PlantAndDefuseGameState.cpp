@@ -2,6 +2,7 @@
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -188,6 +189,7 @@ void APlantAndDefuseGameState::OnPlantBomb()
 	if(CurrentGamePhase == EndPhase) return;
 	Multicast_ChangeCurrentRoundState(BombPlanted);
 	Multicast_SetBombPlantedTimer();
+	NetMulticast_PlaySound(BombPlantedSound);
 }
 
 void APlantAndDefuseGameState::OnDefuseBomb()
@@ -196,6 +198,7 @@ void APlantAndDefuseGameState::OnDefuseBomb()
 	Server_SetWinnerTeam(false);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
+	NetMulticast_PlaySound(BombDefusedSound);
 }
 
 void APlantAndDefuseGameState::OnBombExploded()
@@ -284,6 +287,11 @@ void APlantAndDefuseGameState::Multicast_IncreaseAttackersScore_Implementation()
 void APlantAndDefuseGameState::Multicast_IncreaseDefendersScore_Implementation()
 {
 	DefendersScore++;
+}
+
+void APlantAndDefuseGameState::NetMulticast_PlaySound_Implementation(USoundCue* Sound)
+{
+	if(Sound) UGameplayStatics::PlaySound2D(GetWorld(), Sound);
 }
 
 bool APlantAndDefuseGameState::TimeRanOutBothTeamsAlive()
