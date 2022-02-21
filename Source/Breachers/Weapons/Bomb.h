@@ -31,9 +31,21 @@ protected:
 	
 	UFUNCTION(Client, Reliable)
 	void Client_SetIsBeingDefused(bool bIsDefusing);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetAimOffsetToPlanting();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetAimOffsetToNormal();
 	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* DefuseArea;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UAimOffsetBlendSpace1D* PlantBlendSpace_TP;
+
+	UPROPERTY()
+	UAimOffsetBlendSpace1D* NormalBlendSpace_TP;
 
 	UPROPERTY(Replicated)
 	bool bIsBeginDefused;

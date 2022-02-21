@@ -26,6 +26,7 @@ void ABomb::BeginPlay()
 	Super::BeginPlay();
 	DefuseArea->OnComponentBeginOverlap.AddDynamic(this, &ABomb::OnPlayerEnterDefuseArea);
 	DefuseArea->OnComponentEndOverlap.AddDynamic(this, &ABomb::OnPlayerExitDefuseArea);
+	NormalBlendSpace_TP = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
 }
 
 void ABomb::OnPlayerEnterDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -77,6 +78,7 @@ void ABomb::OnPlanted()
 
 void ABomb::OnStartPlant(int32 PlantTime)
 {
+	Multicast_SetAimOffsetToPlanting();
 	UAnimMontage* PlantMontage_FP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;
 	UAnimMontage* PlantMontage_TP= WeaponInfo.WeaponAnimations.FireAnim_ArmsTP;
 	if(!CharacterPlayer || !PlantMontage_FP || !PlantMontage_TP) return;
@@ -86,5 +88,17 @@ void ABomb::OnStartPlant(int32 PlantTime)
 
 void ABomb::OnStopPlant()
 {
+	Multicast_SetAimOffsetToNormal();
 	CancelAllAnimations();
+}
+
+void ABomb::Multicast_SetAimOffsetToPlanting_Implementation()
+{
+	if(PlantBlendSpace_TP) WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP = PlantBlendSpace_TP;
+}
+
+void ABomb::Multicast_SetAimOffsetToNormal_Implementation()
+{
+	UAimOffsetBlendSpace1D* NormalAimOffset = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
+	if(NormalAimOffset) NormalAimOffset = NormalBlendSpace_TP;
 }
