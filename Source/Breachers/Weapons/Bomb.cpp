@@ -13,12 +13,14 @@ ABomb::ABomb()
 	DefuseArea->SetupAttachment(RootComponent);
 
 	bIsBeginDefused = false;
+	BombState = BombUnplanted;
 }
 
 void ABomb::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABomb, bIsBeginDefused);
+	DOREPLIFETIME(ABomb, BombState);
 }
 
 void ABomb::BeginPlay()
@@ -49,14 +51,9 @@ void ABomb::OnPlayerExitDefuseArea(UPrimitiveComponent* OverlappedComponent, AAc
 
 void ABomb::SetIsBeingDefused(bool bIsDefusing)
 {
-	Server_SetIsBeingDefused(bIsDefusing);
+	Multicast_SetIsBeingDefused(bIsDefusing);
 }
-void ABomb::Server_SetIsBeingDefused_Implementation(bool bIsDefusing)
-{
-	bIsBeginDefused = bIsDefusing;
-	Client_SetIsBeingDefused(bIsDefusing);
-}
-void ABomb::Client_SetIsBeingDefused_Implementation(bool bIsDefusing)
+void ABomb::Multicast_SetIsBeingDefused_Implementation(bool bIsDefusing)
 {
 	bIsBeginDefused = bIsDefusing;
 }
@@ -74,6 +71,7 @@ void ABomb::OnPlanted()
 		SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SphereComponent->SetCollisionProfileName(COLLISION_NoCollision, false);
 	}
+	SetBombState(BombPlanted);
 }
 
 void ABomb::OnStartPlant(int32 PlantTime)
@@ -101,4 +99,14 @@ void ABomb::Multicast_SetAimOffsetToNormal_Implementation()
 {
 	UAimOffsetBlendSpace1D* NormalAimOffset = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
 	if(NormalAimOffset) NormalAimOffset = NormalBlendSpace_TP;
+}
+
+void ABomb::SetBombState(ERoundState NewBombState)
+{
+	Multicast_SetBombState(NewBombState);
+}
+
+void ABomb::Multicast_SetBombState_Implementation(ERoundState NewBombState)
+{
+	BombState = NewBombState;
 }

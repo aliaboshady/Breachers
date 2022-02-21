@@ -1,6 +1,7 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "WeaponBase.h"
+#include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Bomb.generated.h"
 
 UCLASS()
@@ -12,7 +13,9 @@ public:
 	ABomb();
 	void SetIsBeingDefused(bool bIsDefusing);
 	FORCEINLINE bool GetIsBeingDefused(){return bIsBeginDefused;}
+	FORCEINLINE ERoundState GetBombState(){return BombState;}
 	void OnStartPlant(int32 PlantTime);
+	void SetBombState(ERoundState NewBombState);
 	void OnStopPlant();
 	void OnPlanted();
 	
@@ -26,17 +29,17 @@ protected:
 	UFUNCTION()
 	void OnPlayerExitDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-	UFUNCTION(Server, Reliable)
-	void Server_SetIsBeingDefused(bool bIsDefusing);
-	
-	UFUNCTION(Client, Reliable)
-	void Client_SetIsBeingDefused(bool bIsDefusing);
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetIsBeingDefused(bool bIsDefusing);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetAimOffsetToPlanting();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetAimOffsetToNormal();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetBombState(ERoundState NewBombState);
 	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* DefuseArea;
@@ -49,4 +52,7 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bIsBeginDefused;
+	
+	UPROPERTY(Replicated)
+	TEnumAsByte<ERoundState> BombState;
 };
