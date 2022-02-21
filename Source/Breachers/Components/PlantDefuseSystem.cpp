@@ -113,8 +113,9 @@ void UPlantDefuseSystem::Server_Defuse_Implementation()
 {
 	if(bIsDefusing) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
 	Bomb->SetIsBeingDefused(false);
+	Bomb->SetBombState(BombDefused);
 	Multicast_SetIsDefusing(false);
-	SetPlayerConstraints(false);
+	Multicast_StopPlantDefuseEffects();
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->DefuseBomb();
