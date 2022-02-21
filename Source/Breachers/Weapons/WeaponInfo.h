@@ -16,7 +16,8 @@ enum EWeaponType
 	Primary,
 	Secondary,
 	Melee,
-	Bomb
+	Bomb,
+	Defuser
 };
 
 UENUM(BlueprintType)
@@ -177,7 +178,6 @@ struct FReloadInfo
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float EquipTime;
-
 };
 
 USTRUCT(BlueprintType)

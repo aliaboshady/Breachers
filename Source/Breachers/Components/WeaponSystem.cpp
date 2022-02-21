@@ -26,6 +26,7 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, SecondaryWeapon);
 	DOREPLIFETIME(UWeaponSystem, MeleeWeapon);
 	DOREPLIFETIME(UWeaponSystem, Bomb);
+	DOREPLIFETIME(UWeaponSystem, DefuseDevice);
 	DOREPLIFETIME(UWeaponSystem, CharacterPlayer);
 	DOREPLIFETIME(UWeaponSystem, bShootingEnabled);
 	DOREPLIFETIME(UWeaponSystem, bIsPlantingOrDefusing);
@@ -46,7 +47,7 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &UWeaponSystem::Server_EquipPrimary);
 		PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &UWeaponSystem::Server_EquipSecondary);
-		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UWeaponSystem::Server_EquipBomb);
+		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UWeaponSystem::Server_EquipBombOrDefuser);
 		PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &UWeaponSystem::Server_EquipMelee);
 	
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartPrimaryFire);
@@ -65,6 +66,7 @@ void UWeaponSystem::Server_SpawnStartWeapons_Implementation()
 {
 	if(MeleeWeaponClass && !MeleeWeapon) GetWorld()->SpawnActor<AWeaponBase>(MeleeWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
 	if(PistolWeaponClass && !SecondaryWeapon) GetWorld()->SpawnActor<AWeaponBase>(PistolWeaponClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
+	if(DefuseDeviceClass && !DefuseDevice) GetWorld()->SpawnActor<AWeaponBase>(DefuseDeviceClass, CharacterPlayer->GetActorTransform(), FActorSpawnParameters());
 
 	if(CurrentWeapon && CurrentWeapon == PrimaryWeapon) return;
 	
@@ -158,6 +160,10 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 	{
 		Bomb = Weapon;
 	}
+	else if(Weapon->WeaponInfo.WeaponType == EWeaponType::Defuser && DefuseDevice == nullptr)
+	{
+		DefuseDevice = Weapon;
+	}
 	else if(Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr)
 	{
 		MeleeWeapon = Weapon;
@@ -190,6 +196,10 @@ void UWeaponSystem::Server_DropWeapon_Implementation()
 	else if(CurrentWeapon->WeaponInfo.WeaponType == EWeaponType::Bomb)
 	{
 		Bomb = nullptr;
+	}
+	else if(CurrentWeapon->WeaponInfo.WeaponType == EWeaponType::Defuser)
+	{
+		DefuseDevice = nullptr;
 	}
 
 	Multicast_DropWeaponVisualsTP(CurrentWeapon);
@@ -332,8 +342,9 @@ bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 	bool bCanTakeWeaponP = Weapon->WeaponInfo.WeaponType == Primary && PrimaryWeapon == nullptr;
 	bool bCanTakeWeaponS = Weapon->WeaponInfo.WeaponType == Secondary && SecondaryWeapon == nullptr;
 	bool bCanTakeWeaponB = Weapon->WeaponInfo.WeaponType == EWeaponType::Bomb && Bomb == nullptr;
+	bool bCanTakeWeaponD = Weapon->WeaponInfo.WeaponType == EWeaponType::Defuser && DefuseDevice == nullptr;
 	bool bCanTakeWeaponM = Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr;
-	return bCanTakeWeaponP || bCanTakeWeaponS || bCanTakeWeaponB || bCanTakeWeaponM;
+	return bCanTakeWeaponP || bCanTakeWeaponS || bCanTakeWeaponB || bCanTakeWeaponM || bCanTakeWeaponD;
 }
 
 void UWeaponSystem::Server_EquipPrimary_Implementation()
@@ -352,6 +363,13 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 {
 	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon || bIsPlantingOrDefusing) return;
 	EquipWeapon(MeleeWeapon);
+}
+
+void UWeaponSystem::Server_EquipBombOrDefuser_Implementation()
+{
+	if(CurrentWeapon == Bomb || CurrentWeapon == DefuseDevice || bIsPlantingOrDefusing) return;
+	if(Bomb) EquipWeapon(Bomb);
+	else if(DefuseDevice) EquipWeapon(DefuseDevice);
 }
 
 void UWeaponSystem::Server_EquipBomb_Implementation()

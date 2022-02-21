@@ -59,6 +59,9 @@ protected:
 	void Server_EquipMelee();
 
 	UFUNCTION(Server, Reliable)
+	void Server_EquipBombOrDefuser();
+	
+	UFUNCTION(Server, Reliable)
 	void Server_EquipBomb();
 
 	UFUNCTION(Server, Reliable)
@@ -139,6 +142,9 @@ protected:
 	UPROPERTY(Replicated)
 	AWeaponBase* Bomb;
 
+	UPROPERTY(Replicated)
+	AWeaponBase* DefuseDevice;
+
 	UPROPERTY(EditAnywhere)
 	float WeaponPickupDistance;
 
@@ -147,6 +153,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> PistolWeaponClass;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AWeaponBase> DefuseDeviceClass;
 
 	UPROPERTY(Replicated)
 	bool bShootingEnabled;
