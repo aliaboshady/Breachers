@@ -15,6 +15,7 @@ public:
 	FORCEINLINE bool GetIsBeingDefused(){return bIsBeginDefused;}
 	FORCEINLINE ERoundState GetBombState(){return BombState;}
 	void OnStartPlant(int32 PlantTime);
+	void OnStartDefuse();
 	void SetBombState(ERoundState NewBombState);
 	void OnStopPlant();
 	void OnPlanted();

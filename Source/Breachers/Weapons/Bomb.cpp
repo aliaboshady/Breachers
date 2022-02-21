@@ -75,6 +75,11 @@ void ABomb::OnPlanted()
 	SetBombState(BombPlanted);
 }
 
+void ABomb::OnStartDefuse()
+{
+	NetMulticast_PlayBombSound(WeaponInfo.WeaponEffects.ImpactSound);
+}
+
 void ABomb::OnStartPlant(int32 PlantTime)
 {
 	NetMulticast_PlayBombSound(WeaponInfo.WeaponEffects.MuzzleFireSound);

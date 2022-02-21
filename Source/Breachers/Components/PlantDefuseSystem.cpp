@@ -83,6 +83,7 @@ void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 {
 	if(!Bomb || Bomb->GetIsBeingDefused() || Bomb->GetBombState() != BombPlanted || !IsStraightLineToBomb()) return;
 	CharacterPlayer->WeaponSystem->EquipDefuser();
+	Bomb->OnStartDefuse();
 	Multicast_SetIsDefusing(true);
 	Multicast_StartPlantDefuseEffects();
 	Bomb->SetIsBeingDefused(true);
