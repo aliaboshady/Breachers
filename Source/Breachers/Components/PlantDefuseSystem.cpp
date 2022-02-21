@@ -91,18 +91,18 @@ void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
 {
 	if(bIsDefusing || bIsPlanting) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
+	Multicast_StopPlantDefuseEffects();
 	Multicast_SetIsDefusing(false);
 	Multicast_SetIsPlanting(false);
 	if(Bomb) Bomb->SetIsBeingDefused(false);
-	Multicast_StopPlantDefuseEffects();
 	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseTimerHandle);
 }
 
 void UPlantDefuseSystem::Server_Plant_Implementation()
 {
 	if(!Bomb || !CharacterPlayer) return;
-	Multicast_SetIsPlanting(false);
 	Multicast_StopPlantDefuseEffects();
+	Multicast_SetIsPlanting(false);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->PlantBomb(Bomb, CharacterPlayer);

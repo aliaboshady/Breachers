@@ -97,8 +97,7 @@ void ABomb::Multicast_SetAimOffsetToPlanting_Implementation()
 
 void ABomb::Multicast_SetAimOffsetToNormal_Implementation()
 {
-	UAimOffsetBlendSpace1D* NormalAimOffset = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
-	if(NormalAimOffset) NormalAimOffset = NormalBlendSpace_TP;
+	if(NormalBlendSpace_TP) WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP = NormalBlendSpace_TP;
 }
 
 void ABomb::SetBombState(ERoundState NewBombState)
