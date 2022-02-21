@@ -28,6 +28,8 @@ public:
 	FORCEINLINE bool HasBomb(){return Bomb ? true : false;}
 	void SetIsPlantingOrDefusing(bool bPlantingOrDefusing);
 	void DropBomb();
+	void EquipPreviousWeapon();
+	void EquipDefuser();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
@@ -59,7 +61,7 @@ protected:
 	void Server_EquipMelee();
 
 	UFUNCTION(Server, Reliable)
-	void Server_EquipBombOrDefuser();
+	void Server_EquipDefuser();
 	
 	UFUNCTION(Server, Reliable)
 	void Server_EquipBomb();

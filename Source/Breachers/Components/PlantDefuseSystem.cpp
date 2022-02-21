@@ -81,6 +81,8 @@ void UPlantDefuseSystem::StartPlant(int32 PlantTime)
 void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 {
 	if(!Bomb || Bomb->GetIsBeingDefused() || !IsStraightLineToBomb()) return;
+	CharacterPlayer->WeaponSystem->EquipDefuser();
+	Multicast_SetIsDefusing(true);
 	Multicast_StartPlantDefuseEffects();
 	Bomb->SetIsBeingDefused(true);
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Defuse, 1, false, DefuseTime);
@@ -88,6 +90,8 @@ void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 
 void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
 {
+	if(bIsDefusing) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
+	Multicast_SetIsDefusing(false);
 	if(Bomb) Bomb->SetIsBeingDefused(false);
 	Multicast_StopPlantDefuseEffects();
 	Multicast_SetIsPlanting(false);
@@ -107,7 +111,9 @@ void UPlantDefuseSystem::Server_Plant_Implementation()
 
 void UPlantDefuseSystem::Server_Defuse_Implementation()
 {
+	if(bIsDefusing) CharacterPlayer->WeaponSystem->EquipPreviousWeapon();
 	Bomb->SetIsBeingDefused(false);
+	Multicast_SetIsDefusing(false);
 	SetPlayerConstraints(false);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
@@ -204,6 +210,11 @@ void UPlantDefuseSystem::SetPlayerConstraints(bool bPlantingOrDefusing)
 void UPlantDefuseSystem::Multicast_SetIsPlanting_Implementation(bool bPlanting)
 {
 	bIsPlanting = bPlanting;
+}
+
+void UPlantDefuseSystem::Multicast_SetIsDefusing_Implementation(bool bDefusing)
+{
+	bIsDefusing = bDefusing;
 }
 
 void UPlantDefuseSystem::Multicast_StartPlantDefuseEffects_Implementation(int32 PlantTime)

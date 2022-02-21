@@ -47,7 +47,7 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 	{
 		PlayerInputComponent->BindAction("EquipPrimary", IE_Pressed, this, &UWeaponSystem::Server_EquipPrimary);
 		PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &UWeaponSystem::Server_EquipSecondary);
-		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UWeaponSystem::Server_EquipBombOrDefuser);
+		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UWeaponSystem::Server_EquipBomb);
 		PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &UWeaponSystem::Server_EquipMelee);
 	
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartPrimaryFire);
@@ -320,6 +320,10 @@ void UWeaponSystem::EquipWeapon(AWeaponBase* Weapon)
 	Server_EquipWeapon(Weapon);
 }
 
+void UWeaponSystem::EquipPreviousWeapon()
+{
+	Server_EquipPreviousWeapon();
+}
 void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
 {
 	if(PreviousWeapon || bIsPlantingOrDefusing) EquipWeapon(PreviousWeapon);
@@ -365,11 +369,14 @@ void UWeaponSystem::Server_EquipMelee_Implementation()
 	EquipWeapon(MeleeWeapon);
 }
 
-void UWeaponSystem::Server_EquipBombOrDefuser_Implementation()
+void UWeaponSystem::EquipDefuser()
 {
-	if(CurrentWeapon == Bomb || CurrentWeapon == DefuseDevice || bIsPlantingOrDefusing) return;
-	if(Bomb) EquipWeapon(Bomb);
-	else if(DefuseDevice) EquipWeapon(DefuseDevice);
+	Server_EquipDefuser();
+}
+void UWeaponSystem::Server_EquipDefuser_Implementation()
+{
+	if(!DefuseDevice || CurrentWeapon == DefuseDevice || bIsPlantingOrDefusing) return;
+	EquipWeapon(DefuseDevice);
 }
 
 void UWeaponSystem::Server_EquipBomb_Implementation()

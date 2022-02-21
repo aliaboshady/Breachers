@@ -74,6 +74,9 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetIsPlanting(bool bPlanting);
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetIsDefusing(bool bDefusing);
 
 	UPROPERTY(Replicated)
 	ACharacterBase* CharacterPlayer;
