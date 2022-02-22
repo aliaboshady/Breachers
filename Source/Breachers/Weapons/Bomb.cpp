@@ -94,6 +94,7 @@ void ABomb::OnExploded()
 	Server_ForceEndTick();
 	Multicast_ExplosionEffects();
 	Server_ExplosionDamage();
+	Destroy();
 }
 
 void ABomb::OnStartDefuse()
