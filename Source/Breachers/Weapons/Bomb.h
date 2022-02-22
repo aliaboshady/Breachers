@@ -36,6 +36,8 @@ public:
 	void SetBombState(ERoundState NewBombState);
 	void OnStopPlant();
 	void OnPlanted();
+	void OnDefused();
+	void OnExploded();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -76,6 +78,9 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void Server_EndTickSegment();
+
+	UFUNCTION(Server, Reliable)
+	void Server_ForceEndTick();
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayTickSound();

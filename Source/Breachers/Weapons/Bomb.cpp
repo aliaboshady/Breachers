@@ -79,6 +79,16 @@ void ABomb::OnPlanted()
 	Server_StartTickSegment();
 }
 
+void ABomb::OnDefused()
+{
+	Server_ForceEndTick();
+}
+
+void ABomb::OnExploded()
+{
+	Server_ForceEndTick();
+}
+
 void ABomb::OnStartDefuse()
 {
 	NetMulticast_PlayBombSound(WeaponInfo.WeaponEffects.ImpactSound);
@@ -176,7 +186,11 @@ void ABomb::Server_EndTickSegment_Implementation()
 {
 	GetWorldTimerManager().ClearTimer(TickSegmentTimerHandle);
 	Multicast_IncrementTickSegmentIndex();
-	if(TickSegmentIndex >= BombTickingSegments.Num()) return;
+	if(TickSegmentIndex >= BombTickingSegments.Num())
+	{
+		GetWorldTimerManager().ClearTimer(StopTickTimerHandle);
+		return;
+	}
 	Server_StartTickSegment();
 }
 
@@ -189,4 +203,10 @@ void ABomb::Multicast_PlayTickSound_Implementation()
 void ABomb::Multicast_IncrementTickSegmentIndex_Implementation()
 {
 	TickSegmentIndex++;
+}
+
+void ABomb::Server_ForceEndTick_Implementation()
+{
+	GetWorldTimerManager().ClearTimer(TickSegmentTimerHandle);
+	GetWorldTimerManager().ClearTimer(StopTickTimerHandle);
 }
