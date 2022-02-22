@@ -6,6 +6,7 @@
 #include "Breachers/GameModes/BreachersGameModeBase.h"
 #include "Breachers/GameModes/DeathMatchGameMode.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/DecalComponent.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -431,6 +432,8 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	if(ADeathMatchGameMode* DGM = Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode())) Destroy();
 	
 	PreviousOwner = DropperCharacter;
+	PreviousOwner->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	PreviousOwner->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	SetOwner(nullptr);
 	SetInstigator(nullptr);
 	
