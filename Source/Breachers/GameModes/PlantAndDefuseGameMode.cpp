@@ -327,6 +327,7 @@ void APlantAndDefuseGameMode::OnBombExploded()
 void APlantAndDefuseGameMode::PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer)
 {
 	if(!Bomb || !CharacterPlayer) return;
+	Bomb->SetToNotBePickedUp();
 	CharacterPlayer->WeaponSystem->DropWeapon();
 	FTransform PlantTransform = CharacterPlayer->GetMesh()->GetComponentTransform();
 	PlantTransform.SetRotation(FRotator(PlantTransform.Rotator().Pitch, PlantTransform.Rotator().Yaw - 90, PlantTransform.Rotator().Roll).Quaternion());

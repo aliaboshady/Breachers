@@ -47,6 +47,7 @@ AWeaponBase::AWeaponBase()
 	bIsFiring = false;
 	bIsReloading = false;
 	bIsEquipping = false;
+	bCanBePicked = true;
 	RecoilTimePerShot = 0;
 }
 
@@ -90,12 +91,13 @@ void AWeaponBase::AddWeaponTag()
 	else if(WeaponInfo.WeaponType == Secondary) Tags.Add(TAG_Secondary);
 	else if(WeaponInfo.WeaponType == Melee) Tags.Add(TAG_Melee);
 	else if(WeaponInfo.WeaponType == Bomb) Tags.Add(TAG_Bomb);
+	else if(WeaponInfo.WeaponType == Defuser) Tags.Add(TAG_Defuser);
 }
 
 void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(!HasAuthority()) return;
+	if(!HasAuthority() || !bCanBePicked) return;
 	
 	if(OtherActor->ActorHasTag(TAG_Player))
 	{
@@ -464,6 +466,16 @@ void AWeaponBase::Multicast_OnDropEnableOverlap_Implementation()
 	PreviousOwner = nullptr;
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+}
+
+void AWeaponBase::SetToNotBePickedUp()
+{
+	Multicast_SetToNotBePickedUp();
+}
+
+void AWeaponBase::Multicast_SetToNotBePickedUp_Implementation()
+{
+	bCanBePicked = false;
 }
 
 void AWeaponBase::OnEquip()

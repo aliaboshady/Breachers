@@ -14,6 +14,7 @@
 #define TAG_Secondary "Secondary"
 #define TAG_Melee "Melee"
 #define TAG_Bomb "Bomb"
+#define TAG_Defuser "Defuser"
 
 class ABulletTracer;
 class ACharacterBase;
@@ -38,6 +39,7 @@ public:
 	virtual void OnUnquip();
 	void OnCancelEquip();
 	virtual void OnRestartRound();
+	void SetToNotBePickedUp();
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
 
@@ -79,6 +81,9 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnTaken();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetToNotBePickedUp();
 
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnBulletTracer(FHitResult OutHit);
@@ -166,6 +171,7 @@ protected:
 	bool bIsFiring;
 	bool bIsReloading;
 	bool bIsEquipping;
+	bool bCanBePicked;
 
 	float RecoilTimePerShot;
 };
