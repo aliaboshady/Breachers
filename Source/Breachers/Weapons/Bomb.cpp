@@ -2,6 +2,7 @@
 
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/PlantDefuseSystem.h"
+#include "Breachers/GameModes/PlantAndDefuseGameMode.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -15,6 +16,7 @@ ABomb::ABomb()
 
 	bIsBeginDefused = false;
 	BombState = BombUnplanted;
+	TickSegmentIndex = 0;
 }
 
 void ABomb::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -30,6 +32,7 @@ void ABomb::BeginPlay()
 	DefuseArea->OnComponentBeginOverlap.AddDynamic(this, &ABomb::OnPlayerEnterDefuseArea);
 	DefuseArea->OnComponentEndOverlap.AddDynamic(this, &ABomb::OnPlayerExitDefuseArea);
 	NormalBlendSpace_TP = WeaponInfo.WeaponAnimations.BlendSpace_ArmsTP;
+	Server_SetTickingSegments();
 }
 
 void ABomb::OnPlayerEnterDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -73,6 +76,7 @@ void ABomb::OnPlanted()
 		SphereComponent->SetCollisionProfileName(COLLISION_NoCollision, false);
 	}
 	SetBombState(BombPlanted);
+	Server_StartTickSegment();
 }
 
 void ABomb::OnStartDefuse()
@@ -136,4 +140,53 @@ void ABomb::PlantAnimation(int32 PlantTime)
 void ABomb::NetMulticast_PlayBombSound_Implementation(USoundCue* BombSound)
 {
 	if(BombSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), BombSound, GetActorLocation(), GetActorRotation());
+}
+
+void ABomb::Server_SetTickingSegments_Implementation()
+{
+	int32 DetonateTime = 0;
+	int32 TotalSegments = 0;
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		DetonateTime = PDGM->GetDetonateTimeInSeconds();
+	}
+
+	for (FBombTickingSegments Segment : BombTickingSegments)
+	{
+		TotalSegments += Segment.SegmentSize;
+	}
+
+	for (int i = 0; i < BombTickingSegments.Num(); i++)
+	{
+		float SegmentSizeInSeconds = (float(BombTickingSegments[i].SegmentSize) / float(TotalSegments)) * DetonateTime;
+		if(i == 0) SegmentSizeInSeconds--;
+		BombTickingSegments[i].SegmentSizeInSeconds = SegmentSizeInSeconds;
+	}
+}
+
+void ABomb::Server_StartTickSegment_Implementation()
+{
+	float Rate = 1 / float(BombTickingSegments[TickSegmentIndex].BeatsPerSecond);
+	int32 SegmentSize = BombTickingSegments[TickSegmentIndex].SegmentSizeInSeconds;
+	GetWorldTimerManager().SetTimer(TickSegmentTimerHandle, this, &ABomb::Multicast_PlayTickSound, Rate, true);
+	GetWorldTimerManager().SetTimer(StopTickTimerHandle, this, &ABomb::Server_EndTickSegment, 1, false, SegmentSize);
+}
+
+void ABomb::Server_EndTickSegment_Implementation()
+{
+	GetWorldTimerManager().ClearTimer(TickSegmentTimerHandle);
+	Multicast_IncrementTickSegmentIndex();
+	if(TickSegmentIndex >= BombTickingSegments.Num()) return;
+	Server_StartTickSegment();
+}
+
+void ABomb::Multicast_PlayTickSound_Implementation()
+{
+	float Volume = BombTickingSegments[TickSegmentIndex].VolumeMultiplier;
+	if(BombTickSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), BombTickSound, GetActorLocation(), GetActorRotation(), Volume);
+}
+
+void ABomb::Multicast_IncrementTickSegmentIndex_Implementation()
+{
+	TickSegmentIndex++;
 }

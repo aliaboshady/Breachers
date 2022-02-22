@@ -4,6 +4,23 @@
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Bomb.generated.h"
 
+USTRUCT()
+struct FBombTickingSegments
+{
+	GENERATED_BODY()
+
+	int32 SegmentSizeInSeconds;
+	
+	UPROPERTY(EditAnywhere)
+	int32 SegmentSize = 1;
+
+	UPROPERTY(EditAnywhere)
+	int32 BeatsPerSecond = 1;
+
+	UPROPERTY(EditAnywhere)
+	float VolumeMultiplier = 1;
+};
+
 UCLASS()
 class BREACHERS_API ABomb : public AWeaponBase
 {
@@ -33,6 +50,9 @@ protected:
 	UFUNCTION()
 	void PlantAnimation(int32 PlantTime);
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetTickingSegments();
+
 	UFUNCTION(NetMulticast, Reliable)
 	void NetMulticast_PlayBombSound(USoundCue* BombSound);
 	
@@ -50,10 +70,25 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetBombState(ERoundState NewBombState);
+
+	UFUNCTION(Server, Reliable)
+	void Server_StartTickSegment();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EndTickSegment();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayTickSound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_IncrementTickSegmentIndex();
 	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* DefuseArea;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* BombTickSound;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UAimOffsetBlendSpace1D* PlantBlendSpace_TP;
 
@@ -66,5 +101,11 @@ protected:
 	UPROPERTY(Replicated)
 	TEnumAsByte<ERoundState> BombState;
 
+	UPROPERTY(EditAnywhere)
+	TArray<FBombTickingSegments> BombTickingSegments;
+
 	FTimerHandle PlantOrDefuseAnimationTimerHandle;
+	FTimerHandle TickSegmentTimerHandle;
+	FTimerHandle StopTickTimerHandle;
+	int32 TickSegmentIndex;
 };
