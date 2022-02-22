@@ -23,6 +23,8 @@ void UHealthSystem::BeginPlay()
 	if(CharacterPlayer && CharacterPlayer->HasAuthority())
 	{
 		CharacterPlayer->OnTakePointDamage.AddDynamic(this, &UHealthSystem::OnTakePointDamage);
+		CharacterPlayer->OnTakeRadialDamage.AddDynamic(this, &UHealthSystem::OnTakeRadialDamage);
+		CharacterPlayer->OnTakeAnyDamage.AddDynamic(this, &UHealthSystem::OnTakeAnyDamage);
 	}
 
 	CurrentHealth = MaxHealth;
@@ -54,17 +56,31 @@ void UHealthSystem::OnTakePointDamage(AActor* DamagedActor, float Damage, AContr
                                       FVector HitLocation, UPrimitiveComponent* FHitComponent, FName BoneName, FVector ShotFromDirection,
                                       const UDamageType* DamageType, AActor* DamageCauser)
 {
+	int32 DamageDealt = static_cast<int32>(Damage);
+	if(DamageDealt > 0) Multicast_ShowBlood(HitLocation);
+	if(CurrentHealth - DamageDealt <= 0) CharacterPlayer->PushOnDeath(DamageCauser, CharacterPlayer->GetActorLocation() - ShotFromDirection);
+}
+
+inline void UHealthSystem::OnTakeRadialDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	FVector Origin, FHitResult HitInfo, AController* InstigatedBy, AActor* DamageCauser)
+{
+	int32 DamageDealt = static_cast<int32>(Damage);
+	if(DamageDealt > 0) Multicast_ShowBlood(CharacterPlayer->GetActorLocation());
+	if(CurrentHealth - DamageDealt <= 0) CharacterPlayer->PushOnDeath(DamageCauser, CharacterPlayer->GetActorLocation() - Origin);
+}
+
+inline void UHealthSystem::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	AController* InstigatedBy, AActor* DamageCauser)
+{
 	if(!bFriendlyFireOn && InstigatedBy->GetCharacter()->ActorHasTag(OwnerTeamTag)) return;
 	
 	int32 DamageDealt = static_cast<int32>(Damage);
-	if(DamageDealt > 0) Multicast_ShowBlood(HitLocation);
 	CurrentHealth = FMath::Clamp(CurrentHealth - DamageDealt, 0, MaxHealth);
 	if(CurrentHealth <= 0 && !bIsDead)
 	{
 		bIsDead = true;
 		Server_KillPlayer(InstigatedBy, DamageCauser);
 		RewardKiller(InstigatedBy, DamageCauser);
-		CharacterPlayer->PushOnDeath(DamageCauser, CharacterPlayer->GetActorLocation() - ShotFromDirection);
 	}
 }
 
