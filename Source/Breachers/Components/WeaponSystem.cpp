@@ -337,6 +337,7 @@ void UWeaponSystem::UnequipWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::EquipStartUpWeapons()
 {
+	if(DefuseDevice)EquipWeapon(DefuseDevice);
 	if(MeleeWeapon)EquipWeapon(MeleeWeapon);
 	if(SecondaryWeapon) EquipWeapon(SecondaryWeapon);
 }
