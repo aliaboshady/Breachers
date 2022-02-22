@@ -116,6 +116,12 @@ protected:
 	UPROPERTY(EditAnywhere)
 	USoundCue* BombDefusedSound;
 
+	UPROPERTY(EditAnywhere)
+	USoundCue* AttackersWinAnnouncement;
+	
+	UPROPERTY(EditAnywhere)
+	USoundCue* DefendersWinAnnouncement;
+
 	UPROPERTY(Replicated)
 	TEnumAsByte<EPhase> CurrentGamePhase;
 

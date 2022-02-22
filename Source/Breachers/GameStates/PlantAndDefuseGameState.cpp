@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "Sound/SoundCue.h"
 
 APlantAndDefuseGameState::APlantAndDefuseGameState()
 {
@@ -160,6 +161,7 @@ void APlantAndDefuseGameState::EndOfMainPhase()
 	if(TimeRanOutBothTeamsAlive())
 	{
 		Server_SetWinnerTeam(false);
+		NetMulticast_PlaySound(DefendersWinAnnouncement);
 	}
 }
 
@@ -199,6 +201,13 @@ void APlantAndDefuseGameState::OnDefuseBomb()
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 	NetMulticast_PlaySound(BombDefusedSound);
+
+	float BombDefusedSoundDuration = 0;
+	if(BombDefusedSound) BombDefusedSoundDuration = BombDefusedSound->GetDuration();
+	FTimerHandle AnnouncementHandle;
+	FTimerDelegate AnnouncementDelegate;
+	AnnouncementDelegate.BindUFunction(this, FName(TEXT("NetMulticast_PlaySound")), DefendersWinAnnouncement);
+	GetWorldTimerManager().SetTimer(AnnouncementHandle, AnnouncementDelegate, 1, false, BombDefusedSoundDuration);
 }
 
 void APlantAndDefuseGameState::OnBombExploded()
@@ -207,6 +216,7 @@ void APlantAndDefuseGameState::OnBombExploded()
 	Server_SetWinnerTeam(true);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
+	NetMulticast_PlaySound(AttackersWinAnnouncement);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
 		PDGM->OnBombExploded();
@@ -281,6 +291,8 @@ void APlantAndDefuseGameState::OnFullTeamKilled(bool bAttackersWon)
 	Server_SetWinnerTeam(bAttackersWon);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
+	if(bAttackersWin) NetMulticast_PlaySound(AttackersWinAnnouncement);
+	else NetMulticast_PlaySound(DefendersWinAnnouncement);
 }
 
 void APlantAndDefuseGameState::Multicast_IncreaseAttackersScore_Implementation()
