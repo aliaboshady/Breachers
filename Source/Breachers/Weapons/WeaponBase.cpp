@@ -97,7 +97,7 @@ void AWeaponBase::AddWeaponTag()
 void AWeaponBase::OnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(!HasAuthority() || !bCanBePicked) return;
+	if(!HasAuthority() || !bCanBePicked || GetOwner()) return;
 	
 	if(OtherActor->ActorHasTag(TAG_Player))
 	{
