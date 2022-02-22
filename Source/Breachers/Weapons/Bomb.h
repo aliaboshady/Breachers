@@ -35,7 +35,7 @@ public:
 	void OnStartDefuse();
 	void SetBombState(ERoundState NewBombState);
 	void OnStopPlant();
-	void OnPlanted();
+	void OnPlanted(ACharacterBase* PlanterCharacter);
 	void OnDefused();
 	void OnExploded();
 	
@@ -88,12 +88,24 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_IncrementTickSegmentIndex();
 
+	UFUNCTION(Server, Reliable)
+	void Server_ExplosionDamage();
+	
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ExplosionEffects();
 	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* DefuseArea;
+	
+	UPROPERTY(Replicated)
+	ACharacterBase* Planter;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DamageInnerRadius;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DamageOuterRadius;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ExplosionSize;
 

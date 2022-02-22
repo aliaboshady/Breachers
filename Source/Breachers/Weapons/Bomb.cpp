@@ -28,6 +28,7 @@ void ABomb::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABomb, bIsBeginDefused);
 	DOREPLIFETIME(ABomb, BombState);
+	DOREPLIFETIME(ABomb, Planter);
 }
 
 void ABomb::BeginPlay()
@@ -66,8 +67,9 @@ void ABomb::Multicast_SetIsBeingDefused_Implementation(bool bIsDefusing)
 	bIsBeginDefused = bIsDefusing;
 }
 
-void ABomb::OnPlanted()
+void ABomb::OnPlanted(ACharacterBase* PlanterCharacter)
 {
+	Planter = PlanterCharacter;
 	if(Mesh_TP)
 	{
 		Mesh_TP->SetEnableGravity(false);
@@ -92,6 +94,7 @@ void ABomb::OnExploded()
 {
 	Server_ForceEndTick();
 	Multicast_ExplosionEffects();
+	Server_ExplosionDamage();
 }
 
 void ABomb::OnStartDefuse()
@@ -226,4 +229,13 @@ void ABomb::Multicast_ExplosionEffects_Implementation()
 	}
 
 	if(ExplosionSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(), GetActorRotation(), ExplosionVolume);
+}
+
+void ABomb::Server_ExplosionDamage_Implementation()
+{
+	TArray<AActor*> ActorsToIgnore;
+	UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), WeaponInfo.DamageInfo.HeadDamage, 1,
+		GetActorLocation(), DamageInnerRadius, DamageOuterRadius, 1, UDamageType::StaticClass(), ActorsToIgnore,
+		this, Planter->GetController()
+	);
 }
