@@ -437,7 +437,7 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	Mesh_TP->SetEnableGravity(true);
 	Mesh_TP->SetSimulatePhysics(true);
 	Mesh_TP->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	ABreachersPlayerController* DropperCharacterPC = DropperCharacter->GetBreacherPC();
 	FVector ThrowDirection;
@@ -445,7 +445,7 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	else ThrowDirection = DropperCharacter->GetCameraDirection();
 	
 	const FVector Force = ThrowDirection * DropperCharacter->WeaponSystem->WeaponThrowForce;
-	Mesh_TP->AddImpulse(Force);
+	Mesh_TP->AddImpulse(Force, NAME_None, true);
 	
 	FTimerHandle OverlapHandle;
 	GetWorldTimerManager().SetTimer(OverlapHandle, this, &AWeaponBase::Multicast_OnDropEnableOverlap, 1, false, TIME_PickWeaponAfterDrop);
@@ -459,8 +459,8 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 void AWeaponBase::Multicast_OnDropEnableOverlap_Implementation()
 {
 	PreviousOwner = nullptr;
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void AWeaponBase::OnEquip()
