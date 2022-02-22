@@ -87,9 +87,21 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_IncrementTickSegmentIndex();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ExplosionEffects();
 	
 	UPROPERTY(VisibleAnywhere)
 	USphereComponent* DefuseArea;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ExplosionSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ExplosionVolume;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* ExplosionSound;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USoundCue* BombTickSound;

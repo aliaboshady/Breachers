@@ -301,6 +301,16 @@ void APlantAndDefuseGameMode::DefuseBomb()
 	}
 }
 
+void APlantAndDefuseGameMode::OnBombExploded()
+{
+	if(!BombClass) return;
+
+	if(ABomb* Bomb = Cast<ABomb>(UGameplayStatics::GetActorOfClass(GetWorld(), BombClass)))
+	{
+		Bomb->OnExploded();
+	}
+}
+
 void APlantAndDefuseGameMode::PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer)
 {
 	if(!Bomb || !CharacterPlayer) return;

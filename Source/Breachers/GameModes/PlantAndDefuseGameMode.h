@@ -27,6 +27,7 @@ public:
 
 	void PlantBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer);
 	void DefuseBomb();
+	void OnBombExploded();
 
 protected:
 	virtual void BeginPlay() override;

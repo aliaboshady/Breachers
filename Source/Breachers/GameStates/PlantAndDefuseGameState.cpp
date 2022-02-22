@@ -207,6 +207,10 @@ void APlantAndDefuseGameState::OnBombExploded()
 	Server_SetWinnerTeam(true);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		PDGM->OnBombExploded();
+	}
 }
 
 void APlantAndDefuseGameState::OnPlayerDied()

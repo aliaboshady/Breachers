@@ -7,6 +7,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "Particles/ParticleSystem.h"
+#include "Particles/ParticleSystemComponent.h"
 
 ABomb::ABomb()
 {
@@ -17,6 +19,8 @@ ABomb::ABomb()
 	bIsBeginDefused = false;
 	BombState = BombUnplanted;
 	TickSegmentIndex = 0;
+	ExplosionSize = 10;
+	ExplosionVolume = 10;
 }
 
 void ABomb::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -87,6 +91,7 @@ void ABomb::OnDefused()
 void ABomb::OnExploded()
 {
 	Server_ForceEndTick();
+	Multicast_ExplosionEffects();
 }
 
 void ABomb::OnStartDefuse()
@@ -169,7 +174,7 @@ void ABomb::Server_SetTickingSegments_Implementation()
 	for (int i = 0; i < BombTickingSegments.Num(); i++)
 	{
 		float SegmentSizeInSeconds = (float(BombTickingSegments[i].SegmentSize) / float(TotalSegments)) * DetonateTime;
-		if(i == 0) SegmentSizeInSeconds--;
+		if(i == 0) SegmentSizeInSeconds = FMath::Clamp(--SegmentSizeInSeconds, 0.0f, 100000.0f);
 		BombTickingSegments[i].SegmentSizeInSeconds = SegmentSizeInSeconds;
 	}
 }
@@ -209,4 +214,16 @@ void ABomb::Server_ForceEndTick_Implementation()
 {
 	GetWorldTimerManager().ClearTimer(TickSegmentTimerHandle);
 	GetWorldTimerManager().ClearTimer(StopTickTimerHandle);
+}
+
+void ABomb::Multicast_ExplosionEffects_Implementation()
+{
+	UParticleSystem* ExplosionEffect = WeaponInfo.WeaponEffects.MuzzleFlashEffect;
+	if(ExplosionEffect)
+	{
+		UParticleSystemComponent* Explosion = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
+		if(Explosion) Explosion->SetWorldScale3D(FVector(ExplosionSize, ExplosionSize, ExplosionSize));
+	}
+
+	if(ExplosionSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(), GetActorRotation(), ExplosionVolume);
 }
