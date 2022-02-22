@@ -19,7 +19,6 @@ ABomb::ABomb()
 	bIsBeginDefused = false;
 	BombState = BombUnplanted;
 	TickSegmentIndex = 0;
-	ExplosionSize = 10;
 	ExplosionVolume = 10;
 }
 
@@ -222,12 +221,7 @@ void ABomb::Server_ForceEndTick_Implementation()
 void ABomb::Multicast_ExplosionEffects_Implementation()
 {
 	UParticleSystem* ExplosionEffect = WeaponInfo.WeaponEffects.MuzzleFlashEffect;
-	if(ExplosionEffect)
-	{
-		UParticleSystemComponent* Explosion = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
-		if(Explosion) Explosion->SetWorldScale3D(FVector(ExplosionSize, ExplosionSize, ExplosionSize));
-	}
-
+	if(ExplosionEffect) UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionEffect, GetActorLocation());
 	if(ExplosionSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation(), GetActorRotation(), ExplosionVolume);
 }
 

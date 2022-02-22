@@ -105,9 +105,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float DamageOuterRadius;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float ExplosionSize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ExplosionVolume;
