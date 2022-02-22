@@ -236,6 +236,6 @@ void ABomb::Server_ExplosionDamage_Implementation()
 	TArray<AActor*> ActorsToIgnore;
 	UGameplayStatics::ApplyRadialDamageWithFalloff(GetWorld(), WeaponInfo.DamageInfo.HeadDamage, 1,
 		GetActorLocation(), DamageInnerRadius, DamageOuterRadius, 1, UDamageType::StaticClass(), ActorsToIgnore,
-		this, Planter->GetController()
+		this, Planter->GetController(), TRACE_BombExplosion
 	);
 }
