@@ -2,6 +2,7 @@
 
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
+#include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/MovementSystem.h"
 #include "Breachers/Components/WeaponSystem.h"
 #include "Breachers/GameInstance/MainGameInstance.h"
@@ -151,24 +152,24 @@ void APlantAndDefuseGameMode::StartEndPhase(bool bAttackersWin)
 	if(bAttackersWin) SetPhaseBanner(AttackersWinBanner);
 	else SetPhaseBanner(DefendersWinBanner);
 }
-void APlantAndDefuseGameMode::EndOfRound()
+void APlantAndDefuseGameMode::EndOfRound(bool bAttackersWon)
 {
-	RestartRound();
+	RestartRound(bAttackersWon);
 }
 
-void APlantAndDefuseGameMode::RestartRound()
+void APlantAndDefuseGameMode::RestartRound(bool bAttackersWon)
 {
 	AttackerSpawnIndex = 0;
 	DefenderSpawnIndex = 0;
 	ShuffleSpawnPoints(AttackerSpawns);
 	ShuffleSpawnPoints(DefenderSpawns);
-	RespawnALlPlayers();
+	RespawnALlPlayers(bAttackersWon);
 	RemoveAllUnpossessedBodies();
 	RemoveAllUnownedWeapons();
 	RestartCountDownTimer();
 }
 
-void APlantAndDefuseGameMode::RespawnALlPlayers()
+void APlantAndDefuseGameMode::RespawnALlPlayers(bool bAttackersWon)
 {
 	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
 	{
@@ -178,8 +179,20 @@ void APlantAndDefuseGameMode::RespawnALlPlayers()
 			{
 				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
 				{
+					
 					ETeam PlayerTeam = BPC->GetPlayerTeam();
 					if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
+
+					if(bAttackersWon)
+					{
+						if(PlayerTeam == Attacker) BPC->MoneySystem->AddToCurrentMoney(WinMoney);
+						else BPC->MoneySystem->AddToCurrentMoney(LoseMoney);
+					}
+					else
+					{
+						if(PlayerTeam == Attacker) BPC->MoneySystem->AddToCurrentMoney(LoseMoney);
+						else BPC->MoneySystem->AddToCurrentMoney(WinMoney);
+					}
 					
 					if(BPS->GetIsDead())
 					{

@@ -182,7 +182,7 @@ void APlantAndDefuseGameState::EndOfRound()
 	Multicast_ChangeCurrentGamePhase(BuyPhase);
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
-		PDGM->EndOfRound();
+		PDGM->EndOfRound(bAttackersWin);
 	}
 }
 

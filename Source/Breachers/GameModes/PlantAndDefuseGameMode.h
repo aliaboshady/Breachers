@@ -14,7 +14,7 @@ class BREACHERS_API APlantAndDefuseGameMode : public ABreachersGameModeBase
 public:
 	APlantAndDefuseGameMode();
 	virtual void OnPlayerDied(ABreachersPlayerController* Controller, ETeam NextTeamRespawn) override;
-	void EndOfRound();
+	void EndOfRound(bool bAttackersWon);
 	FORCEINLINE int32 GetBuyPhaseTimeInSeconds(){return BuyPhaseTimeInSeconds;}
 	FORCEINLINE int32 GetEndPhaseTimeInSeconds(){return EndPhaseTimeInSeconds;}
 	FORCEINLINE int32 GetPlantTimeInSeconds(){return PlantTimeInSeconds;}
@@ -42,8 +42,8 @@ protected:
 	UFUNCTION()
 	void SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer);
 
-	void RestartRound();
-	void RespawnALlPlayers();
+	void RestartRound(bool bAttackersWon);
+	void RespawnALlPlayers(bool bAttackersWon);
 	void RemoveAllUnpossessedBodies();
 	void RemoveAllUnownedWeapons();
 	void RestartCountDownTimer();
@@ -82,6 +82,12 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 RoundsNumber;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 WinMoney;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 LoseMoney;
 
 	int32 AttackerSpawnIndex;
 	int32 DefenderSpawnIndex;
