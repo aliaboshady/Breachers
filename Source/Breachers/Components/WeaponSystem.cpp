@@ -278,18 +278,12 @@ void UWeaponSystem::DestroyAllWeapons()
 void UWeaponSystem::OnRestartRound()
 {
 	Server_CancelReload();
-	if(SecondaryWeapon)
-	{
-		SecondaryWeapon->OnRestartRound();
-		Server_EquipSecondary();
-	}
+	if(PrimaryWeapon) PrimaryWeapon->OnRestartRound();
+	if(SecondaryWeapon) SecondaryWeapon->OnRestartRound();
 	else Server_SpawnStartWeapons();
-	
-	if(PrimaryWeapon)
-	{
-		PrimaryWeapon->OnRestartRound();
-		Server_EquipPrimary();
-	}
+
+	if(SecondaryWeapon) Server_EquipSecondary();
+	if(PrimaryWeapon) Server_EquipPrimary();
 }
 
 void UWeaponSystem::Server_EquipWeapon_Implementation(AWeaponBase* Weapon)
@@ -340,6 +334,7 @@ void UWeaponSystem::EquipStartUpWeapons()
 	if(DefuseDevice)EquipWeapon(DefuseDevice);
 	if(MeleeWeapon)EquipWeapon(MeleeWeapon);
 	if(SecondaryWeapon) EquipWeapon(SecondaryWeapon);
+	if(PrimaryWeapon) EquipWeapon(PrimaryWeapon);
 }
 
 bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
