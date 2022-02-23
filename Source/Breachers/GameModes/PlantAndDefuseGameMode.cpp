@@ -161,6 +161,7 @@ void APlantAndDefuseGameMode::StartEndPhase(bool bAttackersWin)
 	if(bAttackersWin) SetPhaseBanner(AttackersWinBanner);
 	else SetPhaseBanner(DefendersWinBanner);
 	CheckHalfTime();
+	CheckEndOfGame();
 }
 void APlantAndDefuseGameMode::EndOfRound(bool bAttackersWon)
 {

@@ -51,6 +51,7 @@ protected:
 	void BuyPhasePlayerConstrains(bool bIsInBuyPhase);
 	void SetPhaseBanner(EPhaseBanner PhaseBanner);
 	void CheckHalfTime();
+	void CheckEndOfGame();
 	void SwitchTeams(ABreachersPlayerController* BPC, ETeam PlayerTeam);
 	void AddMoneyToPlayer(ETeam PlayerTeam, bool bAttackersWon, ABreachersPlayerController* BPC);
 	void RespawnPlayer(ETeam PlayerTeam, ABreachersPlayerController* BPC, ABreachersPlayerState* BPS, bool bForceRespawn = false);
