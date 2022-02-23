@@ -30,6 +30,7 @@ public:
 	void DropBomb();
 	void EquipPreviousWeapon();
 	void EquipDefuser();
+	AWeaponBase* GetBomb();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;

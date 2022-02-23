@@ -73,7 +73,10 @@ void UPlantDefuseSystem::Server_StartPlantOrDefuse_Implementation()
 void UPlantDefuseSystem::StartPlant(int32 PlantTime)
 {
 	if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
-	if(Bomb) Bomb->OnStartPlant(PlantTime);
+	if(ABomb* CurrentBomb = Cast<ABomb>(CharacterPlayer->WeaponSystem->GetBomb()))
+	{
+		CurrentBomb->OnStartPlant(PlantTime);
+	}
 	Multicast_SetIsPlanting(true);
 	Multicast_StartPlantDefuseEffects();
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Plant, 1, false, PlantTime);

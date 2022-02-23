@@ -374,6 +374,7 @@ void UWeaponSystem::EquipDefuser()
 {
 	Server_EquipDefuser();
 }
+
 void UWeaponSystem::Server_EquipDefuser_Implementation()
 {
 	if(!DefuseDevice || CurrentWeapon == DefuseDevice || bIsPlantingOrDefusing) return;
@@ -507,4 +508,9 @@ void UWeaponSystem::EnableShooting(bool bEnableShooting)
 void UWeaponSystem::SetIsPlantingOrDefusing(bool bPlantingOrDefusing)
 {
 	bIsPlantingOrDefusing = bPlantingOrDefusing;
+}
+
+AWeaponBase* UWeaponSystem::GetBomb()
+{
+	return Bomb;
 }
