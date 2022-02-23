@@ -49,6 +49,7 @@ protected:
 	void DestroyAllParticleSystems();
 	void BuyPhasePlayerConstrains(bool bIsInBuyPhase);
 	void SetPhaseBanner(EPhaseBanner PhaseBanner);
+	bool ReachedHalfTime();
 	
 	UFUNCTION(BlueprintCallable)
 	void SetUnlimitedMoney(bool bIsUnlimitedMoney);
@@ -91,6 +92,8 @@ protected:
 
 	int32 AttackerSpawnIndex;
 	int32 DefenderSpawnIndex;
+
+	bool bShouldSwitch;
 
 	UPROPERTY()
 	TArray<AActor*> BombSpawns;

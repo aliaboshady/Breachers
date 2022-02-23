@@ -25,12 +25,17 @@ APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 	DetonateTimeInSeconds = 30;
 	BuyPhaseTimeInSeconds = 20;
 	EndPhaseTimeInSeconds = 5;
+	bShouldSwitch = false;
 }
 
 void APlantAndDefuseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	GetBombSpawnLocations();
+	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Unlimited money %d"), bUnlimitedMoney));
+	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Unlimited rounds %d"), bUnlimitedRounds));
+	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Round time %d"), RoundTimeInMinutes));
+	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Round count %d"), RoundsNumber));
 }
 
 void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
@@ -153,6 +158,11 @@ void APlantAndDefuseGameMode::StartEndPhase(bool bAttackersWin)
 {
 	if(bAttackersWin) SetPhaseBanner(AttackersWinBanner);
 	else SetPhaseBanner(DefendersWinBanner);
+	if(ReachedHalfTime())
+	{
+		bShouldSwitch = true;
+		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetSwitchNextRound")));
+	}
 }
 void APlantAndDefuseGameMode::EndOfRound(bool bAttackersWon)
 {
@@ -325,6 +335,16 @@ void APlantAndDefuseGameMode::DefuseBomb()
 		if(PDGS->GetCurrentGamePhase() == BuyPhase) return;
 		if(PDGS->GetCurrentRoundState() == BombPlanted) PDGS->OnDefuseBomb();
 	}
+}
+
+bool APlantAndDefuseGameMode::ReachedHalfTime()
+{
+	RoundsNumber = 2; // Remove Later
+	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
+	{
+		if(PDGS->GetTotalPlayedRounds() == RoundsNumber) return true;
+	}
+	return false;
 }
 
 void APlantAndDefuseGameMode::PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer)

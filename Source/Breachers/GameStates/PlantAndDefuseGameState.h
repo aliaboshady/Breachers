@@ -43,6 +43,7 @@ public:
 	void OnDefuseBomb();
 	void OnBombExploded();
 	void ShowTeamsCountUI();
+	int32 GetTotalPlayedRounds();
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

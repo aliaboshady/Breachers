@@ -323,3 +323,8 @@ void APlantAndDefuseGameState::Multicast_SetCanSetWinnerTeam_Implementation(bool
 {
 	bCanSetWinnerTeam = bCanSetWinner;
 }
+
+int32 APlantAndDefuseGameState::GetTotalPlayedRounds()
+{
+	return AttackersScore + DefendersScore;
+}
