@@ -31,6 +31,7 @@ APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 	bUnlimitedRounds = false;
 	bFriendlyFireOn = true;
 	bShouldSwitchTeams = false;
+	bHasSwitchedTeams = false;
 }
 
 void APlantAndDefuseGameMode::BeginPlay()
@@ -354,12 +355,13 @@ void APlantAndDefuseGameMode::DefuseBomb()
 
 void APlantAndDefuseGameMode::CheckHalfTime()
 {
-	if(bUnlimitedRounds) return;
-	
+	if(bUnlimitedRounds || bHasSwitchedTeams) return;
+	RoundsNumber = 2;
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
 		if(PDGS->GetTotalPlayedRounds() != RoundsNumber) return;
 		bShouldSwitchTeams = true;
+		bHasSwitchedTeams = true;
 		
 		for (APlayerState* PlayerState : PDGS->PlayerArray)
 		{
@@ -372,6 +374,14 @@ void APlantAndDefuseGameMode::CheckHalfTime()
 				}
 			}
 		}
+	}
+}
+
+void APlantAndDefuseGameMode::CheckEndOfGame()
+{
+	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
+	{
+		if(PDGS->GetTotalPlayedRounds() == RoundsNumber * 2) EndOfMatch();		
 	}
 }
 

@@ -97,6 +97,7 @@ protected:
 	int32 AttackerSpawnIndex;
 	int32 DefenderSpawnIndex;
 	bool bShouldSwitchTeams;
+	bool bHasSwitchedTeams;
 
 	UPROPERTY()
 	TArray<AActor*> BombSpawns;
