@@ -217,10 +217,6 @@ void APlantAndDefuseGameState::OnBombExploded()
 	Multicast_ChangeCurrentGamePhase(EndPhase);
 	StartEndPhase();
 	NetMulticast_PlaySound(AttackersWinAnnouncement);
-	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
-	{
-		PDGM->OnBombExploded();
-	}
 }
 
 void APlantAndDefuseGameState::OnPlayerDied()
