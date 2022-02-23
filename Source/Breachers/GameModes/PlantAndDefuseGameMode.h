@@ -47,6 +47,7 @@ protected:
 	void RemoveAllUnpossessedBodies();
 	void RemoveAllUnownedWeapons();
 	void RestartCountDownTimer();
+	void DestroyAllParticleSystems();
 	void BuyPhasePlayerConstrains(bool bIsInBuyPhase);
 	void SetPhaseBanner(EPhaseBanner PhaseBanner);
 	

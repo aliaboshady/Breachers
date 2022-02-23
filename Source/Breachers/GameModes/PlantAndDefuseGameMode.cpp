@@ -1,5 +1,4 @@
 #include "PlantAndDefuseGameMode.h"
-
 #include "Breachers/Components/BuyMenu.h"
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MoneySystem.h"
@@ -13,8 +12,11 @@
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "Breachers/Weapons/Bomb.h"
 #include "Breachers/Weapons/WeaponBase.h"
+#include "Components/DecalComponent.h"
+#include "Engine/DecalActor.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 {
@@ -167,6 +169,7 @@ void APlantAndDefuseGameMode::RestartRound(bool bAttackersWon)
 	RemoveAllUnpossessedBodies();
 	RemoveAllUnownedWeapons();
 	RestartCountDownTimer();
+	DestroyAllParticleSystems();
 }
 
 void APlantAndDefuseGameMode::RespawnALlPlayers(bool bAttackersWon)
@@ -243,6 +246,16 @@ void APlantAndDefuseGameMode::RestartCountDownTimer()
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
 		PDGS->StartCountDownTimer();
+	}
+}
+
+void APlantAndDefuseGameMode::DestroyAllParticleSystems()
+{
+	TArray<AActor*> AllParticleSystems;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), UParticleSystemComponent::StaticClass(), AllParticleSystems);
+	for (AActor* ParticleSystem : AllParticleSystems)
+	{
+		ParticleSystem->Destroy();
 	}
 }
 

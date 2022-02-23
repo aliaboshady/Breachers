@@ -100,6 +100,9 @@ struct FWeaponEffect
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float DecalSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DecalLifeSpan;
 };
 
 USTRUCT(BlueprintType)

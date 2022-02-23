@@ -225,6 +225,7 @@ void AWeaponBase::Multicast_SpawnBulletHoleDecal_Implementation(FHitResult OutHi
 		DecalRotation.Roll += 180;
 		DecalRotation.Pitch += 180;
 		UDecalComponent* SpawnedDecal = UGameplayStatics::SpawnDecalAtLocation(GetWorld(), WeaponInfo.WeaponEffects.BulletHoleDecal, FVector(WeaponInfo.WeaponEffects.DecalSize), OutHit.ImpactPoint, DecalRotation);
+		SpawnedDecal->SetLifeSpan(WeaponInfo.WeaponEffects.DecalLifeSpan);
 		SpawnedDecal->SetFadeScreenSize(0.0001);
 	}
 }
