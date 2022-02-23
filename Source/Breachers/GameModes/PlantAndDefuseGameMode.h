@@ -5,6 +5,7 @@
 #include "PlantAndDefuseGameMode.generated.h"
 
 class ABomb;
+class ABreachersPlayerState;
 
 UCLASS()
 class BREACHERS_API APlantAndDefuseGameMode : public ABreachersGameModeBase
@@ -49,7 +50,10 @@ protected:
 	void DestroyAllParticleSystems();
 	void BuyPhasePlayerConstrains(bool bIsInBuyPhase);
 	void SetPhaseBanner(EPhaseBanner PhaseBanner);
-	bool ReachedHalfTime();
+	void CheckHalfTime();
+	void SwitchTeams(ABreachersPlayerController* BPC, ETeam PlayerTeam);
+	void AddMoneyToPlayer(ETeam PlayerTeam, bool bAttackersWon, ABreachersPlayerController* BPC);
+	void RespawnPlayer(ETeam PlayerTeam, ABreachersPlayerController* BPC, ABreachersPlayerState* BPS, bool bForceRespawn = false);
 	
 	UFUNCTION(BlueprintCallable)
 	void SetUnlimitedMoney(bool bIsUnlimitedMoney);
@@ -92,8 +96,7 @@ protected:
 
 	int32 AttackerSpawnIndex;
 	int32 DefenderSpawnIndex;
-
-	bool bShouldSwitch;
+	bool bShouldSwitchTeams;
 
 	UPROPERTY()
 	TArray<AActor*> BombSpawns;

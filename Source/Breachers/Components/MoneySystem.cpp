@@ -36,6 +36,11 @@ void UMoneySystem::AddToCurrentMoney(int32 AddedMoney)
 	Server_AddToCurrentMoney(AddedMoney);
 }
 
+void UMoneySystem::ResetCurrentMoney()
+{
+	CurrentMoney = StartUpMoney;
+}
+
 void UMoneySystem::SetMoney()
 {
 	ABreachersGameModeBase* BreachersGM = Cast<ABreachersGameModeBase>(GetWorld()->GetAuthGameMode());

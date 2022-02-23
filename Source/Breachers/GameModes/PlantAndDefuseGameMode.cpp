@@ -25,7 +25,7 @@ APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 	DetonateTimeInSeconds = 30;
 	BuyPhaseTimeInSeconds = 20;
 	EndPhaseTimeInSeconds = 5;
-	bShouldSwitch = false;
+	bShouldSwitchTeams = false;
 }
 
 void APlantAndDefuseGameMode::BeginPlay()
@@ -158,11 +158,7 @@ void APlantAndDefuseGameMode::StartEndPhase(bool bAttackersWin)
 {
 	if(bAttackersWin) SetPhaseBanner(AttackersWinBanner);
 	else SetPhaseBanner(DefendersWinBanner);
-	if(ReachedHalfTime())
-	{
-		bShouldSwitch = true;
-		UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("SetSwitchNextRound")));
-	}
+	CheckHalfTime();
 }
 void APlantAndDefuseGameMode::EndOfRound(bool bAttackersWon)
 {
@@ -194,34 +190,47 @@ void APlantAndDefuseGameMode::RespawnALlPlayers(bool bAttackersWon)
 				{
 					
 					ETeam PlayerTeam = BPC->GetPlayerTeam();
-					if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
-
-					if(bAttackersWon)
-					{
-						if(PlayerTeam == Attacker) BPC->MoneySystem->AddToCurrentMoney(WinMoney);
-						else BPC->MoneySystem->AddToCurrentMoney(LoseMoney);
-					}
-					else
-					{
-						if(PlayerTeam == Attacker) BPC->MoneySystem->AddToCurrentMoney(LoseMoney);
-						else BPC->MoneySystem->AddToCurrentMoney(WinMoney);
-					}
 					
-					if(BPS->GetIsDead())
-					{
-						if(PlayerTeam == Attacker) RequestAttackerSpawn(BPC);
-						else RequestDefenderSpawn(BPC);
-					}
-					else
-					{
-						if(PlayerTeam == Attacker) RequestAttackerRepositionToSpawn(BPC);
-						else RequestDefenderRepositionToSpawn(BPC);
-
-						if(BPC->CharacterPlayer) BPC->CharacterPlayer->HealthSystem->Reset();
-					}
+					if(!bShouldSwitchTeams) AddMoneyToPlayer(PlayerTeam, bAttackersWon, BPC);
+					else BPC->MoneySystem->ResetCurrentMoney();
+					
+					RespawnPlayer(PlayerTeam, BPC, BPS, bShouldSwitchTeams);
+					
+					if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
 				}
 			}
 		}
+	}
+	bShouldSwitchTeams = false;
+}
+
+void APlantAndDefuseGameMode::RespawnPlayer(ETeam PlayerTeam, ABreachersPlayerController* BPC, ABreachersPlayerState* BPS, bool bForceRespawn)
+{
+	if(BPS->GetIsDead() || bForceRespawn)
+	{
+		if(PlayerTeam == Attacker) RequestAttackerSpawn(BPC);
+		else RequestDefenderSpawn(BPC);
+	}
+	else
+	{
+		if(PlayerTeam == Attacker) RequestAttackerRepositionToSpawn(BPC);
+		else RequestDefenderRepositionToSpawn(BPC);
+
+		if(BPC->CharacterPlayer) BPC->CharacterPlayer->HealthSystem->Reset();
+	}
+}
+
+void APlantAndDefuseGameMode::AddMoneyToPlayer(ETeam PlayerTeam, bool bAttackersWon, ABreachersPlayerController* BPC)
+{
+	if(bAttackersWon)
+	{
+		if(PlayerTeam == Attacker) BPC->MoneySystem->AddToCurrentMoney(WinMoney);
+		else BPC->MoneySystem->AddToCurrentMoney(LoseMoney);
+	}
+	else
+	{
+		if(PlayerTeam == Attacker) BPC->MoneySystem->AddToCurrentMoney(LoseMoney);
+		else BPC->MoneySystem->AddToCurrentMoney(WinMoney);
 	}
 }
 
@@ -337,14 +346,32 @@ void APlantAndDefuseGameMode::DefuseBomb()
 	}
 }
 
-bool APlantAndDefuseGameMode::ReachedHalfTime()
+void APlantAndDefuseGameMode::CheckHalfTime()
 {
 	RoundsNumber = 2; // Remove Later
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
-		if(PDGS->GetTotalPlayedRounds() == RoundsNumber) return true;
+		if(PDGS->GetTotalPlayedRounds() != RoundsNumber) return;
+		bShouldSwitchTeams = true;
+		
+		for (APlayerState* PlayerState : PDGS->PlayerArray)
+		{
+			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
+			{
+				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
+				{
+					ETeam PlayerTeam = BPC->GetPlayerTeam();
+					SwitchTeams(BPC, PlayerTeam);
+				}
+			}
+		}
 	}
-	return false;
+}
+
+void APlantAndDefuseGameMode::SwitchTeams(ABreachersPlayerController* BPC, ETeam PlayerTeam)
+{
+	if(PlayerTeam == Attacker) BPC->Server_ChangeTeam(Defender);
+	else BPC->Server_ChangeTeam(Attacker);
 }
 
 void APlantAndDefuseGameMode::PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlayer)

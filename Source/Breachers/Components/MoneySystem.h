@@ -13,6 +13,7 @@ class BREACHERS_API UMoneySystem : public UActorComponent
 public:	
 	UMoneySystem();
 	void AddToCurrentMoney(int32 AddedMoney);
+	void ResetCurrentMoney();
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE int32 GetCurrentMoney(){return CurrentMoney;}
