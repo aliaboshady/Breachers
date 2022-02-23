@@ -44,6 +44,7 @@ public:
 	void OnBombExploded();
 	void ShowTeamsCountUI();
 	int32 GetTotalPlayedRounds();
+	void SwitchTeamsScores();
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -88,6 +89,9 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_IncreaseDefendersScore();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SwitchTeamsScores();
 
 	UFUNCTION(Server, Reliable)
 	void Server_SetCanSetWinnerTeam(bool bCanSetWinner);

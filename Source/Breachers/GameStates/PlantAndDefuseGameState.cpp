@@ -328,3 +328,16 @@ int32 APlantAndDefuseGameState::GetTotalPlayedRounds()
 {
 	return AttackersScore + DefendersScore;
 }
+
+void APlantAndDefuseGameState::SwitchTeamsScores()
+{
+	Multicast_SwitchTeamsScores();
+}
+
+void APlantAndDefuseGameState::Multicast_SwitchTeamsScores_Implementation()
+{
+	int32 TempAttackerScore = AttackersScore;
+	AttackersScore = DefendersScore;
+	DefendersScore = TempAttackerScore;
+	OnTeamsScoreChange.Broadcast(AttackersScore, DefendersScore);
+}

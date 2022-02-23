@@ -25,6 +25,11 @@ APlantAndDefuseGameMode::APlantAndDefuseGameMode()
 	DetonateTimeInSeconds = 30;
 	BuyPhaseTimeInSeconds = 20;
 	EndPhaseTimeInSeconds = 5;
+	RoundsNumber = 8;
+	WinMoney = 1000;
+	LoseMoney = 500;
+	bUnlimitedRounds = false;
+	bFriendlyFireOn = true;
 	bShouldSwitchTeams = false;
 }
 
@@ -32,10 +37,6 @@ void APlantAndDefuseGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	GetBombSpawnLocations();
-	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Unlimited money %d"), bUnlimitedMoney));
-	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Unlimited rounds %d"), bUnlimitedRounds));
-	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Round time %d"), RoundTimeInMinutes));
-	// UKismetSystemLibrary::PrintString(this, FString::Printf(TEXT("Round count %d"), RoundsNumber));
 }
 
 void APlantAndDefuseGameMode::SpawnPlayerWithSelectedTeam(APlayerController* NewPlayer)
@@ -180,9 +181,9 @@ void APlantAndDefuseGameMode::RestartRound(bool bAttackersWon)
 
 void APlantAndDefuseGameMode::RespawnALlPlayers(bool bAttackersWon)
 {
-	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
+	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
-		for (APlayerState* PlayerState : BGS->PlayerArray)
+		for (APlayerState* PlayerState : PDGS->PlayerArray)
 		{
 			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
 			{
@@ -200,8 +201,13 @@ void APlantAndDefuseGameMode::RespawnALlPlayers(bool bAttackersWon)
 				}
 			}
 		}
+
+		if(bShouldSwitchTeams)
+		{
+			PDGS->SwitchTeamsScores();
+			bShouldSwitchTeams = false;
+		}
 	}
-	bShouldSwitchTeams = false;
 }
 
 void APlantAndDefuseGameMode::RespawnPlayer(ETeam PlayerTeam, ABreachersPlayerController* BPC, ABreachersPlayerState* BPS, bool bForceRespawn)
@@ -348,7 +354,8 @@ void APlantAndDefuseGameMode::DefuseBomb()
 
 void APlantAndDefuseGameMode::CheckHalfTime()
 {
-	RoundsNumber = 2; // Remove Later
+	if(bUnlimitedRounds) return;
+	
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
 		if(PDGS->GetTotalPlayedRounds() != RoundsNumber) return;
