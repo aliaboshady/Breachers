@@ -4,6 +4,7 @@
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "PlantAndDefusePlayerController.generated.h"
 
+class USpectatorSystem;
 class UGamePhaseBanner;
 
 UCLASS()
@@ -12,6 +13,7 @@ class BREACHERS_API APlantAndDefusePlayerController : public ABreachersPlayerCon
 	GENERATED_BODY()
 
 public:
+	APlantAndDefusePlayerController();
 	void SwitchRoundPhaseBanner(EPhaseBanner Phase);
 
 protected:
@@ -32,6 +34,9 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGamePhaseBanner> GamePhaseBannerWidgetClass;
+
+	UPROPERTY(VisibleAnywhere)
+	USpectatorSystem* SpectatorSystem;
 	
 	UPROPERTY()
 	UGamePhaseBanner* GamePhaseBannerWidget;

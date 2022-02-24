@@ -1,7 +1,14 @@
 #include "PlantAndDefusePlayerController.h"
+
+#include "Breachers/Components/SpectatorSystem.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "Breachers/Widgets/Killfeed.h"
+
+APlantAndDefusePlayerController::APlantAndDefusePlayerController()
+{
+	SpectatorSystem = CreateDefaultSubobject<USpectatorSystem>("SpectatorSystem");
+}
 
 void APlantAndDefusePlayerController::BeginPlay()
 {
