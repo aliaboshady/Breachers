@@ -320,6 +320,7 @@ void UWeaponSystem::EquipPreviousWeapon()
 }
 void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
 {
+	if(PreviousWeapon == DefuseDevice) return;
 	if(PreviousWeapon || bIsPlantingOrDefusing) EquipWeapon(PreviousWeapon);
 }
 
