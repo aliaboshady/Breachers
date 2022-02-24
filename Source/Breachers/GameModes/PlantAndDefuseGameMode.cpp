@@ -361,7 +361,6 @@ void APlantAndDefuseGameMode::DefuseBomb()
 void APlantAndDefuseGameMode::CheckHalfTime()
 {
 	if(bUnlimitedRounds || bHasSwitchedTeams) return;
-	RoundsNumber = 2;
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
 		if(PDGS->GetTotalPlayedRounds() != RoundsNumber) return;
