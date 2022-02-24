@@ -35,14 +35,13 @@ public:
 	void OnStartDefuse();
 	void SetBombState(ERoundState NewBombState);
 	void OnStopPlant();
-	void OnPlanted(ACharacterBase* PlanterCharacter, int32 DetonateTime);
+	void OnPlanted(ACharacterBase* PlanterCharacter);
 	void OnDefused();
+	void OnExploded();
 	
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	void OnExploded();
-	void SetBombToExplode(int32 DetonateTime);
 
 	UFUNCTION()
 	void OnPlayerEnterDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -134,6 +133,5 @@ protected:
 	FTimerHandle PlantOrDefuseAnimationTimerHandle;
 	FTimerHandle TickSegmentTimerHandle;
 	FTimerHandle StopTickTimerHandle;
-	FTimerHandle DetonationTimerHandle;
 	int32 TickSegmentIndex;
 };

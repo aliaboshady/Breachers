@@ -66,9 +66,8 @@ void ABomb::Multicast_SetIsBeingDefused_Implementation(bool bIsDefusing)
 	bIsBeginDefused = bIsDefusing;
 }
 
-void ABomb::OnPlanted(ACharacterBase* PlanterCharacter, int32 DetonateTime)
+void ABomb::OnPlanted(ACharacterBase* PlanterCharacter)
 {
-	SetBombToExplode(DetonateTime);
 	Planter = PlanterCharacter;
 	if(Mesh_TP)
 	{
@@ -87,13 +86,7 @@ void ABomb::OnPlanted(ACharacterBase* PlanterCharacter, int32 DetonateTime)
 
 void ABomb::OnDefused()
 {
-	GetWorldTimerManager().ClearTimer(DetonationTimerHandle);
 	Server_ForceEndTick();
-}
-
-void ABomb::SetBombToExplode(int32 DetonateTime)
-{
-	GetWorldTimerManager().SetTimer(DetonationTimerHandle, this, &ABomb::OnExploded, 1, false, DetonateTime);
 }
 
 void ABomb::OnExploded()

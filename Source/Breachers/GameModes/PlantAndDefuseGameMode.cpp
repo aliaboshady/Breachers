@@ -402,7 +402,7 @@ void APlantAndDefuseGameMode::PinBomb(ABomb* Bomb, ACharacterBase* CharacterPlay
 	CharacterPlayer->WeaponSystem->DropWeapon();
 	FTransform PlantTransform = CharacterPlayer->GetMesh()->GetComponentTransform();
 	PlantTransform.SetRotation(FRotator(PlantTransform.Rotator().Pitch, PlantTransform.Rotator().Yaw - 90, PlantTransform.Rotator().Roll).Quaternion());
-	Bomb->OnPlanted(CharacterPlayer, DetonateTimeInSeconds);
+	Bomb->OnPlanted(CharacterPlayer);
 	Bomb->SetActorTransform(PlantTransform);
 }
 

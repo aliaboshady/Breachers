@@ -1,6 +1,7 @@
 #include "PlantAndDefuseGameState.h"
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
+#include "Breachers/Weapons/Bomb.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -192,10 +193,12 @@ void APlantAndDefuseGameState::OnPlantBomb()
 	Multicast_ChangeCurrentRoundState(BombPlanted);
 	Multicast_SetBombPlantedTimer();
 	NetMulticast_PlaySound(BombPlantedSound);
+	Server_SetBombToExplode();
 }
 
 void APlantAndDefuseGameState::OnDefuseBomb()
 {
+	GetWorldTimerManager().ClearTimer(DetonationTimerHandle);
 	Multicast_ChangeCurrentRoundState(BombDefused);
 	Server_SetWinnerTeam(false);
 	Multicast_ChangeCurrentGamePhase(EndPhase);
@@ -340,4 +343,23 @@ void APlantAndDefuseGameState::Multicast_SwitchTeamsScores_Implementation()
 	AttackersScore = DefendersScore;
 	DefendersScore = TempAttackerScore;
 	OnTeamsScoreChange.Broadcast(AttackersScore, DefendersScore);
+}
+
+void APlantAndDefuseGameState::Server_SetBombToExplode_Implementation()
+{
+	ABomb* Bomb = Cast<ABomb>(UGameplayStatics::GetActorOfClass(GetWorld(), ABomb::StaticClass()));
+	float DetonateTimeInSeconds = 0;
+	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
+	{
+		DetonateTimeInSeconds = PDGM->GetDetonateTimeInSeconds();
+	}
+	
+	FTimerDelegate DetonationDelegate;
+	DetonationDelegate.BindUFunction(this, FName(TEXT("Server_DetonateBomb")), Bomb);
+	GetWorldTimerManager().SetTimer(DetonationTimerHandle, DetonationDelegate, 1, false, DetonateTimeInSeconds);
+}
+
+void APlantAndDefuseGameState::Server_DetonateBomb_Implementation(ABomb* Bomb)
+{
+	if(Bomb) Bomb->OnExploded();
 }

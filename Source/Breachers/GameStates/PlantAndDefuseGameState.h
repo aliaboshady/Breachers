@@ -3,6 +3,7 @@
 #include "BreachersGameState.h"
 #include "PlantAndDefuseGameState.generated.h"
 
+class ABomb;
 class USoundCue;
 
 UENUM(BlueprintType)
@@ -102,6 +103,12 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void NetMulticast_PlaySound(USoundCue* Sound);
 
+	UFUNCTION(Server, Reliable)
+	void Server_SetBombToExplode();
+
+	UFUNCTION(Server, Reliable)
+	void Server_DetonateBomb(ABomb* Bomb);
+
 	bool TimeRanOutBothTeamsAlive();
 	
 	void StartBuyPhase();
@@ -146,4 +153,6 @@ protected:
 	
 	UPROPERTY(Replicated)
 	int32 DefendersScore;
+
+	FTimerHandle DetonationTimerHandle;
 };
