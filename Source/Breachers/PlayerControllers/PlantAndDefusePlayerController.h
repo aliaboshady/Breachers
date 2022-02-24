@@ -4,7 +4,6 @@
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "PlantAndDefusePlayerController.generated.h"
 
-class USpectatorSystem;
 class UGamePhaseBanner;
 
 UCLASS()
@@ -20,6 +19,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void OnPossess(APawn* InPawn) override;
+	void SpectateModeStart();
 
 	UFUNCTION(Client, Reliable)
 	void Client_CheckIfKillfeedWidgetInViewport();
@@ -36,9 +36,14 @@ protected:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGamePhaseBanner> GamePhaseBannerWidgetClass;
 
-	UPROPERTY(VisibleAnywhere)
-	USpectatorSystem* SpectatorSystem;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ASpectatorPawn> SpectatorPawnClass;
+
+	UPROPERTY(EditAnywhere)
+	float StartSpectateAfter;
 	
 	UPROPERTY()
 	UGamePhaseBanner* GamePhaseBannerWidget;
+
+	FTimerHandle SpectatorTimerHandle;
 };

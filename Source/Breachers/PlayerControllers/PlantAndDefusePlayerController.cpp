@@ -1,13 +1,12 @@
 #include "PlantAndDefusePlayerController.h"
-
-#include "Breachers/Components/SpectatorSystem.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "Breachers/Widgets/Killfeed.h"
+#include "GameFramework/SpectatorPawn.h"
 
 APlantAndDefusePlayerController::APlantAndDefusePlayerController()
 {
-	SpectatorSystem = CreateDefaultSubobject<USpectatorSystem>("SpectatorSystem");
+	StartSpectateAfter = 2;
 }
 
 void APlantAndDefusePlayerController::BeginPlay()
@@ -22,6 +21,7 @@ void APlantAndDefusePlayerController::BeginPlay()
 void APlantAndDefusePlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
+	GetWorld()->GetTimerManager().ClearTimer(SpectatorTimerHandle);
 	if(APlantAndDefuseGameState* PDGS = Cast<APlantAndDefuseGameState>(GetWorld()->GetGameState()))
 	{
 		PDGS->ShowTeamsCountUI();
@@ -62,5 +62,18 @@ void APlantAndDefusePlayerController::Client_SwitchRoundPhaseBanner_Implementati
 
 void APlantAndDefusePlayerController::BeginSpectate()
 {
-	if(SpectatorSystem) SpectatorSystem->SpectateNext();
+	GetWorldTimerManager().SetTimer(SpectatorTimerHandle, this, &APlantAndDefusePlayerController::SpectateModeStart, 1, false, StartSpectateAfter);
+}
+
+void APlantAndDefusePlayerController::SpectateModeStart()
+{
+	if(!SpectatorPawnClass || !CharacterPlayer) return;
+	
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	FTransform SpawnTransform = CharacterPlayer->GetActorTransform();
+	if(ASpectatorPawn* Spectator = GetWorld()->SpawnActor<ASpectatorPawn>(SpectatorPawnClass, SpawnTransform, SpawnParameters))
+	{
+		Possess(Spectator);
+	}
 }
