@@ -59,3 +59,8 @@ void APlantAndDefusePlayerController::Client_SwitchRoundPhaseBanner_Implementati
 {
 	if(GamePhaseBannerWidget) GamePhaseBannerWidget->SwitchRoundPhaseBanner(Phase);
 }
+
+void APlantAndDefusePlayerController::BeginSpectate()
+{
+	if(SpectatorSystem) SpectatorSystem->SpectateNext();
+}

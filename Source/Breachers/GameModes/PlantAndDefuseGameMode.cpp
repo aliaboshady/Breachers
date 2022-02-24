@@ -104,6 +104,10 @@ void APlantAndDefuseGameMode::OnPlayerDied(ABreachersPlayerController* Controlle
 	{
 		PDGS->OnPlayerDied();
 	}
+	if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(Controller))
+	{
+		PDPC->BeginSpectate();
+	}
 }
 
 void APlantAndDefuseGameMode::SetPhaseBanner(EPhaseBanner PhaseBanner)

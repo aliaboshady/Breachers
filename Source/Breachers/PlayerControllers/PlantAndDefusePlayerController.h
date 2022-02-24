@@ -15,6 +15,7 @@ class BREACHERS_API APlantAndDefusePlayerController : public ABreachersPlayerCon
 public:
 	APlantAndDefusePlayerController();
 	void SwitchRoundPhaseBanner(EPhaseBanner Phase);
+	void BeginSpectate();
 
 protected:
 	virtual void BeginPlay() override;
