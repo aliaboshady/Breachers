@@ -300,7 +300,7 @@ void ABreachersPlayerController::Client_OnScoreBoardChange_Implementation()
 	if(!bCanOpenCloseScoreBoard || !ScoreBoardWidget) return;
 	if(ScoreBoardWidget->IsVisible())
 	{
-		ScoreBoardWidget->OnAddToScreen(BreachersGameState);
+		ScoreBoardWidget->OnAddToScreen(BreachersGameState, true);
 	}
 }
 
