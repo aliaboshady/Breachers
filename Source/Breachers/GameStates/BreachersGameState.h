@@ -14,6 +14,7 @@ class BREACHERS_API ABreachersGameState : public AGameStateBase
 
 public:
 	void PlayerOnDied(AController* Killer, AActor* DamageCauser, ABreachersPlayerState* KilledPlayerState);
+	void OnScoreBoardChange();
 
 protected:
 	virtual void BeginPlay() override;

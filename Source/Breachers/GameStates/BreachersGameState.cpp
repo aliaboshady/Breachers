@@ -84,6 +84,7 @@ void ABreachersGameState::PlayerOnDied(AController* Killer, AActor* DamageCauser
 	}
 
 	AddToAllPlayersKillfeed(KillerName, bKillerIsAttacker, WeaponIcon, KilledName, bKilledIsAttacker);
+	OnScoreBoardChange();
 }
 
 void ABreachersGameState::AddToAllPlayersKillfeed(FName KillerName, bool bKillerIsAttacker, UTexture2D* WeaponIcon, FName KilledName, bool bKilledIsAttacker)
@@ -93,6 +94,17 @@ void ABreachersGameState::AddToAllPlayersKillfeed(FName KillerName, bool bKiller
 		if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(PlayerState->GetOwner()))
 		{
 			BPC->UpdateKillfeed(KillerName, bKillerIsAttacker, WeaponIcon, KilledName, bKilledIsAttacker);
+		}
+	}
+}
+
+void ABreachersGameState::OnScoreBoardChange()
+{
+	for (auto PlayerState : PlayerArray)
+	{
+		if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(PlayerState->GetOwner()))
+		{
+			BPC->OnScoreBoardChange();
 		}
 	}
 }

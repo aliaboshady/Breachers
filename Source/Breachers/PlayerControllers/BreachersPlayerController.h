@@ -27,6 +27,7 @@ public:
 	void EnableShooting(bool bEnableShooting);
 	void OpenScoreBoard();
 	void CloseScoreBoard();
+	void OnScoreBoardChange();
 	void ToggleChangeTeamMenu();
 	void OnKill();
 	void OnPlayerSpawn();
@@ -51,6 +52,9 @@ public:
 	
 	UFUNCTION(Client, Reliable)
 	void Client_OpenScoreBoard();
+	
+	UFUNCTION(Client, Reliable)
+	void Client_OnScoreBoardChange();
 
 	UFUNCTION(BlueprintCallable)
 	void ShowHidePauseMenu();

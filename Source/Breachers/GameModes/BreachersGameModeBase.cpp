@@ -28,6 +28,10 @@ void ABreachersGameModeBase::BeginPlay()
 void ABreachersGameModeBase::HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer)
 {
 	Super::HandleStartingNewPlayer_Implementation(NewPlayer);
+	if(ABreachersGameState* BGS = GetGameState<ABreachersGameState>())
+	{
+		BGS->OnScoreBoardChange();
+	}
 
 	if(ABreachersPlayerController* CharacterPC = Cast<ABreachersPlayerController>(NewPlayer))
 	{

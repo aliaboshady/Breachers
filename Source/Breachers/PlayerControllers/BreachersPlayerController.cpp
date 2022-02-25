@@ -284,6 +284,20 @@ void ABreachersPlayerController::CloseScoreBoard()
 	if(ScoreBoardWidget) ScoreBoardWidget->RemoveFromViewport();
 }
 
+void ABreachersPlayerController::OnScoreBoardChange()
+{
+	Client_OnScoreBoardChange();
+}
+
+void ABreachersPlayerController::Client_OnScoreBoardChange_Implementation()
+{
+	if(!bCanOpenCloseScoreBoard || !ScoreBoardWidget) return;
+	if(ScoreBoardWidget->IsVisible())
+	{
+		ScoreBoardWidget->OnAddToScreen(BreachersGameState);
+	}
+}
+
 void ABreachersPlayerController::ToggleChangeTeamMenu()
 {
 	if(!TeamSelectWidget) return;
