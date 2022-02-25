@@ -10,11 +10,6 @@ class BREACHERS_API ADeathMatchGameState : public ABreachersGameState
 {
 	GENERATED_BODY()
 
-public:
-
-	UFUNCTION(BlueprintCallable)
-	TArray<ABreachersPlayerState*> GetSortedPlayersBasedOnKillCount();
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void Multicast_DecrementCountdownTime() override;

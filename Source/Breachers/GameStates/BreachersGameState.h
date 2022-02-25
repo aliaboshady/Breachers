@@ -16,6 +16,9 @@ public:
 	void PlayerOnDied(AController* Killer, AActor* DamageCauser, ABreachersPlayerState* KilledPlayerState);
 	void OnScoreBoardChange();
 
+	UFUNCTION(BlueprintCallable)
+	virtual TArray<ABreachersPlayerState*> GetSortedPlayersBasedOnKillCount();
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

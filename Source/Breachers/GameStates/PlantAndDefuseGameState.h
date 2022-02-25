@@ -46,6 +46,7 @@ public:
 	void ShowTeamsCountUI();
 	int32 GetTotalPlayedRounds();
 	void SwitchTeamsScores();
+	virtual TArray<ABreachersPlayerState*> GetSortedPlayersBasedOnKillCount() override;
 	
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

@@ -363,3 +363,8 @@ void APlantAndDefuseGameState::Server_DetonateBomb_Implementation(ABomb* Bomb)
 {
 	if(Bomb) Bomb->OnExploded();
 }
+
+TArray<ABreachersPlayerState*> APlantAndDefuseGameState::GetSortedPlayersBasedOnKillCount()
+{
+	return Super::GetSortedPlayersBasedOnKillCount();
+}
