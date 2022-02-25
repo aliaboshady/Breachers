@@ -1,5 +1,6 @@
 #pragma once
 #include "CoreMinimal.h"
+#include "Breachers/Characters/CharacterBase.h"
 #include "GameFramework/PlayerState.h"
 #include "BreachersPlayerState.generated.h"
 
@@ -14,6 +15,7 @@ public:
 	ABreachersPlayerState();
 	void OnDie(AController* InstigatedBy, AActor* DamageCauser);
 	void OnKill();
+	void SetTeam(ETeam NewTeam);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE int32 GetKillsCount(){return Kills;}
@@ -28,6 +30,9 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetTeam(ETeam NewTeam);
+
 	UFUNCTION()
 	void OnSpawn();
 
@@ -39,6 +44,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bIsDead;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	TEnumAsByte<ETeam> Team;
 
 	UPROPERTY()
 	ABreachersGameState* BreachersGameState;

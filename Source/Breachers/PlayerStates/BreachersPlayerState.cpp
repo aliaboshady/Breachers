@@ -27,6 +27,7 @@ void ABreachersPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>
 	DOREPLIFETIME(ABreachersPlayerState, Kills);
 	DOREPLIFETIME(ABreachersPlayerState, Deaths);
 	DOREPLIFETIME(ABreachersPlayerState, bIsDead);
+	DOREPLIFETIME(ABreachersPlayerState, Team);
 }
 
 void ABreachersPlayerState::OnSpawn()
@@ -44,4 +45,14 @@ void ABreachersPlayerState::OnDie(AController* InstigatedBy, AActor* DamageCause
 void ABreachersPlayerState::OnKill()
 {
 	++Kills;
+}
+
+void ABreachersPlayerState::SetTeam(ETeam NewTeam)
+{
+	Multicast_SetTeam(NewTeam);
+}
+
+void ABreachersPlayerState::Multicast_SetTeam_Implementation(ETeam NewTeam)
+{
+	Team = NewTeam;
 }

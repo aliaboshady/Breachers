@@ -240,6 +240,12 @@ void ABreachersPlayerController::OnPossess(APawn* InPawn)
 		CharacterPlayer->MovementSystem->SetCanMove(bCanMove);
 		CharacterPlayer->WeaponSystem->EnableShooting(bCanShoot);
 		Client_PRV_SetMouseSensitivityFactor(CharacterPlayer);
+
+		if(BreachersPlayerState)
+		{
+			if(CharacterPlayer->ActorHasTag(TAG_Attacker)) BreachersPlayerState->SetTeam(Attacker);
+			else if(CharacterPlayer->ActorHasTag(TAG_Defender)) BreachersPlayerState->SetTeam(Defender);
+		}
 	}
 }
 
