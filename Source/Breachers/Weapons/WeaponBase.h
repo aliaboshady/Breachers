@@ -68,6 +68,7 @@ protected:
 	void DecreaseRecoilTimePerShot();
 	void WaitRecoilTimePerShot();
 	bool IsCurrentWeapon();
+	FVector ProcessThrowDirection(FHitResult OutHit, FVector LookDirection);
 
 	UFUNCTION()
 	virtual void OnPlayerUnpossessed();
