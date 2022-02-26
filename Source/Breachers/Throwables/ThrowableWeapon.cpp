@@ -20,6 +20,12 @@ void AThrowableWeapon::OnPrimaryFire()
 	GetWorld()->GetTimerManager().SetTimer(EquipPreviousWeaponTimer, this, &AThrowableWeapon::EquipPreviousWeaponAfterThrow, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
+void AThrowableWeapon::OnThrow()
+{
+	SetToNotBePickedUp();
+	WeaponInfo.bIsDroppable = true;
+}
+
 void AThrowableWeapon::EquipPreviousWeaponAfterThrow()
 {
 	if(CharacterPlayer)

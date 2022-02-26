@@ -18,6 +18,7 @@ public:
 	void EquipWeapon(AWeaponBase* Weapon);
 	bool CanTakeWeapon(AWeaponBase* Weapon);
 	void TakeWeapon(AWeaponBase* Weapon);
+	void Throw();
 	void DropWeapon();
 	void EnableShooting(bool bEnableShooting);
 	AWeaponBase* GetCurrentWeapon();
@@ -37,6 +38,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
 
+	UPROPERTY(EditAnywhere)
+	float WeaponDropForce;
+
 protected:
 	virtual void BeginPlay() override;
 	FAttachmentTransformRules CreateAttachRules();
@@ -44,6 +48,7 @@ protected:
 	void EquipStartUpWeapons();
 	void UnequipWeapon(AWeaponBase* Weapon);
 	void EquipeLastTakenWeapon();
+	bool HasThisThrowable(AWeaponBase* Weapon);
 
 	UFUNCTION(Server, Reliable)
 	void Server_PlayerDropWeapon();

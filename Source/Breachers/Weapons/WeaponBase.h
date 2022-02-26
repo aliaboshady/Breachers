@@ -44,6 +44,7 @@ public:
 	void OnCancelEquip();
 	virtual void OnRestartRound();
 	void SetToNotBePickedUp();
+	FORCEINLINE bool CanBePicked() const {return bCanBePicked;}
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
 

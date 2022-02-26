@@ -2,6 +2,7 @@
 #include "MovementSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/GameModes/DeathMatchGameMode.h"
+#include "Breachers/Throwables/ThrowableWeapon.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -10,6 +11,7 @@ UWeaponSystem::UWeaponSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	WeaponThrowForce = 40000;
+	WeaponDropForce = 700;
 	WeaponPickupDistance = 200;
 	bShootingEnabled = true;
 	bIsPlantingOrDefusing = false;
@@ -131,13 +133,15 @@ void UWeaponSystem::Client_PickWeapon_Implementation()
 	{
 		if(AWeaponBase* Weapon = Cast<AWeaponBase>(OutHit.Actor))
 		{
-			Server_PickWeapon(Weapon);
+			if(Weapon->CanBePicked()) Server_PickWeapon(Weapon);
 		}
 	}
 }
 
 void UWeaponSystem::Server_PickWeapon_Implementation(AWeaponBase* Weapon)
 {
+	if(HasThisThrowable(Weapon)) return;
+	
 	TakeWeapon(Weapon);
 	Weapon->OnTaken();
 	
@@ -204,6 +208,20 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 void UWeaponSystem::TakeWeapon(AWeaponBase* Weapon)
 {
 	Server_TakeWeapon(Weapon);
+}
+
+void UWeaponSystem::Throw()
+{
+	if(!CurrentWeapon) return;
+
+	if(AThrowableWeapon* ThrowableWeapon = Cast<AThrowableWeapon>(CurrentWeapon))
+	{
+		ThrowableWeapon->OnThrow();
+		float WeaponDropForceTemp = WeaponDropForce;
+		WeaponDropForce = WeaponThrowForce;
+		DropWeapon();
+		WeaponDropForce = WeaponDropForceTemp;
+	}
 }
 
 void UWeaponSystem::Server_DropWeapon_Implementation()
@@ -630,4 +648,14 @@ void UWeaponSystem::SetIsThrowing(bool bThrowing)
 AWeaponBase* UWeaponSystem::GetBomb()
 {
 	return Bomb;
+}
+
+bool UWeaponSystem::HasThisThrowable(AWeaponBase* Weapon)
+{
+	bool bHasG = Grenade && Weapon->ActorHasTag(TAG_Grenade);
+	bool bHasF = Flash && Weapon->ActorHasTag(TAG_Flash);
+	bool bHasS = Smoke && Weapon->ActorHasTag(TAG_Smoke);
+	bool bHasM = Molotov && Weapon->ActorHasTag(TAG_Molotov);
+	bool bHasThrowable = bHasG || bHasF || bHasS || bHasM;
+	return bHasThrowable;
 }

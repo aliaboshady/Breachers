@@ -450,7 +450,7 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	if(DropperCharacterPC) ThrowDirection = DropperCharacterPC->GetControlRotation().Vector();
 	else ThrowDirection = DropperCharacter->GetCameraDirection();
 	
-	const FVector Force = ThrowDirection * DropperCharacter->WeaponSystem->WeaponThrowForce;
+	const FVector Force = ThrowDirection * DropperCharacter->WeaponSystem->WeaponDropForce;
 	Mesh_TP->AddImpulse(Force, NAME_None, true);
 	
 	FTimerHandle OverlapHandle;

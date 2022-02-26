@@ -10,6 +10,7 @@ class BREACHERS_API AThrowableWeapon : public AWeaponBase
 
 public:
 	virtual void OnPrimaryFire() override;
+	virtual void OnThrow();
 
 protected:
 	void EquipPreviousWeaponAfterThrow();
