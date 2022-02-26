@@ -17,7 +17,8 @@ enum EWeaponType
 	Secondary,
 	Melee,
 	Bomb,
-	Defuser
+	Defuser,
+	Throwable
 };
 
 UENUM(BlueprintType)
