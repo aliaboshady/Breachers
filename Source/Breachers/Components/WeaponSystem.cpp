@@ -27,6 +27,10 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, MeleeWeapon);
 	DOREPLIFETIME(UWeaponSystem, Bomb);
 	DOREPLIFETIME(UWeaponSystem, DefuseDevice);
+	DOREPLIFETIME(UWeaponSystem, Grenade);
+	DOREPLIFETIME(UWeaponSystem, Flash);
+	DOREPLIFETIME(UWeaponSystem, Smoke);
+	DOREPLIFETIME(UWeaponSystem, Molotov);
 	DOREPLIFETIME(UWeaponSystem, CharacterPlayer);
 	DOREPLIFETIME(UWeaponSystem, bShootingEnabled);
 	DOREPLIFETIME(UWeaponSystem, bIsPlantingOrDefusing);
@@ -49,6 +53,10 @@ void UWeaponSystem::SetPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindAction("EquipSecondary", IE_Pressed, this, &UWeaponSystem::Server_EquipSecondary);
 		PlayerInputComponent->BindAction("PlantDefuse", IE_Pressed, this, &UWeaponSystem::Server_EquipBomb);
 		PlayerInputComponent->BindAction("EquipMelee", IE_Pressed, this, &UWeaponSystem::Server_EquipMelee);
+		PlayerInputComponent->BindAction("EquipGrenade", IE_Pressed, this, &UWeaponSystem::Server_EquipGrenade);
+		PlayerInputComponent->BindAction("EquipFlash", IE_Pressed, this, &UWeaponSystem::Server_EquipFlash);
+		PlayerInputComponent->BindAction("EquipSmoke", IE_Pressed, this, &UWeaponSystem::Server_EquipSmoke);
+		PlayerInputComponent->BindAction("EquipMolotov", IE_Pressed, this, &UWeaponSystem::Server_EquipMolotov);
 	
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Pressed, this, &UWeaponSystem::Server_StartPrimaryFire);
 		PlayerInputComponent->BindAction("PrimaryFire", IE_Released, this, &UWeaponSystem::Server_StopPrimaryFire);
@@ -168,6 +176,22 @@ void UWeaponSystem::Server_TakeWeapon_Implementation(AWeaponBase* Weapon)
 	{
 		MeleeWeapon = Weapon;
 	}
+	else if(Weapon->ActorHasTag(TAG_Grenade) && Grenade == nullptr)
+	{
+		Grenade = Weapon;
+	}
+	else if(Weapon->ActorHasTag(TAG_Flash) && Flash == nullptr)
+	{
+		Flash = Weapon;
+	}
+	else if(Weapon->ActorHasTag(TAG_Smoke) && Smoke == nullptr)
+	{
+		Smoke = Weapon;
+	}
+	else if(Weapon->ActorHasTag(TAG_Molotov) && Molotov == nullptr)
+	{
+		Molotov = Weapon;
+	}
 	
 	else return;
 
@@ -200,6 +224,22 @@ void UWeaponSystem::Server_DropWeapon_Implementation()
 	else if(CurrentWeapon->WeaponInfo.WeaponType == EWeaponType::Defuser)
 	{
 		DefuseDevice = nullptr;
+	}
+	else if(CurrentWeapon->ActorHasTag(TAG_Grenade))
+	{
+		Grenade = nullptr;
+	}
+	else if(CurrentWeapon->ActorHasTag(TAG_Flash))
+	{
+		Flash = nullptr;
+	}
+	else if(CurrentWeapon->ActorHasTag(TAG_Smoke))
+	{
+		Smoke = nullptr;
+	}
+	else if(CurrentWeapon->ActorHasTag(TAG_Molotov))
+	{
+		Molotov = nullptr;
 	}
 
 	Multicast_DropWeaponVisualsTP(CurrentWeapon);
@@ -239,6 +279,26 @@ void UWeaponSystem::DropAllWeapons()
 		Server_EquipBomb();
 		DropWeapon();
 	}
+	if(Grenade)
+	{
+		Server_EquipGrenade();
+		DropWeapon();
+	}
+	if(Flash)
+	{
+		Server_EquipFlash();
+		DropWeapon();
+	}
+	if(Smoke)
+	{
+		Server_EquipSmoke();
+		DropWeapon();
+	}
+	if(Molotov)
+	{
+		Server_EquipMolotov();
+		DropWeapon();
+	}
 	if(MeleeWeapon) UnequipWeapon(MeleeWeapon);
 }
 
@@ -267,6 +327,26 @@ void UWeaponSystem::DestroyAllWeapons()
 	{
 		Bomb->Destroy();
 		Bomb = nullptr;
+	}
+	if(Grenade)
+	{
+		Grenade->Destroy();
+		Grenade = nullptr;
+	}
+	if(Flash)
+	{
+		Flash->Destroy();
+		Flash = nullptr;
+	}
+	if(Smoke)
+	{
+		Smoke->Destroy();
+		Smoke = nullptr;
+	}
+	if(Molotov)
+	{
+		Molotov->Destroy();
+		Molotov = nullptr;
 	}
 	if(MeleeWeapon)
 	{
@@ -345,7 +425,11 @@ bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 	bool bCanTakeWeaponB = Weapon->WeaponInfo.WeaponType == EWeaponType::Bomb && Bomb == nullptr;
 	bool bCanTakeWeaponD = Weapon->WeaponInfo.WeaponType == EWeaponType::Defuser && DefuseDevice == nullptr;
 	bool bCanTakeWeaponM = Weapon->WeaponInfo.WeaponType == Melee && MeleeWeapon == nullptr;
-	return bCanTakeWeaponP || bCanTakeWeaponS || bCanTakeWeaponB || bCanTakeWeaponM || bCanTakeWeaponD;
+	bool bCanTakeWeaponG = Weapon->ActorHasTag(TAG_Grenade) && Grenade == nullptr;
+	bool bCanTakeWeaponF = Weapon->ActorHasTag(TAG_Flash) && Flash == nullptr;
+	bool bCanTakeWeaponSM = Weapon->ActorHasTag(TAG_Smoke) && Smoke == nullptr;
+	bool bCanTakeWeaponML = Weapon->ActorHasTag(TAG_Molotov) && Molotov == nullptr;
+	return bCanTakeWeaponP || bCanTakeWeaponS || bCanTakeWeaponB || bCanTakeWeaponM || bCanTakeWeaponD || bCanTakeWeaponG || bCanTakeWeaponF || bCanTakeWeaponSM || bCanTakeWeaponML;
 }
 
 void UWeaponSystem::Server_EquipPrimary_Implementation()
@@ -381,6 +465,30 @@ void UWeaponSystem::Server_EquipBomb_Implementation()
 {
 	if(!Bomb || CurrentWeapon == Bomb || bIsPlantingOrDefusing) return;
 	EquipWeapon(Bomb);
+}
+
+void UWeaponSystem::Server_EquipGrenade_Implementation()
+{
+	if(!Grenade || CurrentWeapon == Grenade || bIsPlantingOrDefusing) return;
+	EquipWeapon(Grenade);
+}
+
+void UWeaponSystem::Server_EquipFlash_Implementation()
+{
+	if(!Flash || CurrentWeapon == Flash || bIsPlantingOrDefusing) return;
+	EquipWeapon(Flash);
+}
+
+void UWeaponSystem::Server_EquipSmoke_Implementation()
+{
+	if(!Smoke || CurrentWeapon == Smoke || bIsPlantingOrDefusing) return;
+	EquipWeapon(Smoke);
+}
+
+void UWeaponSystem::Server_EquipMolotov_Implementation()
+{
+	if(!Molotov || CurrentWeapon == Molotov || bIsPlantingOrDefusing) return;
+	EquipWeapon(Molotov);
 }
 
 void UWeaponSystem::EquipeLastTakenWeapon()

@@ -68,6 +68,18 @@ protected:
 	void Server_EquipBomb();
 
 	UFUNCTION(Server, Reliable)
+	void Server_EquipGrenade();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EquipFlash();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EquipSmoke();
+
+	UFUNCTION(Server, Reliable)
+	void Server_EquipMolotov();
+
+	UFUNCTION(Server, Reliable)
 	void Server_EquipLastBoughtWeapon();
 
 	UFUNCTION(Server, Reliable)
@@ -147,6 +159,18 @@ protected:
 
 	UPROPERTY(Replicated)
 	AWeaponBase* DefuseDevice;
+
+	UPROPERTY(Replicated)
+	AWeaponBase* Grenade;
+	
+	UPROPERTY(Replicated)
+	AWeaponBase* Flash;
+	
+	UPROPERTY(Replicated)
+	AWeaponBase* Smoke;
+	
+	UPROPERTY(Replicated)
+	AWeaponBase* Molotov;
 
 	UPROPERTY(EditAnywhere)
 	float WeaponPickupDistance;

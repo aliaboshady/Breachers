@@ -15,6 +15,10 @@
 #define TAG_Melee "Melee"
 #define TAG_Bomb "Bomb"
 #define TAG_Defuser "Defuser"
+#define TAG_Grenade "Grenade"
+#define TAG_Flash "Flash"
+#define TAG_Smoke "Smoke"
+#define TAG_Molotov "Molotov"
 
 class ABulletTracer;
 class ACharacterBase;
