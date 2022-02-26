@@ -446,11 +446,9 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
 	ABreachersPlayerController* DropperCharacterPC = DropperCharacter->GetBreacherPC();
-	FVector LookDirection = DropperCharacter->GetCameraDirection();
-	if(DropperCharacterPC) LookDirection = DropperCharacterPC->GetControlRotation().Vector();
-
-	FHitResult OutHit;
-	FVector ThrowDirection = ProcessThrowDirection(OutHit, LookDirection);
+	FVector ThrowDirection;
+	if(DropperCharacterPC) ThrowDirection = DropperCharacterPC->GetControlRotation().Vector();
+	else ThrowDirection = DropperCharacter->GetCameraDirection();
 	
 	const FVector Force = ThrowDirection * DropperCharacter->WeaponSystem->WeaponDropForce;
 	Mesh_TP->AddImpulse(Force, NAME_None, true);
@@ -462,21 +460,6 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	{
 		CharacterPlayer->HealthSystem->OnDie.RemoveDynamic(this, &AWeaponBase::OnDie);
 	}
-}
-
-FVector AWeaponBase::ProcessThrowDirection(FHitResult OutHit, FVector LookDirection)
-{
-	const FVector Start = CharacterPlayer->GetCameraLocation();
-	FVector End = LookDirection * WeaponInfo.ShotInfo.TraceLength + Start;
-	
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(CharacterPlayer);
-	
-	UKismetSystemLibrary::LineTraceSingle(GetWorld(), Start, End, UEngineTypes::ConvertToTraceType(ECC_Visibility), false, ActorsToIgnore, EDrawDebugTrace::None, OutHit, true);
-
-	FVector ThrowDirection = (End - GetActorLocation()).GetSafeNormal();
-	if(OutHit.bBlockingHit) ThrowDirection = (OutHit.ImpactPoint - GetActorLocation()).GetSafeNormal();
-	return ThrowDirection;
 }
 
 void AWeaponBase::Multicast_OnDropEnableOverlap_Implementation()
