@@ -10,7 +10,6 @@
 UWeaponSystem::UWeaponSystem()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-	WeaponThrowForce = 40000;
 	WeaponDropForce = 700;
 	WeaponPickupDistance = 200;
 	bShootingEnabled = true;
@@ -218,7 +217,7 @@ void UWeaponSystem::Throw()
 	{
 		ThrowableWeapon->OnThrow();
 		float WeaponDropForceTemp = WeaponDropForce;
-		WeaponDropForce = WeaponThrowForce;
+		WeaponDropForce = ThrowableWeapon->GetCurrentThrowForce();
 		DropWeapon();
 		WeaponDropForce = WeaponDropForceTemp;
 	}

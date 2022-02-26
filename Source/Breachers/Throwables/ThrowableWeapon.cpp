@@ -1,10 +1,34 @@
 #include "ThrowableWeapon.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/Components/WeaponSystem.h"
+#include "Net/UnrealNetwork.h"
+
+AThrowableWeapon::AThrowableWeapon()
+{
+	PrimaryThrowForce = 2000;
+	SecondaryThrowForce = 400;
+}
+
+void AThrowableWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AThrowableWeapon, CurrentThrowForce);
+}
 
 void AThrowableWeapon::OnPrimaryFire()
 {
+	OnFire(PrimaryThrowForce);
+}
+
+void AThrowableWeapon::OnSecondaryFire()
+{
+	OnFire(SecondaryThrowForce);
+}
+
+void AThrowableWeapon::OnFire(float ThrowForce)
+{
 	if(!bCanFire || !CharacterPlayer || bIsReloading || bIsEquipping || CurrentAmmoInClip <= 0) return;
+	Multicast_SetThrowForce(ThrowForce);
 	Multicast_PlayThrowAnimation();
 	bCanFire = false;
 	bIsFiring = true;
@@ -20,10 +44,20 @@ void AThrowableWeapon::OnPrimaryFire()
 	GetWorld()->GetTimerManager().SetTimer(EquipPreviousWeaponTimer, this, &AThrowableWeapon::EquipPreviousWeaponAfterThrow, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
+void AThrowableWeapon::Multicast_SetThrowForce_Implementation(float NewThrowForce)
+{
+	CurrentThrowForce = NewThrowForce;
+}
+
 void AThrowableWeapon::OnThrow()
 {
 	SetToNotBePickedUp();
 	WeaponInfo.bIsDroppable = true;
+}
+
+float AThrowableWeapon::GetCurrentThrowForce()
+{
+	return CurrentThrowForce;
 }
 
 void AThrowableWeapon::EquipPreviousWeaponAfterThrow()

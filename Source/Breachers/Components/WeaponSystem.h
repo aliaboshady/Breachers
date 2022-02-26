@@ -37,9 +37,6 @@ public:
 	bool HasThisThrowable(FString WeaponName);
 
 	UPROPERTY(EditAnywhere)
-	float WeaponThrowForce;
-
-	UPROPERTY(EditAnywhere)
 	float WeaponDropForce;
 
 protected:
