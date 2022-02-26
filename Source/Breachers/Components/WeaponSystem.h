@@ -27,10 +27,12 @@ public:
 	void OnRestartRound();
 	FORCEINLINE bool HasBomb(){return Bomb ? true : false;}
 	void SetIsPlantingOrDefusing(bool bPlantingOrDefusing);
+	void SetIsThrowing(bool bThrowing);
 	void DropBomb();
 	void EquipPreviousWeapon();
 	void EquipDefuser();
 	AWeaponBase* GetBomb();
+	void EquipBestValidWeapon();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;
@@ -189,4 +191,7 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bIsPlantingOrDefusing;
+
+	UPROPERTY(Replicated)
+	bool bIsThrowing;
 };
