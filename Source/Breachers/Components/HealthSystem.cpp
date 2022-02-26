@@ -72,7 +72,8 @@ inline void UHealthSystem::OnTakeRadialDamage(AActor* DamagedActor, float Damage
 inline void UHealthSystem::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
 	AController* InstigatedBy, AActor* DamageCauser)
 {
-	if(!bFriendlyFireOn && InstigatedBy->GetCharacter()->ActorHasTag(OwnerTeamTag)) return;
+	bool bInstigatorIsTeammate = InstigatedBy->GetCharacter()->ActorHasTag(OwnerTeamTag);
+	if(!bFriendlyFireOn && bInstigatorIsTeammate) return;
 	
 	int32 DamageDealt = static_cast<int32>(Damage);
 	CurrentHealth = FMath::Clamp(CurrentHealth - DamageDealt, 0, MaxHealth);
@@ -80,7 +81,7 @@ inline void UHealthSystem::OnTakeAnyDamage(AActor* DamagedActor, float Damage, c
 	{
 		bIsDead = true;
 		Server_KillPlayer(InstigatedBy, DamageCauser);
-		RewardKiller(InstigatedBy, DamageCauser);
+		if(!bInstigatorIsTeammate) RewardKiller(InstigatedBy, DamageCauser);
 	}
 }
 
