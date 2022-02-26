@@ -659,3 +659,13 @@ bool UWeaponSystem::HasThisThrowable(AWeaponBase* Weapon)
 	bool bHasThrowable = bHasG || bHasF || bHasS || bHasM;
 	return bHasThrowable;
 }
+
+bool UWeaponSystem::HasThisThrowable(FString WeaponName)
+{
+	bool bHasG = Grenade && WeaponName == TAG_Grenade;
+	bool bHasF = Flash && WeaponName == TAG_Flash;
+	bool bHasS = Smoke && WeaponName == TAG_Smoke;
+	bool bHasM = Molotov && WeaponName == TAG_Molotov;
+	bool bHasThrowable = bHasG || bHasF || bHasS || bHasM;
+	return bHasThrowable;
+}

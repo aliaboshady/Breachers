@@ -32,6 +32,9 @@ protected:
 	void SetInputUI(bool bIsUI);
 	void GetPC();
 
+	UFUNCTION(BlueprintCallable)
+	bool HasThisThrowable(FString WeaponName);
+
 	UFUNCTION(Server, Reliable)
 	void Server_BuyWeapon(int32 Price, TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType);
 

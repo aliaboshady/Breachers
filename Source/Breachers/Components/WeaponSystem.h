@@ -34,6 +34,7 @@ public:
 	void EquipDefuser();
 	AWeaponBase* GetBomb();
 	void EquipBestValidWeapon();
+	bool HasThisThrowable(FString WeaponName);
 
 	UPROPERTY(EditAnywhere)
 	float WeaponThrowForce;

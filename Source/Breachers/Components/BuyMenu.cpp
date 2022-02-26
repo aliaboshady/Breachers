@@ -44,6 +44,12 @@ void UBuyMenu::GetPC()
 	Client_CreateBuyMenu();
 }
 
+bool UBuyMenu::HasThisThrowable(FString WeaponName)
+{
+	if(!PC || !PC->CharacterPlayer) return false;
+	return PC->CharacterPlayer->WeaponSystem->HasThisThrowable(WeaponName);
+}
+
 void UBuyMenu::Client_CreateBuyMenu_Implementation()
 {
 	if(BuyMenuWidgetClass && PC) BuyMenuWidget = CreateWidget(PC, BuyMenuWidgetClass);
