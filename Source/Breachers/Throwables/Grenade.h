@@ -7,4 +7,20 @@ UCLASS()
 class BREACHERS_API AGrenade : public AThrowableWeapon
 {
 	GENERATED_BODY()
+
+public:
+	AGrenade();
+	virtual void OnThrow() override;
+
+	virtual void OnActivate() override;
+
+	UFUNCTION(Server, Reliable)
+	void Server_ExplosionDamage();
+
+protected:
+	UPROPERTY(EditAnywhere)
+	float DamageInnerRadius;
+	
+	UPROPERTY(EditAnywhere)
+	float DamageOuterRadius;
 };
