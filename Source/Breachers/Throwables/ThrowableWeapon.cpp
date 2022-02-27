@@ -10,6 +10,8 @@ AThrowableWeapon::AThrowableWeapon()
 	SecondaryThrowForce = 400;
 	TimeToActivate = 1;
 	ActivationDuration = 0;
+	bCanPlayBounceSound = true;
+	ImpactSoundPower = 20;
 }
 
 void AThrowableWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -17,6 +19,12 @@ void AThrowableWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(AThrowableWeapon, CurrentThrowForce);
 	DOREPLIFETIME(AThrowableWeapon, ThrowerCharacter);
+}
+
+void AThrowableWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	Mesh_TP->OnComponentHit.AddDynamic(this, &AThrowableWeapon::OnHit);
 }
 
 void AThrowableWeapon::OnPrimaryFire()
@@ -69,6 +77,12 @@ void AThrowableWeapon::SetThrowerCharacter(ACharacterBase* NewThrowerCharacter)
 	ThrowerCharacter = NewThrowerCharacter;
 }
 
+void AThrowableWeapon::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& Hit)
+{
+	if(GetVelocity().Size() >= ImpactSoundPower && bCanPlayBounceSound) Multicast_PlayBounceSound();
+}
+
 void AThrowableWeapon::EquipPreviousWeaponAfterThrow()
 {
 	if(CharacterPlayer)
@@ -100,4 +114,23 @@ void AThrowableWeapon::Multicast_ActivationEffects_Implementation()
 
 	USoundCue* ExplosionSound = WeaponInfo.WeaponEffects.MuzzleFireSound;
 	if(ExplosionSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation());
+}
+
+void AThrowableWeapon::Multicast_PlayBounceSound_Implementation()
+{
+	USoundCue* BounceSound = WeaponInfo.WeaponEffects.ImpactSound;
+	if(BounceSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), BounceSound, GetActorLocation());
+		Multicast_SetCanPlayBounceSound(false);
+		FTimerHandle BounceSoundHandle;
+		FTimerDelegate BounceSoundDelegate;
+		BounceSoundDelegate.BindUFunction(this, FName(TEXT("Multicast_SetCanPlayBounceSound")), true);
+		GetWorldTimerManager().SetTimer(BounceSoundHandle, BounceSoundDelegate, 1, false, 0.5);
+	}
+}
+
+void AThrowableWeapon::Multicast_SetCanPlayBounceSound_Implementation(bool bCanPlaySound)
+{
+	bCanPlayBounceSound = bCanPlaySound;
 }

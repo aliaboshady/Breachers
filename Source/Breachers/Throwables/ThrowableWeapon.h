@@ -17,10 +17,14 @@ public:
 	void SetThrowerCharacter(ACharacterBase* NewThrowerCharacter);
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void EquipPreviousWeaponAfterThrow();
 	void OnFire(float ThrowForce);
 	virtual void OnActivate();
+
+	UFUNCTION()
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetThrowForce(float NewThrowForce);
@@ -30,6 +34,12 @@ protected:
 	
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void Multicast_ActivationEffects();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayBounceSound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetCanPlayBounceSound(bool bCanPlaySound);
 
 	UPROPERTY(Replicated)
 	ACharacterBase* ThrowerCharacter;
@@ -46,6 +56,11 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float ActivationDuration;
 
+	UPROPERTY(EditAnywhere)
+	float ImpactSoundPower;
+
 	UPROPERTY(Replicated)
 	float CurrentThrowForce;
+
+	bool bCanPlayBounceSound;
 };
