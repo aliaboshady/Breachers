@@ -15,6 +15,7 @@ protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnThrow() override;
 	void SetToThrown();
+	virtual void Multicast_ActivationEffects_Implementation() override;
 
 	UFUNCTION(Server, Reliable)
 	void Server_CheckSpeed();

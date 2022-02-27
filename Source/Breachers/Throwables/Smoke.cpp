@@ -1,6 +1,8 @@
 #include "Smoke.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
 
 ASmoke::ASmoke()
 {
@@ -26,6 +28,23 @@ void ASmoke::OnThrow()
 void ASmoke::SetToThrown()
 {
 	SetActorTickEnabled(true);
+}
+
+void ASmoke::Multicast_ActivationEffects_Implementation()
+{
+	UParticleSystem* ExplosionParticles = WeaponInfo.WeaponEffects.MuzzleFlashEffect;
+	if(ExplosionParticles)
+	{
+		UParticleSystemComponent* SmokeParticles = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ExplosionParticles, GetActorTransform());
+		FParticleSysParam LifeTimeParameter;
+		LifeTimeParameter.Name = "SmokeDuration";
+		LifeTimeParameter.ParamType = PSPT_Scalar;
+		LifeTimeParameter.Scalar = ActivationDuration;
+		SmokeParticles->InstanceParameters.Add(LifeTimeParameter);
+	}
+
+	USoundCue* ExplosionSound = WeaponInfo.WeaponEffects.MuzzleFireSound;
+	if(ExplosionSound) UGameplayStatics::PlaySoundAtLocation(GetWorld(), ExplosionSound, GetActorLocation());
 }
 
 void ASmoke::Server_CheckSpeed_Implementation()
