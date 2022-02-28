@@ -13,6 +13,7 @@ public:
 	virtual void OnPrimaryFire() override;
 	virtual void OnSecondaryFire() override;
 	virtual void OnThrow();
+	virtual void OnCancelEquip() override;
 	float GetCurrentThrowForce();
 	void SetThrowerCharacter(ACharacterBase* NewThrowerCharacter);
 
@@ -62,5 +63,8 @@ protected:
 	UPROPERTY(Replicated)
 	float CurrentThrowForce;
 
+	FTimerHandle IsFiringTimer;
+	FTimerHandle ResetTimer;
+	FTimerHandle EquipPreviousWeaponTimer;
 	bool bCanPlayBounceSound;
 };

@@ -35,7 +35,6 @@ void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(UWeaponSystem, CharacterPlayer);
 	DOREPLIFETIME(UWeaponSystem, bShootingEnabled);
 	DOREPLIFETIME(UWeaponSystem, bIsPlantingOrDefusing);
-	DOREPLIFETIME(UWeaponSystem, bIsThrowing);
 }
 
 void UWeaponSystem::BeginPlay()
@@ -418,7 +417,7 @@ void UWeaponSystem::EquipPreviousWeapon()
 }
 void UWeaponSystem::Server_EquipPreviousWeapon_Implementation()
 {
-	if(PreviousWeapon == DefuseDevice || bIsThrowing) return;
+	if(PreviousWeapon == DefuseDevice) return;
 	if(PreviousWeapon || bIsPlantingOrDefusing) EquipWeapon(PreviousWeapon);
 }
 
@@ -452,19 +451,19 @@ bool UWeaponSystem::CanTakeWeapon(AWeaponBase* Weapon)
 
 void UWeaponSystem::Server_EquipPrimary_Implementation()
 {
-	if(!PrimaryWeapon || CurrentWeapon == PrimaryWeapon || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!PrimaryWeapon || CurrentWeapon == PrimaryWeapon || bIsPlantingOrDefusing) return;
 	EquipWeapon(PrimaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipSecondary_Implementation()
 {
-	if(!SecondaryWeapon || CurrentWeapon == SecondaryWeapon || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!SecondaryWeapon || CurrentWeapon == SecondaryWeapon || bIsPlantingOrDefusing) return;
 	EquipWeapon(SecondaryWeapon);
 }
 
 void UWeaponSystem::Server_EquipMelee_Implementation()
 {
-	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!MeleeWeapon || CurrentWeapon == MeleeWeapon || bIsPlantingOrDefusing) return;
 	EquipWeapon(MeleeWeapon);
 }
 
@@ -475,37 +474,37 @@ void UWeaponSystem::EquipDefuser()
 
 void UWeaponSystem::Server_EquipDefuser_Implementation()
 {
-	if(!DefuseDevice || CurrentWeapon == DefuseDevice || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!DefuseDevice || CurrentWeapon == DefuseDevice || bIsPlantingOrDefusing) return;
 	EquipWeapon(DefuseDevice);
 }
 
 void UWeaponSystem::Server_EquipBomb_Implementation()
 {
-	if(!Bomb || CurrentWeapon == Bomb || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!Bomb || CurrentWeapon == Bomb || bIsPlantingOrDefusing) return;
 	EquipWeapon(Bomb);
 }
 
 void UWeaponSystem::Server_EquipGrenade_Implementation()
 {
-	if(!Grenade || CurrentWeapon == Grenade || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!Grenade || CurrentWeapon == Grenade || bIsPlantingOrDefusing) return;
 	EquipWeapon(Grenade);
 }
 
 void UWeaponSystem::Server_EquipFlash_Implementation()
 {
-	if(!Flash || CurrentWeapon == Flash || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!Flash || CurrentWeapon == Flash || bIsPlantingOrDefusing) return;
 	EquipWeapon(Flash);
 }
 
 void UWeaponSystem::Server_EquipSmoke_Implementation()
 {
-	if(!Smoke || CurrentWeapon == Smoke || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!Smoke || CurrentWeapon == Smoke || bIsPlantingOrDefusing) return;
 	EquipWeapon(Smoke);
 }
 
 void UWeaponSystem::Server_EquipMolotov_Implementation()
 {
-	if(!Molotov || CurrentWeapon == Molotov || bIsPlantingOrDefusing || bIsThrowing) return;
+	if(!Molotov || CurrentWeapon == Molotov || bIsPlantingOrDefusing) return;
 	EquipWeapon(Molotov);
 }
 
@@ -637,11 +636,6 @@ void UWeaponSystem::EnableShooting(bool bEnableShooting)
 void UWeaponSystem::SetIsPlantingOrDefusing(bool bPlantingOrDefusing)
 {
 	bIsPlantingOrDefusing = bPlantingOrDefusing;
-}
-
-void UWeaponSystem::SetIsThrowing(bool bThrowing)
-{
-	bIsThrowing = bThrowing;
 }
 
 AWeaponBase* UWeaponSystem::GetBomb()

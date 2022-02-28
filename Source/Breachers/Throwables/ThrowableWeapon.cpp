@@ -44,15 +44,9 @@ void AThrowableWeapon::OnFire(float ThrowForce)
 	Multicast_PlayThrowAnimation();
 	bCanFire = false;
 	bIsFiring = true;
-	CharacterPlayer->WeaponSystem->SetIsThrowing(true);
 
-	FTimerHandle IsFiringTimer;
 	GetWorld()->GetTimerManager().SetTimer(IsFiringTimer, this, &AThrowableWeapon::ResetIsFiring, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
-
-	FTimerHandle ResetTimer;
 	GetWorld()->GetTimerManager().SetTimer(ResetTimer, this, &AThrowableWeapon::ResetCanFire, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
-	
-	FTimerHandle EquipPreviousWeaponTimer;
 	GetWorld()->GetTimerManager().SetTimer(EquipPreviousWeaponTimer, this, &AThrowableWeapon::EquipPreviousWeaponAfterThrow, 1, false, WeaponInfo.ShotInfo.FireAnimationTime);
 }
 
@@ -65,6 +59,16 @@ void AThrowableWeapon::OnThrow()
 {
 	SetToNotBePickedUp();
 	WeaponInfo.bIsDroppable = true;
+}
+
+void AThrowableWeapon::OnCancelEquip()
+{
+	Super::OnCancelEquip();
+	GetWorld()->GetTimerManager().ClearTimer(IsFiringTimer);
+	GetWorld()->GetTimerManager().ClearTimer(ResetTimer);
+	GetWorld()->GetTimerManager().ClearTimer(EquipPreviousWeaponTimer);
+	bCanFire = true;
+	bIsFiring = false;
 }
 
 float AThrowableWeapon::GetCurrentThrowForce()
@@ -87,7 +91,6 @@ void AThrowableWeapon::EquipPreviousWeaponAfterThrow()
 {
 	if(CharacterPlayer)
 	{
-		CharacterPlayer->WeaponSystem->SetIsThrowing(false);
 		CharacterPlayer->WeaponSystem->EquipBestValidWeapon();
 	}
 }

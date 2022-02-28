@@ -42,7 +42,7 @@ public:
 	void OnCancelReload();
 	virtual void OnEquip();
 	virtual void OnUnquip();
-	void OnCancelEquip();
+	virtual void OnCancelEquip();
 	virtual void OnRestartRound();
 	void SetToNotBePickedUp();
 	FORCEINLINE bool CanBePicked() const {return bCanBePicked;}
