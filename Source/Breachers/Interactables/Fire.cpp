@@ -1,6 +1,6 @@
 #include "Fire.h"
-
 #include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Weapons/WeaponBase.h"
 #include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
@@ -9,6 +9,7 @@
 
 AFire::AFire()
 {
+	Tags.Add(TAG_Unwanted);
 	PrimaryActorTick.bCanEverTick = false;
 	BoxCollision = CreateDefaultSubobject<UBoxComponent>("BoxCollision");
 	BoxCollision->SetBoxExtent(FVector(220, 220, 60));

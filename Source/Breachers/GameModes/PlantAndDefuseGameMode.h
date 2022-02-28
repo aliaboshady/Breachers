@@ -46,6 +46,7 @@ protected:
 	void RespawnALlPlayers(bool bAttackersWon);
 	void RemoveAllUnpossessedBodies();
 	void RemoveAllUnownedWeapons();
+	void RemoveAllUnwantedActors();
 	void RestartCountDownTimer();
 	void DestroyAllParticleSystems();
 	void BuyPhasePlayerConstrains(bool bIsInBuyPhase);

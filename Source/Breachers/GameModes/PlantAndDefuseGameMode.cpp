@@ -181,6 +181,7 @@ void APlantAndDefuseGameMode::RestartRound(bool bAttackersWon)
 	RespawnALlPlayers(bAttackersWon);
 	RemoveAllUnpossessedBodies();
 	RemoveAllUnownedWeapons();
+	RemoveAllUnwantedActors();
 	RestartCountDownTimer();
 	DestroyAllParticleSystems();
 }
@@ -270,6 +271,13 @@ void APlantAndDefuseGameMode::RemoveAllUnownedWeapons()
 	{
 		if(!Weapon->GetOwner() || !Weapon->GetOwner()->GetInstigatorController()) Weapon->Destroy();
 	}
+}
+
+void APlantAndDefuseGameMode::RemoveAllUnwantedActors()
+{
+	TArray<AActor*> AllUnwanted;
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), TAG_Unwanted, AllUnwanted);
+	for (AActor* Unwanted : AllUnwanted) Unwanted->Destroy();
 }
 
 void APlantAndDefuseGameMode::RestartCountDownTimer()

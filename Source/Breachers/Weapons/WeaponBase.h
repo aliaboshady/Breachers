@@ -19,6 +19,7 @@
 #define TAG_Flash "Flash"
 #define TAG_Smoke "Smoke"
 #define TAG_Molotov "Molotov"
+#define TAG_Unwanted "Unwanted"
 
 class ABulletTracer;
 class ACharacterBase;
