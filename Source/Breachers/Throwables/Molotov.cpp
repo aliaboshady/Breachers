@@ -1,5 +1,8 @@
 #include "Molotov.h"
 
+#include "Breachers/Characters/CharacterBase.h"
+#include "Breachers/Interactables/Fire.h"
+
 AMolotov::AMolotov()
 {
 	ActivationSlope = 5;
@@ -7,7 +10,7 @@ AMolotov::AMolotov()
 
 void AMolotov::OnActivate()
 {
-	// Do Something
+	Server_SpawnFire();
 	Super::OnActivate();
 }
 
@@ -19,4 +22,19 @@ void AMolotov::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPri
 	float Normal_Y = NormalImpulse.Y;
 	float sum = Normal_X + Normal_Y;
 	if(sum > -ActivationSlope && sum <= ActivationSlope) OnActivate();
+}
+
+void AMolotov::Server_SpawnFire_Implementation()
+{
+	if(!FireClass) return;
+	
+	FActorSpawnParameters SpawnParameters;
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	if(AFire* Fire = GetWorld()->SpawnActor<AFire>(FireClass, GetActorLocation(), FRotator(0), SpawnParameters))
+	{
+		Fire->SetLifeSpan(ActivationDuration);
+		Fire->SetDamage(WeaponInfo.DamageInfo.HeadDamage);
+		Fire->SetInstigator(CharacterPlayer);
+		Fire->SetOwner(this);
+	}
 }
