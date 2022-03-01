@@ -11,7 +11,7 @@ class BREACHERS_API UFlashScreen : public UUserWidget
 public:
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime);
+	void GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime, bool bIsFullFlash = true);
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void StopFlash();

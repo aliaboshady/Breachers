@@ -15,15 +15,15 @@ void UFlashComponent::Client_CreateFlashScreenWidget_Implementation()
 	if(FlashScreenWidget) FlashScreenWidget->AddToViewport();
 }
 
-void UFlashComponent::GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime)
+void UFlashComponent::GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime, bool bIsFullFlash)
 {
-	Client_GetFlashed(FlashAmount, FlashTime, FlashFadeTime);
+	Client_GetFlashed(FlashAmount, FlashTime, FlashFadeTime, bIsFullFlash);
 }
 
-void UFlashComponent::Client_GetFlashed_Implementation(float FlashAmount, float FlashTime, float FlashFadeTime)
+void UFlashComponent::Client_GetFlashed_Implementation(float FlashAmount, float FlashTime, float FlashFadeTime, bool bIsFullFlash)
 {
 	if(!FlashScreenWidget) Client_CreateFlashScreenWidget();
-	if(FlashScreenWidget) FlashScreenWidget->GetFlashed(FlashAmount, FlashTime, FlashFadeTime);
+	if(FlashScreenWidget) FlashScreenWidget->GetFlashed(FlashAmount, FlashTime, FlashFadeTime, bIsFullFlash);
 }
 
 void UFlashComponent::StopFlash()

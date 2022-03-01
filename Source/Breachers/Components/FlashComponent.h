@@ -12,12 +12,12 @@ class BREACHERS_API UFlashComponent : public UActorComponent
 
 public:	
 	UFlashComponent();
-	void GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime);
+	void GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime, bool bIsFullFlash = true);
 	void StopFlash();
 
 protected:
 	UFUNCTION(Client, Reliable)
-	void Client_GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime);
+	void Client_GetFlashed(float FlashAmount, float FlashTime, float FlashFadeTime, bool bIsFullFlash);
 	
 	UFUNCTION(Client, Reliable)
 	void Client_StopFlash();

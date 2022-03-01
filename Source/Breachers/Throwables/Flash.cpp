@@ -55,8 +55,8 @@ void AFlash::Server_Flash_Implementation()
 
 		if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(CharacterBasePlayer->GetBreacherPC()))
 		{
-			if(FacingAngle > FullFlashAngle) PDPC->FlashComponent->GetFlashed(FullFlashAmount, FullFlashTime, FlashFadeTime);
-			else PDPC->FlashComponent->GetFlashed(HalfFlashAmount, HalfFlashTime, FlashFadeTime);
+			if(FacingAngle > FullFlashAngle) PDPC->FlashComponent->GetFlashed(FullFlashAmount, FullFlashTime, FlashFadeTime, true);
+			else PDPC->FlashComponent->GetFlashed(HalfFlashAmount, HalfFlashTime, FlashFadeTime, false);
 		}
 	}
 }
