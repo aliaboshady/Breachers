@@ -1,5 +1,6 @@
 #include "PlantAndDefuseGameMode.h"
 #include "Breachers/Components/BuyMenu.h"
+#include "Breachers/Components/FlashComponent.h"
 #include "Breachers/Components/HealthSystem.h"
 #include "Breachers/Components/MoneySystem.h"
 #include "Breachers/Components/MovementSystem.h"
@@ -194,17 +195,18 @@ void APlantAndDefuseGameMode::RespawnALlPlayers(bool bAttackersWon)
 		{
 			if(ABreachersPlayerState* BPS = Cast<ABreachersPlayerState>(PlayerState))
 			{
-				if(ABreachersPlayerController* BPC = Cast<ABreachersPlayerController>(BPS->GetOwner()))
+				if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(BPS->GetOwner()))
 				{
 					
-					ETeam PlayerTeam = BPC->GetPlayerTeam();
+					ETeam PlayerTeam = PDPC->GetPlayerTeam();
 					
-					if(!bShouldSwitchTeams) AddMoneyToPlayer(PlayerTeam, bAttackersWon, BPC);
-					else BPC->MoneySystem->ResetCurrentMoney();
+					if(!bShouldSwitchTeams) AddMoneyToPlayer(PlayerTeam, bAttackersWon, PDPC);
+					else PDPC->MoneySystem->ResetCurrentMoney();
 					
-					RespawnPlayer(PlayerTeam, BPC, BPS, bShouldSwitchTeams);
+					RespawnPlayer(PlayerTeam, PDPC, BPS, bShouldSwitchTeams);
 					
-					if(BPC->CharacterPlayer) BPC->CharacterPlayer->WeaponSystem->OnRestartRound();
+					if(PDPC->CharacterPlayer) PDPC->CharacterPlayer->WeaponSystem->OnRestartRound();
+					PDPC->FlashComponent->StopFlash();
 				}
 			}
 		}
