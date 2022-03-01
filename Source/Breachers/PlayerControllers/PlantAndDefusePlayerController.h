@@ -4,6 +4,7 @@
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "PlantAndDefusePlayerController.generated.h"
 
+class UFlashComponent;
 class UGamePhaseBanner;
 
 UCLASS()
@@ -15,6 +16,9 @@ public:
 	APlantAndDefusePlayerController();
 	void SwitchRoundPhaseBanner(EPhaseBanner Phase);
 	void BeginSpectate();
+
+	UPROPERTY(VisibleAnywhere)
+	UFlashComponent* FlashComponent;
 
 protected:
 	virtual void BeginPlay() override;

@@ -1,4 +1,5 @@
 #include "PlantAndDefusePlayerController.h"
+#include "Breachers/Components/FlashComponent.h"
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "Breachers/Widgets/Killfeed.h"
@@ -7,6 +8,7 @@
 APlantAndDefusePlayerController::APlantAndDefusePlayerController()
 {
 	StartSpectateAfter = 2;
+	FlashComponent = CreateDefaultSubobject<UFlashComponent>(TEXT("Flash Component"));
 }
 
 void APlantAndDefusePlayerController::BeginPlay()
