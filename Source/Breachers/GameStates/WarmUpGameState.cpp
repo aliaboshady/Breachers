@@ -3,7 +3,7 @@
 void AWarmUpGameState::BeginPlay()
 {
 	Super::BeginPlay();
-	OneSecondTimespan = FTimespan(0, 0, 3);
+	OneSecondTimespan = FTimespan(0, 0, 1);
 	bUnlimitedTime = false;
 }
 
