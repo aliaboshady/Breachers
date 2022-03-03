@@ -27,9 +27,6 @@ protected:
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
 	float HalfFlashTime;
 
-	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
-	float FlashFadeTime;
-
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0", ClampMax = "1"))
 	float FullFlashAmount;
 
@@ -38,4 +35,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "-1", ClampMax = "1"))
 	float FullFlashAngle;
+	
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float FullFlashFadeTime;
+
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0"))
+	float HalfFlashFadeTime;
 };

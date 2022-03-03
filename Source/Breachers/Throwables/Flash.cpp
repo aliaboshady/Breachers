@@ -8,11 +8,12 @@ AFlash::AFlash()
 {
 	MaxFlashDistance = 3000;
 	FullFlashTime = 2;
-	HalfFlashTime = 0.75;
-	FlashFadeTime = 1;
+	HalfFlashTime = 0.5;
 	FullFlashAmount = 1;
-	HalfFlashAmount = 0.5;
+	HalfFlashAmount = 0.3;
 	FullFlashAngle = 0;
+	FullFlashFadeTime = 1;
+	HalfFlashFadeTime = 0.2;
 }
 
 void AFlash::OnThrow()
@@ -55,8 +56,8 @@ void AFlash::Server_Flash_Implementation()
 
 		if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(CharacterBasePlayer->GetBreacherPC()))
 		{
-			if(FacingAngle > FullFlashAngle) PDPC->FlashComponent->GetFlashed(FullFlashAmount, FullFlashTime, FlashFadeTime, true);
-			else PDPC->FlashComponent->GetFlashed(HalfFlashAmount, HalfFlashTime, FlashFadeTime, false);
+			if(FacingAngle > FullFlashAngle) PDPC->FlashComponent->GetFlashed(FullFlashAmount, FullFlashTime, FullFlashFadeTime, true);
+			else PDPC->FlashComponent->GetFlashed(HalfFlashAmount, HalfFlashTime, HalfFlashFadeTime, false);
 		}
 	}
 }
