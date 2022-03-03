@@ -14,6 +14,8 @@ UWeaponSystem::UWeaponSystem()
 	WeaponPickupDistance = 200;
 	bShootingEnabled = true;
 	bIsPlantingOrDefusing = false;
+	bCanDropWeapon = true;
+	DropWeaponCooldownTime = 0.1;
 }
 
 void UWeaponSystem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -221,7 +223,11 @@ void UWeaponSystem::Throw()
 
 void UWeaponSystem::Server_DropWeapon_Implementation()
 {
-	if(!CurrentWeapon || !CurrentWeapon->WeaponInfo.bIsDroppable || !CharacterPlayer) return;
+	if(!CurrentWeapon || !CurrentWeapon->WeaponInfo.bIsDroppable || !CharacterPlayer || !bCanDropWeapon) return;
+
+	bCanDropWeapon = false;
+	FTimerHandle DropHandle;
+	GetWorld()->GetTimerManager().SetTimer(DropHandle, this, &UWeaponSystem::ResetCanDropWeapon, 1, false, DropWeaponCooldownTime);
 	
 	if(CurrentWeapon->WeaponInfo.WeaponType == Primary)
 	{
@@ -520,13 +526,6 @@ void UWeaponSystem::Server_EquipLastBoughtWeapon_Implementation()
 	if(LastBoughtWeapon) EquipWeapon(LastBoughtWeapon);
 }
 
-void UWeaponSystem::EquipBestValidWeapon()
-{
-	if(PrimaryWeapon) Server_EquipPrimary();
-	else if(SecondaryWeapon) Server_EquipSecondary();
-	else if(MeleeWeapon) Server_EquipMelee();
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////// Fire //////////////////////////////////////////////////////
@@ -659,4 +658,9 @@ bool UWeaponSystem::HasThisThrowable(FString WeaponName)
 	bool bHasM = Molotov && WeaponName == TAG_Molotov;
 	bool bHasThrowable = bHasG || bHasF || bHasS || bHasM;
 	return bHasThrowable;
+}
+
+void UWeaponSystem::ResetCanDropWeapon()
+{
+	bCanDropWeapon = true;
 }

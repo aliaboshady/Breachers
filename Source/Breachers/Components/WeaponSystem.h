@@ -32,7 +32,6 @@ public:
 	void EquipPreviousWeapon();
 	void EquipDefuser();
 	AWeaponBase* GetBomb();
-	void EquipBestValidWeapon();
 	bool HasThisThrowable(FString WeaponName);
 
 	UPROPERTY(EditAnywhere)
@@ -46,6 +45,7 @@ protected:
 	void UnequipWeapon(AWeaponBase* Weapon);
 	void EquipeLastTakenWeapon();
 	bool HasThisThrowable(AWeaponBase* Weapon);
+	void ResetCanDropWeapon();
 
 	UFUNCTION(Server, Reliable)
 	void Server_PlayerDropWeapon();
@@ -180,6 +180,9 @@ protected:
 	float WeaponPickupDistance;
 
 	UPROPERTY(EditAnywhere)
+	float DropWeaponCooldownTime;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AWeaponBase> MeleeWeaponClass;
 
 	UPROPERTY(EditAnywhere)
@@ -190,6 +193,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	bool bShootingEnabled;
+
+	UPROPERTY(Replicated)
+	bool bCanDropWeapon;
 
 	UPROPERTY(Replicated)
 	bool bIsPlantingOrDefusing;

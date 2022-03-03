@@ -20,7 +20,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	void EquipPreviousWeaponAfterThrow();
 	void OnFire(float ThrowForce);
 	virtual void OnActivate();
 
@@ -74,6 +73,5 @@ protected:
 
 	FTimerHandle IsFiringTimer;
 	FTimerHandle ResetTimer;
-	FTimerHandle EquipPreviousWeaponTimer;
 	bool bCanPlayBounceSound;
 };
