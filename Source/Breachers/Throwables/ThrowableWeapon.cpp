@@ -29,11 +29,13 @@ void AThrowableWeapon::BeginPlay()
 
 void AThrowableWeapon::OnPrimaryFire()
 {
+	Multicast_SetThrowAnimation(PrimaryThrowAnimation);
 	OnFire(PrimaryThrowForce);
 }
 
 void AThrowableWeapon::OnSecondaryFire()
 {
+	Multicast_SetThrowAnimation(SecondaryThrowAnimation);
 	OnFire(SecondaryThrowForce);
 }
 
@@ -85,6 +87,15 @@ void AThrowableWeapon::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAct
 	FVector NormalImpulse, const FHitResult& Hit)
 {
 	if(GetVelocity().Size() >= ImpactSoundPower && bCanPlayBounceSound) Multicast_PlayBounceSound();
+}
+
+void AThrowableWeapon::Multicast_SetThrowAnimation_Implementation(UAnimMontage* ThrowAnimation)
+{
+	if(ThrowAnimation)
+	{
+		WeaponInfo.WeaponAnimations.FireAnim_ArmsTP = ThrowAnimation;
+		WeaponInfo.WeaponAnimations.FireAnim_ArmsFP = ThrowAnimation;
+	}
 }
 
 void AThrowableWeapon::EquipPreviousWeaponAfterThrow()

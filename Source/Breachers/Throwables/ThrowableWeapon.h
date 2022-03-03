@@ -42,6 +42,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetCanPlayBounceSound(bool bCanPlaySound);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_SetThrowAnimation(UAnimMontage* ThrowAnimation);
+
 	UPROPERTY(Replicated)
 	ACharacterBase* ThrowerCharacter;
 
@@ -59,6 +62,12 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	float ImpactSoundPower;
+
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* PrimaryThrowAnimation;
+	
+	UPROPERTY(EditAnywhere)
+	UAnimMontage* SecondaryThrowAnimation;
 
 	UPROPERTY(Replicated)
 	float CurrentThrowForce;
