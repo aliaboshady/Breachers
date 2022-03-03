@@ -71,6 +71,9 @@ protected:
 	bool IsCurrentWeapon();
 
 	UFUNCTION()
+	void PRV_OnDrop(ACharacterBase* DropperCharacter);
+
+	UFUNCTION()
 	virtual void OnPlayerUnpossessed();
 
 	UFUNCTION()
@@ -132,13 +135,13 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_OnCancelEquipAnimations();
 
-	void SpawnBulletTracer(FHitResult OutHit, FVector Start, bool bIsClient);
-	
 	UFUNCTION(Client, Reliable)
 	void Client_SpawnBulletTracer(FHitResult OutHit);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SpawnBulletTracer(FHitResult OutHit);
+	
+	void SpawnBulletTracer(FHitResult OutHit, FVector Start, bool bIsClient);
 	
 	virtual void FireSpread();
 	void ResetCanFire();

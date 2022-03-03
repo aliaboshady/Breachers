@@ -215,10 +215,7 @@ void UWeaponSystem::Throw()
 	if(AThrowableWeapon* ThrowableWeapon = Cast<AThrowableWeapon>(CurrentWeapon))
 	{
 		ThrowableWeapon->OnThrow();
-		float WeaponDropForceTemp = WeaponDropForce;
-		WeaponDropForce = ThrowableWeapon->GetCurrentThrowForce();
 		DropWeapon();
-		WeaponDropForce = WeaponDropForceTemp;
 	}
 }
 
@@ -597,6 +594,7 @@ void UWeaponSystem::Multicast_DropWeaponVisualsTP_Implementation(AWeaponBase* We
 	{
 		const FDetachmentTransformRules DetachmentTransformRules = FDetachmentTransformRules(EDetachmentRule::KeepWorld, true);
 		Weapon->Mesh_TP->DetachFromComponent(DetachmentTransformRules);
+		Weapon->SetActorLocation(CharacterPlayer->GetCameraLocation());
 	}
 }
 

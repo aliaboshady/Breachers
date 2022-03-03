@@ -433,7 +433,15 @@ void AWeaponBase::Multicast_OnTaken_Implementation()
 
 void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 {
-	if(ADeathMatchGameMode* DGM = Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode())) Destroy();
+	FTimerHandle DropHandle;
+	FTimerDelegate DropDelegate;
+	DropDelegate.BindUFunction(this, FName(TEXT("PRV_OnDrop")), DropperCharacter);
+	GetWorldTimerManager().SetTimer(DropHandle, DropDelegate, 1, false, 0.05);
+}
+
+void AWeaponBase::PRV_OnDrop(ACharacterBase* DropperCharacter)
+{
+	if(ADeathMatchGameMode* DGM = Cast<ADeathMatchGameMode>(GetWorld()->GetAuthGameMode())) Destroy();	
 	if(AThrowableWeapon* ThrowableWeapon = Cast<AThrowableWeapon>(this)) ThrowableWeapon->SetThrowerCharacter(DropperCharacter);
 	PreviousOwner = DropperCharacter;
 	PreviousOwner->GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
@@ -450,8 +458,14 @@ void AWeaponBase::OnDrop(ACharacterBase* DropperCharacter)
 	FVector ThrowDirection;
 	if(DropperCharacterPC) ThrowDirection = DropperCharacterPC->GetControlRotation().Vector();
 	else ThrowDirection = DropperCharacter->GetCameraDirection();
+
+	FVector Force = ThrowDirection;
+	if(AThrowableWeapon* ThrowableWeapon = Cast<AThrowableWeapon>(this))
+	{
+		Force *= ThrowableWeapon->GetCurrentThrowForce();
+	}
+	else Force *= DropperCharacter->WeaponSystem->WeaponDropForce;
 	
-	const FVector Force = ThrowDirection * DropperCharacter->WeaponSystem->WeaponDropForce;
 	Mesh_TP->AddImpulse(Force, NAME_None, true);
 	
 	FTimerHandle OverlapHandle;
