@@ -628,3 +628,24 @@ bool AWeaponBase::IsCurrentWeapon()
 	if(!CharacterPlayer) return false;
 	return CharacterPlayer->WeaponSystem->GetCurrentWeapon() == this;
 }
+
+void AWeaponBase::PlayEquipSound(bool bClientOnlySound)
+{
+	Server_PlayEquipSound(bClientOnlySound);
+}
+
+void AWeaponBase::Server_PlayEquipSound_Implementation(bool bClientOnlySound)
+{
+	if(bClientOnlySound) Client_PlayEquipSound();
+	else Multicast_PlayEquipSound();
+}
+
+void AWeaponBase::Client_PlayEquipSound_Implementation()
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.EquipSound, GetActorLocation());
+}
+
+void AWeaponBase::Multicast_PlayEquipSound_Implementation()
+{
+	UGameplayStatics::SpawnSoundAtLocation(GetWorld(), WeaponInfo.WeaponEffects.EquipSound, GetActorLocation());
+}

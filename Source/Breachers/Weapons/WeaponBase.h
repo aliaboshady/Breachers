@@ -45,6 +45,7 @@ public:
 	virtual void OnCancelEquip();
 	virtual void OnRestartRound();
 	void SetToNotBePickedUp();
+	void PlayEquipSound(bool bClientOnlySound);
 	FORCEINLINE bool CanBePicked() const {return bCanBePicked;}
 	FORCEINLINE int32 GetCurrentAmmoInClip() const {return CurrentAmmoInClip;}
 	FORCEINLINE int32 GetCurrentTotalAmmo() const {return CurrentTotalAmmo;}
@@ -140,6 +141,15 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SpawnBulletTracer(FHitResult OutHit);
+
+	UFUNCTION(Server, Reliable)
+	void Server_PlayEquipSound(bool bClientOnlySound);
+	
+	UFUNCTION(Client, Reliable)
+	void Client_PlayEquipSound();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayEquipSound();
 	
 	void SpawnBulletTracer(FHitResult OutHit, FVector Start, bool bIsClient);
 	

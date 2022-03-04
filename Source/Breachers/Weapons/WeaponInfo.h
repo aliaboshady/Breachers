@@ -95,6 +95,9 @@ struct FWeaponEffect
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	USoundCue* ImpactSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	USoundCue* EquipSound;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UMaterialInterface* BulletHoleDecal;
