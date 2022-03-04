@@ -2,6 +2,7 @@
 #include "MoneySystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/GameModes/BreachersGameModeBase.h"
+#include "Breachers/GameModes/PlantAndDefuseGameMode.h"
 #include "Breachers/PlayerControllers/BreachersPlayerController.h"
 #include "Breachers/Weapons/WeaponBase.h"
 #include "Components/CapsuleComponent.h"
@@ -81,7 +82,11 @@ inline void UHealthSystem::OnTakeAnyDamage(AActor* DamagedActor, float Damage, c
 	{
 		bIsDead = true;
 		Server_KillPlayer(InstigatedBy, DamageCauser);
-		if(!bInstigatorIsTeammate) RewardKiller(InstigatedBy, DamageCauser);
+
+		APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode());
+		if(PDGM && bInstigatorIsTeammate) return;
+		
+		RewardKiller(InstigatedBy, DamageCauser);
 	}
 }
 
