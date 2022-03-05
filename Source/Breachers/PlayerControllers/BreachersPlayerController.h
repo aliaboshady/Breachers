@@ -5,6 +5,7 @@
 #include "BreachersPlayerController.generated.h"
 
 class UBuyMenu;
+class UPlayerUI;
 class UKillfeed;
 class UScoreBoard;
 class UMoneySystem;
@@ -154,7 +155,7 @@ protected:
 	TSubclassOf<UUserWidget> TeamSelectWidgetClass;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> PlayerUIWidgetClass;
+	TSubclassOf<UPlayerUI> PlayerUIWidgetClass;
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
@@ -167,6 +168,9 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UKillfeed> KillfeedWidgetClass;
+	
+	UPROPERTY()
+	UPlayerUI* PlayerUIWidget;
 	
 	UPROPERTY()
 	UUserWidget* TeamSelectWidget;

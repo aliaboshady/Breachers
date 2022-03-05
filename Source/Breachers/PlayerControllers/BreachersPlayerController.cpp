@@ -13,6 +13,7 @@
 #include "Breachers/PlayerStates/BreachersPlayerState.h"
 #include "Breachers/Widgets/ScoreBoard.h"
 #include "Breachers/Widgets/Killfeed.h"
+#include "Breachers/Widgets/PlayerUI.h"
 #include "Camera/CameraActor.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
@@ -189,8 +190,8 @@ void ABreachersPlayerController::Server_SetNextTeam_Implementation(ETeam NextTea
 void ABreachersPlayerController::Client_ShowPlayerUI_Implementation()
 {
 	if(!PlayerUIWidgetClass) return;
-	UUserWidget* UIWidget = CreateWidget(this, PlayerUIWidgetClass);
-	if(UIWidget) UIWidget->AddToViewport();
+	PlayerUIWidget = CreateWidget<UPlayerUI>(this, PlayerUIWidgetClass);
+	if(PlayerUIWidget) PlayerUIWidget->AddToViewport();
 	SetInputUI(false);
 }
 

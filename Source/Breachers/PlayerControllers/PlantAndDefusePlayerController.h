@@ -16,6 +16,8 @@ public:
 	APlantAndDefusePlayerController();
 	void SwitchRoundPhaseBanner(EPhaseBanner Phase);
 	void BeginSpectate();
+	void SetPlantDefuseProgress(float Duration);
+	void StopPlantDefuseProgress();
 
 	UPROPERTY(VisibleAnywhere)
 	UFlashComponent* FlashComponent;
@@ -36,6 +38,12 @@ protected:
 	
 	UFUNCTION(Client, Reliable)
 	void Client_SwitchRoundPhaseBanner(EPhaseBanner Phase);
+
+	UFUNCTION(Client, Reliable)
+	void Client_SetPlantDefuseProgress(float Duration);
+
+	UFUNCTION(Client, Reliable)
+	void Client_StopPlantDefuseProgress();
 	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UGamePhaseBanner> GamePhaseBannerWidgetClass;

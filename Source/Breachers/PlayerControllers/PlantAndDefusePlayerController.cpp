@@ -3,7 +3,9 @@
 #include "Breachers/GameStates/PlantAndDefuseGameState.h"
 #include "Breachers/Widgets/GamePhaseBanner.h"
 #include "Breachers/Widgets/Killfeed.h"
+#include "Breachers/Widgets/PlayerUI.h"
 #include "GameFramework/SpectatorPawn.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 APlantAndDefusePlayerController::APlantAndDefusePlayerController()
 {
@@ -65,6 +67,26 @@ void APlantAndDefusePlayerController::Client_SwitchRoundPhaseBanner_Implementati
 void APlantAndDefusePlayerController::BeginSpectate()
 {
 	GetWorldTimerManager().SetTimer(SpectatorTimerHandle, this, &APlantAndDefusePlayerController::SpectateModeStart, 1, false, StartSpectateAfter);
+}
+
+void APlantAndDefusePlayerController::SetPlantDefuseProgress(float Duration)
+{
+	Client_SetPlantDefuseProgress(Duration);
+}
+
+void APlantAndDefusePlayerController::Client_SetPlantDefuseProgress_Implementation(float Duration)
+{
+	if(PlayerUIWidget) PlayerUIWidget->SetPlantDefuseProgress(Duration);
+}
+
+void APlantAndDefusePlayerController::StopPlantDefuseProgress()
+{
+	Client_StopPlantDefuseProgress();
+}
+
+void APlantAndDefusePlayerController::Client_StopPlantDefuseProgress_Implementation()
+{
+	if(PlayerUIWidget) PlayerUIWidget->StopPlantDefuseProgress();
 }
 
 void APlantAndDefusePlayerController::SpectateModeStart()

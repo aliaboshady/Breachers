@@ -4,6 +4,7 @@
 #include "WeaponSystem.h"
 #include "Breachers/Characters/CharacterBase.h"
 #include "Breachers/GameModes/PlantAndDefuseGameMode.h"
+#include "Breachers/PlayerControllers/PlantAndDefusePlayerController.h"
 #include "Breachers/Weapons/Bomb.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -80,6 +81,10 @@ void UPlantDefuseSystem::StartPlant(int32 PlantTime)
 	Multicast_SetIsPlanting(true);
 	Multicast_StartPlantDefuseEffects();
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Plant, 1, false, PlantTime);
+	if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(CharacterPlayer->GetController()))
+	{
+		PDPC->SetPlantDefuseProgress(PlantTime);
+	}
 }
 
 void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
@@ -91,6 +96,10 @@ void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
 	Multicast_StartPlantDefuseEffects();
 	Bomb->SetIsBeingDefused(true);
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseTimerHandle, this, &UPlantDefuseSystem::Server_Defuse, 1, false, DefuseTime);
+	if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(CharacterPlayer->GetController()))
+	{
+		PDPC->SetPlantDefuseProgress(DefuseTime);
+	}
 }
 
 void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
@@ -101,6 +110,10 @@ void UPlantDefuseSystem::Server_StopPlantOrDefuse_Implementation()
 	Multicast_SetIsPlanting(false);
 	if(Bomb) Bomb->SetIsBeingDefused(false);
 	GetWorld()->GetTimerManager().ClearTimer(PlantOrDefuseTimerHandle);
+	if(APlantAndDefusePlayerController* PDPC = Cast<APlantAndDefusePlayerController>(CharacterPlayer->GetController()))
+	{
+		PDPC->StopPlantDefuseProgress();
+	}
 }
 
 void UPlantDefuseSystem::Server_Plant_Implementation()
