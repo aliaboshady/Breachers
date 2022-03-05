@@ -31,7 +31,7 @@ public:
 	void SetIsBeingDefused(bool bIsDefusing);
 	FORCEINLINE bool GetIsBeingDefused(){return bIsBeginDefused;}
 	FORCEINLINE ERoundState GetBombState(){return BombState;}
-	void OnStartPlant(int32 PlantTime);
+	void OnStartPlant(float PlantTime);
 	void OnStartDefuse();
 	void SetBombState(ERoundState NewBombState);
 	void OnStopPlant();
@@ -50,7 +50,7 @@ protected:
 	void OnPlayerExitDefuseArea(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UFUNCTION()
-	void PlantAnimation(int32 PlantTime);
+	void PlantAnimation(float PlantTime);
 
 	UFUNCTION(Server, Reliable)
 	void Server_SetTickingSegments();
@@ -59,7 +59,7 @@ protected:
 	void NetMulticast_PlayBombSound(USoundCue* BombSound);
 	
 	UFUNCTION(NetMulticast, Reliable)
-	void NetMulticast_PlayPlantAnimationAfterTime(int32 PlantTime);
+	void NetMulticast_PlayPlantAnimationAfterTime(float PlantTime);
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_SetIsBeingDefused(bool bIsDefusing);

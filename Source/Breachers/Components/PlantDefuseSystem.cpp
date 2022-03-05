@@ -58,8 +58,8 @@ void UPlantDefuseSystem::Server_StartPlantOrDefuse_Implementation()
 {
 	if(!CharacterPlayer) return;
 
-	int32 PlantTime = 0;
-	int32 DefuseTime = 0;
+	float PlantTime = 0;
+	float DefuseTime = 0;
 	
 	if(APlantAndDefuseGameMode* PDGM = Cast<APlantAndDefuseGameMode>(GetWorld()->GetAuthGameMode()))
 	{
@@ -71,7 +71,7 @@ void UPlantDefuseSystem::Server_StartPlantOrDefuse_Implementation()
 	else StartDefuse(DefuseTime);
 }
 
-void UPlantDefuseSystem::StartPlant(int32 PlantTime)
+void UPlantDefuseSystem::StartPlant(float PlantTime)
 {
 	if(!bIsInSite || !CharacterPlayer->WeaponSystem->HasBomb()) return;
 	if(ABomb* CurrentBomb = Cast<ABomb>(CharacterPlayer->WeaponSystem->GetBomb()))
@@ -87,7 +87,7 @@ void UPlantDefuseSystem::StartPlant(int32 PlantTime)
 	}
 }
 
-void UPlantDefuseSystem::StartDefuse(int32 DefuseTime)
+void UPlantDefuseSystem::StartDefuse(float DefuseTime)
 {
 	if(!Bomb || Bomb->GetIsBeingDefused() || Bomb->GetBombState() != BombPlanted || !IsStraightLineToBomb()) return;
 	CharacterPlayer->WeaponSystem->EquipDefuser();

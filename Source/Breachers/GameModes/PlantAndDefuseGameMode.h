@@ -18,8 +18,8 @@ public:
 	void EndOfRound(bool bAttackersWon);
 	FORCEINLINE int32 GetBuyPhaseTimeInSeconds(){return BuyPhaseTimeInSeconds;}
 	FORCEINLINE int32 GetEndPhaseTimeInSeconds(){return EndPhaseTimeInSeconds;}
-	FORCEINLINE int32 GetPlantTimeInSeconds(){return PlantTimeInSeconds;}
-	FORCEINLINE int32 GetDefuseTimeInSeconds(){return DefuseTimeInSeconds;}
+	FORCEINLINE float GetPlantTimeInSeconds(){return PlantTimeInSeconds;}
+	FORCEINLINE float GetDefuseTimeInSeconds(){return DefuseTimeInSeconds;}
 	FORCEINLINE int32 GetDetonateTimeInSeconds(){return DetonateTimeInSeconds;}
 
 	void StartBuyPhase();
@@ -70,10 +70,10 @@ protected:
 	void SetRoundNumber(int32 RoundsCount);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 PlantTimeInSeconds;
+	float PlantTimeInSeconds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int32 DefuseTimeInSeconds;
+	float DefuseTimeInSeconds;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 DetonateTimeInSeconds;

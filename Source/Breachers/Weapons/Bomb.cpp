@@ -102,7 +102,7 @@ void ABomb::OnStartDefuse()
 	NetMulticast_PlayBombSound(WeaponInfo.WeaponEffects.ImpactSound);
 }
 
-void ABomb::OnStartPlant(int32 PlantTime)
+void ABomb::OnStartPlant(float PlantTime)
 {
 	NetMulticast_PlayBombSound(WeaponInfo.WeaponEffects.MuzzleFireSound);
 	NetMulticast_PlayPlantAnimationAfterTime(PlantTime);
@@ -135,7 +135,7 @@ void ABomb::Multicast_SetBombState_Implementation(ERoundState NewBombState)
 	BombState = NewBombState;
 }
 
-void ABomb::NetMulticast_PlayPlantAnimationAfterTime_Implementation(int32 PlantTime)
+void ABomb::NetMulticast_PlayPlantAnimationAfterTime_Implementation(float PlantTime)
 {
 	float Delay = 0;
 	if(Bomb) Delay = WeaponInfo.ReloadInfo.EquipTime;
@@ -145,7 +145,7 @@ void ABomb::NetMulticast_PlayPlantAnimationAfterTime_Implementation(int32 PlantT
 	GetWorld()->GetTimerManager().SetTimer(PlantOrDefuseAnimationTimerHandle, AnimationDelegate, 1, false, Delay + 0.01);
 }
 
-void ABomb::PlantAnimation(int32 PlantTime)
+void ABomb::PlantAnimation(float PlantTime)
 {
 	Multicast_SetAimOffsetToPlanting();
 	UAnimMontage* PlantMontage_FP = WeaponInfo.WeaponAnimations.FireAnim_ArmsFP;

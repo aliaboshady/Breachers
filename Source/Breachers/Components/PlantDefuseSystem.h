@@ -24,8 +24,8 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	void GetCharacterTag();
 	bool IsStraightLineToBomb();
-	void StartPlant(int32 PlantTime);
-	void StartDefuse(int32 DefuseTime);
+	void StartPlant(float PlantTime);
+	void StartDefuse(float DefuseTime);
 	void SetPlayerConstraints(bool bPlantingOrDefusing);
 
 	UFUNCTION(Server, Reliable)
