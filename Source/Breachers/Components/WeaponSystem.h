@@ -21,7 +21,6 @@ public:
 	void Throw();
 	void DropWeapon();
 	void EnableShooting(bool bEnableShooting);
-	AWeaponBase* GetCurrentWeapon();
 	void SpawnWeapon(TSubclassOf<AWeaponBase> WeaponClass, EWeaponType WeaponType = Melee);
 	void DropAllWeapons();
 	void DestroyAllWeapons();
@@ -33,6 +32,18 @@ public:
 	void EquipDefuser();
 	AWeaponBase* GetBomb();
 	bool HasThisThrowable(FString WeaponName);
+
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetCurrentWeapon();
+	
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetPrimaryWeapon();
+	
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetSecondaryWeapon();
+	
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetMeleeWeapon();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponDropForce;

@@ -616,6 +616,24 @@ AWeaponBase* UWeaponSystem::GetCurrentWeapon()
 	return nullptr;
 }
 
+AWeaponBase* UWeaponSystem::GetPrimaryWeapon()
+{
+	if(PrimaryWeapon) return PrimaryWeapon;
+	return nullptr;
+}
+
+AWeaponBase* UWeaponSystem::GetSecondaryWeapon()
+{
+	if(SecondaryWeapon) return SecondaryWeapon;
+	return nullptr;
+}
+
+AWeaponBase* UWeaponSystem::GetMeleeWeapon()
+{
+	if(MeleeWeapon) return MeleeWeapon;
+	return nullptr;
+}
+
 FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 {
 	FAttachmentTransformRules AttachRules = FAttachmentTransformRules( EAttachmentRule::KeepRelative, true );;
