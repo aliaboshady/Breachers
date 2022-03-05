@@ -30,7 +30,6 @@ public:
 	void DropBomb();
 	void EquipPreviousWeapon();
 	void EquipDefuser();
-	AWeaponBase* GetBomb();
 	bool HasThisThrowable(FString WeaponName);
 
 	UFUNCTION(BlueprintCallable)
@@ -44,6 +43,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	AWeaponBase* GetMeleeWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetBomb();
 
 	UPROPERTY(EditAnywhere)
 	float WeaponDropForce;
