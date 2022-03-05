@@ -634,6 +634,36 @@ AWeaponBase* UWeaponSystem::GetMeleeWeapon()
 	return nullptr;
 }
 
+AWeaponBase* UWeaponSystem::GetBomb()
+{
+	if(Bomb) return Bomb;
+	return nullptr;
+}
+
+AWeaponBase* UWeaponSystem::GetGrenade()
+{
+	if(Grenade) return Grenade;
+	return nullptr;
+}
+
+AWeaponBase* UWeaponSystem::GetFlash()
+{
+	if(Flash) return Flash;
+	return nullptr;
+}
+
+AWeaponBase* UWeaponSystem::GetSmoke()
+{
+	if(Smoke) return Smoke;
+	return nullptr;
+}
+
+AWeaponBase* UWeaponSystem::GetMolotov()
+{
+	if(Molotov) return Molotov;
+	return nullptr;
+}
+
 FAttachmentTransformRules UWeaponSystem::CreateAttachRules()
 {
 	FAttachmentTransformRules AttachRules = FAttachmentTransformRules( EAttachmentRule::KeepRelative, true );;
@@ -651,11 +681,6 @@ void UWeaponSystem::EnableShooting(bool bEnableShooting)
 void UWeaponSystem::SetIsPlantingOrDefusing(bool bPlantingOrDefusing)
 {
 	bIsPlantingOrDefusing = bPlantingOrDefusing;
-}
-
-AWeaponBase* UWeaponSystem::GetBomb()
-{
-	return Bomb;
 }
 
 bool UWeaponSystem::HasThisThrowable(AWeaponBase* Weapon)

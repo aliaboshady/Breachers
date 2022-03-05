@@ -47,6 +47,18 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AWeaponBase* GetBomb();
 
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetGrenade();
+
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetFlash();
+
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetSmoke();
+
+	UFUNCTION(BlueprintCallable)
+	AWeaponBase* GetMolotov();
+
 	UPROPERTY(EditAnywhere)
 	float WeaponDropForce;
 
