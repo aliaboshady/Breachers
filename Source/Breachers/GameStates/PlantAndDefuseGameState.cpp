@@ -332,6 +332,11 @@ int32 APlantAndDefuseGameState::GetTotalPlayedRounds()
 	return AttackersScore + DefendersScore;
 }
 
+bool APlantAndDefuseGameState::TeamExceededHalfRoundNumber(int HalfRounds)
+{
+	return AttackersScore > HalfRounds || DefendersScore > HalfRounds;
+}
+
 void APlantAndDefuseGameState::SwitchTeamsScores()
 {
 	Multicast_SwitchTeamsScores();

@@ -45,6 +45,7 @@ public:
 	void OnBombExploded();
 	void ShowTeamsCountUI();
 	int32 GetTotalPlayedRounds();
+	bool TeamExceededHalfRoundNumber(int HalfRounds);
 	void SwitchTeamsScores();
 	virtual TArray<ABreachersPlayerState*> GetSortedPlayersBasedOnKillCount() override;
 	

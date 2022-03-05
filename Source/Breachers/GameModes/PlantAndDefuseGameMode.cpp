@@ -395,7 +395,7 @@ void APlantAndDefuseGameMode::CheckEndOfGame()
 {
 	if(APlantAndDefuseGameState* PDGS = GetGameState<APlantAndDefuseGameState>())
 	{
-		if(PDGS->GetTotalPlayedRounds() == RoundsNumber * 2) EndOfMatch();		
+		if(PDGS->GetTotalPlayedRounds() == RoundsNumber * 2 || PDGS->TeamExceededHalfRoundNumber(RoundsNumber)) EndOfMatch();		
 	}
 }
 
